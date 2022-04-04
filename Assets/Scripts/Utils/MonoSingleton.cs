@@ -43,7 +43,8 @@ namespace Utils
 
                         if (FindObjectsOfType(typeof(T)).Length > 1)
                         {
-                            Debug.LogError("To many singleton instance exist in the scene. Reload the scene to fix it.");
+                            Debug.LogError(
+                                "To many singleton instance exist in the scene. Reload the scene to fix it.");
                             return _instance;
                         }
 
@@ -54,7 +55,7 @@ namespace Utils
                             GameObject singletonObject = new GameObject();
                             _instance = singletonObject.AddComponent<T>();
                             singletonObject.name = "(@s)" + typeof(T).ToString();
-                            Debug.Log("Singleton GameObject " + _instance.gameObject.name + " is created in " 
+                            Debug.Log("Singleton GameObject " + _instance.gameObject.name + " is created in "
                                       + SceneManager.GetActiveScene().name);
                         }
                         else
@@ -67,10 +68,10 @@ namespace Utils
                 }
             }
         }
-        
+
         private void OnDestroy()
         {
             onDestroyed = true;
         }
-    }   
+    }
 }

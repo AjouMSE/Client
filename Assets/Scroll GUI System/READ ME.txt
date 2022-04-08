@@ -1,0 +1,34 @@
+Thank you for purchasing my Medieval Scroll GUI MenU System!  I really hope it helps you create something amazing. If you have any questions, 
+or need any help, please email me: mr.patrick.ball@gmail.com  ...I'd also love to see your creation using my asset! let me know!
+
+HOW IT WORKS
+ This asset combines an ANIMATED 3D SCROLL (animated in mecanim) with a masked, sliding Unity UI menu system (animated in script). 
+ the 'ScrollScript' with all of the variables and gameobject assignments is on the ScrollObject_WithScript object in the prefab.
+ Please do have a look. the code is commented out and organized for easy understanding and expansion.
+
+TO USE: 
+just drag the HUDcam object into your scene. place it somewhere far enough away from your scenery that it wont interfere with anything
+
+TO CUSTOMIZE: 
+drag the prefabs (in the 3dscrolls or 2dscrolls folder) into the hierarchy as a child of the HUDcam object. 
+to resize the 3d scrolls, resize the model and the canvas siblings seperately to avoid the UI stretching
+to move the position of the open 3d scroll on screen, move the parent object (i.e., the 'ScrollObjectAndCanvas_Tall')
+because the position of the ScrollObject relative to its parent is handled by the animator
+ Beyond that, just arrange and program your UI in the usual way. the UI objects are organized into panels on a sliding backdrop. 
+ You may have to adjust the position of the sliding backdrop to see the Panel you are working on. Use the existing settings as a guide.
+
+IF THE BUTTONS DON'T WORK:
+Make sure the canvas component in the canvas object in question has the HUDcam assigned to the world cam (or rendering cam) variable. 
+should happen automatically, but... you know.
+Also make sure there is exactly one EventSystem somewhere in your scene. One is attached to the HUDcam object by default.
+
+ATTRIBUTIONS:
+Images titled with 'CC0 are tagged as being released under the Creative Commons 0 licence, making them free for comercial use and modification.
+all other images were created or modified by me.
+The fonts are released under the SIL Open Font Licence, included in the folder with the fonts.
+Audio was recored in my home studio (cardboard box with blanket inside and decent USB mic), for this asset.
+Mastered using Audacity to be free of clipping or noise, and imported in .ogg format. 
+Just simple paper-sliding sounds - please use for whatever you like. No attribution required.
+
+Thank you again for trying my asset!
+-Patrick

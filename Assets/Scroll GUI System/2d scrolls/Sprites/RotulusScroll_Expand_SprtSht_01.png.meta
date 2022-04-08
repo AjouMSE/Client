@@ -1,0 +1,768 @@
+fileFormatVersion: 2
+guid: e0b4f7c1681e0e74d83fd8d367800fa1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: RotulusScroll_Expand_SprtSht_01_0
+  - first:
+      213: 21300002
+    second: RotulusScroll_Expand_SprtSht_01_1
+  - first:
+      213: 21300004
+    second: RotulusScroll_Expand_SprtSht_01_2
+  - first:
+      213: 21300006
+    second: RotulusScroll_Expand_SprtSht_01_3
+  - first:
+      213: 21300008
+    second: RotulusScroll_Expand_SprtSht_01_4
+  - first:
+      213: 21300010
+    second: RotulusScroll_Expand_SprtSht_01_5
+  - first:
+      213: 21300012
+    second: RotulusScroll_Expand_SprtSht_01_6
+  - first:
+      213: 21300014
+    second: RotulusScroll_Expand_SprtSht_01_7
+  - first:
+      213: 21300016
+    second: RotulusScroll_Expand_SprtSht_01_8
+  - first:
+      213: 21300018
+    second: RotulusScroll_Expand_SprtSht_01_9
+  - first:
+      213: 21300020
+    second: RotulusScroll_Expand_SprtSht_01_10
+  - first:
+      213: 21300022
+    second: RotulusScroll_Expand_SprtSht_01_11
+  - first:
+      213: 21300024
+    second: RotulusScroll_Expand_SprtSht_01_12
+  - first:
+      213: 21300026
+    second: RotulusScroll_Expand_SprtSht_01_13
+  - first:
+      213: 21300028
+    second: RotulusScroll_Expand_SprtSht_01_14
+  - first:
+      213: 21300030
+    second: RotulusScroll_Expand_SprtSht_01_15
+  - first:
+      213: 21300032
+    second: RotulusScroll_Expand_SprtSht_01_16
+  - first:
+      213: 21300034
+    second: RotulusScroll_Expand_SprtSht_01_17
+  - first:
+      213: 21300036
+    second: RotulusScroll_Expand_SprtSht_01_18
+  - first:
+      213: 21300038
+    second: RotulusScroll_Expand_SprtSht_01_19
+  - first:
+      213: 21300040
+    second: RotulusScroll_Expand_SprtSht_01_20
+  - first:
+      213: 21300042
+    second: RotulusScroll_Expand_SprtSht_01_21
+  - first:
+      213: 21300044
+    second: RotulusScroll_Expand_SprtSht_01_22
+  - first:
+      213: 21300046
+    second: RotulusScroll_Expand_SprtSht_01_23
+  - first:
+      213: 21300048
+    second: RotulusScroll_Expand_SprtSht_01_24
+  - first:
+      213: 21300050
+    second: RotulusScroll_Expand_SprtSht_01_25
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 16
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 2
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_0
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 388
+        width: 472
+        height: 89
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02305410000000000800000000000000
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_1
+      rect:
+        serializedVersion: 2
+        x: 483
+        y: 383
+        width: 472
+        height: 94
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22305410000000000800000000000000
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_2
+      rect:
+        serializedVersion: 2
+        x: 964
+        y: 367
+        width: 472
+        height: 109
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42305410000000000800000000000000
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_3
+      rect:
+        serializedVersion: 2
+        x: 1444
+        y: 351
+        width: 472
+        height: 126
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62305410000000000800000000000000
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_4
+      rect:
+        serializedVersion: 2
+        x: 1923
+        y: 332
+        width: 472
+        height: 145
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82305410000000000800000000000000
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_5
+      rect:
+        serializedVersion: 2
+        x: 2404
+        y: 313
+        width: 472
+        height: 164
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2305410000000000800000000000000
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_6
+      rect:
+        serializedVersion: 2
+        x: 2884
+        y: 294
+        width: 472
+        height: 183
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2305410000000000800000000000000
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_7
+      rect:
+        serializedVersion: 2
+        x: 3363
+        y: 275
+        width: 472
+        height: 202
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2305410000000000800000000000000
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_8
+      rect:
+        serializedVersion: 2
+        x: 3844
+        y: 256
+        width: 472
+        height: 221
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03305410000000000800000000000000
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_9
+      rect:
+        serializedVersion: 2
+        x: 4324
+        y: 237
+        width: 472
+        height: 240
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23305410000000000800000000000000
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_10
+      rect:
+        serializedVersion: 2
+        x: 4803
+        y: 218
+        width: 472
+        height: 259
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43305410000000000800000000000000
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_11
+      rect:
+        serializedVersion: 2
+        x: 5284
+        y: 199
+        width: 472
+        height: 278
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63305410000000000800000000000000
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_12
+      rect:
+        serializedVersion: 2
+        x: 5764
+        y: 180
+        width: 472
+        height: 297
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83305410000000000800000000000000
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_13
+      rect:
+        serializedVersion: 2
+        x: 6243
+        y: 161
+        width: 472
+        height: 316
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3305410000000000800000000000000
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_14
+      rect:
+        serializedVersion: 2
+        x: 6724
+        y: 142
+        width: 472
+        height: 335
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3305410000000000800000000000000
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_15
+      rect:
+        serializedVersion: 2
+        x: 7204
+        y: 123
+        width: 472
+        height: 354
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3305410000000000800000000000000
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_16
+      rect:
+        serializedVersion: 2
+        x: 7685
+        y: 104
+        width: 472
+        height: 373
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04305410000000000800000000000000
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_17
+      rect:
+        serializedVersion: 2
+        x: 8164
+        y: 85
+        width: 472
+        height: 392
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24305410000000000800000000000000
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_18
+      rect:
+        serializedVersion: 2
+        x: 8644
+        y: 64
+        width: 472
+        height: 412
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44305410000000000800000000000000
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_19
+      rect:
+        serializedVersion: 2
+        x: 9125
+        y: 47
+        width: 472
+        height: 430
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64305410000000000800000000000000
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_20
+      rect:
+        serializedVersion: 2
+        x: 9604
+        y: 32
+        width: 472
+        height: 445
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84305410000000000800000000000000
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_21
+      rect:
+        serializedVersion: 2
+        x: 10084
+        y: 19
+        width: 472
+        height: 458
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4305410000000000800000000000000
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_22
+      rect:
+        serializedVersion: 2
+        x: 10564
+        y: 10
+        width: 472
+        height: 467
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4305410000000000800000000000000
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_23
+      rect:
+        serializedVersion: 2
+        x: 11043
+        y: 9
+        width: 472
+        height: 468
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4305410000000000800000000000000
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_24
+      rect:
+        serializedVersion: 2
+        x: 11524
+        y: 9
+        width: 472
+        height: 468
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05305410000000000800000000000000
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RotulusScroll_Expand_SprtSht_01_25
+      rect:
+        serializedVersion: 2
+        x: 1304
+        y: 264
+        width: 105
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25305410000000000800000000000000
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

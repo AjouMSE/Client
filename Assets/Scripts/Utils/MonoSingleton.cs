@@ -27,8 +27,8 @@ namespace Utils
                 // Singleton object is destroyed.
                 if (onDestroyed)
                 {
-                    Debug.Log("Instance of " + typeof(T) + "already destroyed.");
-                    Debug.Log("Instance of " + typeof(T) + "is null");
+                    Debug.Log("Instance of " + typeof(T) + " already destroyed.");
+                    Debug.Log("Instance of " + typeof(T) + " is null");
                     return null;
                 }
 
@@ -57,6 +57,8 @@ namespace Utils
                             singletonObject.name = "(@s)" + typeof(T).ToString();
                             Debug.Log("Singleton GameObject " + _instance.gameObject.name + " is created in "
                                       + SceneManager.GetActiveScene().name);
+
+                            DontDestroyOnLoad(_instance);
                         }
                         else
                         {

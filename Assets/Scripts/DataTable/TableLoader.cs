@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Action = System.Action;
-using UnityEditor;
 using Utils;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public partial class TableLoader : MonoSingleton<TableLoader>
 {
@@ -83,7 +85,10 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 
     public T Load<T>(string fileName) where T : UnityEngine.Object
     {
-        T obj = AssetDatabase.LoadAssetAtPath<T>(string.Format(string.Format("{0}/{1}.bytes", localPath, fileName)));
+        T obj = null;
+#if UNITY_EDITOR
+        obj = AssetDatabase.LoadAssetAtPath<T>(string.Format(string.Format("{0}/{1}.bytes", localPath, fileName)));
+#endif
 
         if (obj != null)
         {

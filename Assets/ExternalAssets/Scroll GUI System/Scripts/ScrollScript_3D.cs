@@ -45,7 +45,7 @@ public class ScrollScript_3D : MonoBehaviour
         RecTran = backdrop.GetComponent<RectTransform>();
         menPosY = RecTran.localPosition.y;
         menPosZ = RecTran.localPosition.z;
-        MenuCanvas.worldCamera = GameObject.FindGameObjectWithTag("HUDcam").GetComponent<Camera>();
+        MenuCanvas.worldCamera = GameObject.FindGameObjectWithTag("HUDCamera").GetComponent<Camera>();
     }
 
 

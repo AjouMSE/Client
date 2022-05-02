@@ -27,7 +27,6 @@ namespace Scene
         
         
         #region Private instance variables
-        
         // HUD 2D Title UI
         [SerializeField] private Text textTitle;
         [SerializeField] private Camera mainCamera;
@@ -38,7 +37,7 @@ namespace Scene
         // HUD 3D Sign-in UI
         [SerializeField] private TMP_InputField inputFieldId, inputFieldPw;
         [SerializeField] private Text textInformation;
-        [SerializeField] private GameObject scrollObjectTall;
+        [SerializeField] private GameObject scroll2DVertical, scroll3DTall;
         
 
         private float _mainCamRotSpd = 6.0f, _mainCamRotAngle = 0;
@@ -93,7 +92,7 @@ namespace Scene
         public void OnToStartBtnClick()
         {
             canvasHUD2D.gameObject.SetActive(false);
-            ScrollScript_3D scroll3D = scrollObjectTall.GetComponent<ScrollScript_3D>();
+            ScrollScript3D scroll3D = scroll3DTall.GetComponent<ScrollScript3D>();
             scroll3D.OpenScroll();
         }
 
@@ -105,19 +104,23 @@ namespace Scene
                 textInformation.text = NotifyEmptyPwField;
             else if (!CustomUtils.IsValidEmail(inputFieldId.text))
                 textInformation.text = NotifyInvalidIdForm;
-            
-            Packet.Account account = new Packet.Account { 
-                id = inputFieldId.text, 
-                pw = CustomUtils.SHA(inputFieldPw.text, CustomUtils.SHA256)
-            };
-            string json = JsonUtility.ToJson(account);
-            HttpRequestManager.Instance.Post("/user/sign-in", json, SignInResultCallback);
+            else
+            {
+                Packet.Account account = new Packet.Account { 
+                    email = inputFieldId.text, 
+                    password = CustomUtils.SHA(inputFieldPw.text, CustomUtils.SHA256)
+                };
+                string json = JsonUtility.ToJson(account);
+                HttpRequestManager.Instance.Post("/user/sign-in", json, SignInResultCallback);
+            }
         }
         
 
         public void OnSignUpBtnClick()
         {
-            ScrollScript_3D scroll3D = scrollObjectTall.GetComponent<ScrollScript_3D>();
+            ScrollScript2D scroll2D = scroll2DVertical.GetComponent<ScrollScript2D>();
+            ScrollScript3D scroll3D = scroll3DTall.GetComponent<ScrollScript3D>();
+            scroll2D.animate();
             scroll3D.CloseScroll();
         }
 
@@ -152,34 +155,6 @@ namespace Scene
         {
             // Rotate main camera
             RotateMainCamera();
-        }
-        
-        #endregion
-        
-        
-        #region Coroutines
-
-        IEnumerator PostRequestSignIn(string uri, string json)
-        {
-            byte[] jsonToRaw = new UTF8Encoding().GetBytes(json);
-            using (UnityWebRequest request = UnityWebRequest.Post(uri, json))
-            {
-                request.uploadHandler = new UploadHandlerRaw(jsonToRaw);
-                request.downloadHandler = new DownloadHandlerBuffer();
-                request.SetRequestHeader("Content-Type", "application/json");
-                yield return request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    Debug.Log(request.downloadHandler.text);
-                    Debug.Log(request.downloadHandler.data);
-                }
-                else
-                {
-                    Debug.Log(request.error);
-                }
-                Debug.Log(request.responseCode);
-            }
         }
         
         #endregion

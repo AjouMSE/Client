@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
-public class ScrollScript_3D : MonoBehaviour
+public class ScrollScript3D : MonoBehaviour
 {
     // public variables set in the inspector
     public Canvas MenuCanvas;

@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScrollScript_2d : MonoBehaviour
+public class ScrollScript2D : MonoBehaviour
 {
     // Public Variables set in Inspector
     public GameObject MenuContent;
@@ -36,12 +36,14 @@ public class ScrollScript_2d : MonoBehaviour
     {
         if (!open)
         {
+            GetComponentInParent<CanvasGroup>().alpha = 1;
             anim.SetTrigger("OpenTrig");
             PlaySound();
             open = true;
         }
         else if (open)
         {
+            GetComponentInParent<CanvasGroup>().alpha = 0;
             anim.SetTrigger("CloseTrig");
             PlaySound();
             open = false;

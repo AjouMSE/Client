@@ -49,6 +49,7 @@ namespace Manager
         /// <param name="callback">Callback to process the result of post method</param>
         public void Post(string path, string json, Action<UnityWebRequest> callback)
         {
+            Debug.Log(uri + path);
             StartCoroutine(PostReqCoroutine(uri + path, json, callback));
         }
         

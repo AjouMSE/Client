@@ -4,10 +4,11 @@ namespace Utils
 {
     public class Packet
     {
-        [Serializable]
         public struct Account
         {
-            public string id, pw;
+            public string email;
+            public string password;
+            public string nickname;
         }
     }
 }

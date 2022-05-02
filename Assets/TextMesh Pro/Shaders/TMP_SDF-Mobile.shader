@@ -191,7 +191,6 @@ SubShader {
 			return output;
 		}
 
-
 		// PIXEL SHADER
 		fixed4 PixShader(pixel_t input) : SV_Target
 		{

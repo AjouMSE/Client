@@ -746,7 +746,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a51bb71fdd88524994e50b1dd0eb958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  socketIOAddress: 1.238.82.209:8081
+  socketIOAddress: 3.39.227.11:8082
   secureConnection: 0
   autoConnect: 0
   autoReconnect: 1

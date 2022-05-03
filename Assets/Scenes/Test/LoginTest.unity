@@ -9328,8 +9328,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Scene.LoginSceneController, Assembly-CSharp
+      - m_Target: {fileID: 2091869592}
+        m_TargetAssemblyTypeName: UI.Login.HUDSigninController, Assembly-CSharp
         m_MethodName: OnSignUpBtnClick
         m_Mode: 1
         m_Arguments:
@@ -11456,8 +11456,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Scene.LoginSceneController, Assembly-CSharp
+      - m_Target: {fileID: 2091869592}
+        m_TargetAssemblyTypeName: UI.Login.HUDSigninController, Assembly-CSharp
         m_MethodName: OnSignInBtnClick
         m_Mode: 1
         m_Arguments:
@@ -39658,8 +39658,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Scene.LoginSceneController, Assembly-CSharp
+      - m_Target: {fileID: 2091869590}
+        m_TargetAssemblyTypeName: UI.Login.HUDTitleController, Assembly-CSharp
         m_MethodName: OnToStartBtnClick
         m_Mode: 1
         m_Arguments:

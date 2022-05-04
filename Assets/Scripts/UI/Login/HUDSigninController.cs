@@ -69,7 +69,7 @@ namespace UI.Login
         {
             ScrollScript2D scroll2D = scrollSignup.GetComponent<ScrollScript2D>();
             ScrollScript3D scroll3D = scrollSignin.GetComponent<ScrollScript3D>();
-            scroll2D.animate();
+            scroll2D.ScrollDown();
             scroll3D.CloseScroll();
         }
 

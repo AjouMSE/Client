@@ -8,6 +8,7 @@ using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = System.Random;
 
@@ -206,7 +207,16 @@ namespace Test.Networking
             {
                 yield return null;
             }
+
             _sio.Instance.Emit("Auth", JsonUtility.ToJson(new Packet(UnityEngine.Random.Range(0, 10000))), false);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKey(KeyCode.Escape))
+            {
+                SceneManager.LoadScene("LogicTest");
+            }
         }
     }
 }

@@ -8,10 +8,16 @@ namespace Manager
 {
     public class GameManager : MonoSingleton<GameManager>
     {
+
+        #region Private variables
         private GameObject[] _panels;
         private const int Width = 6, Height = 5;
+        private int _selectionTimer;
 
-        public void Init(GameObject panel)
+        #endregion
+
+        #region Init methods
+        public void InitPanel(GameObject panel)
         {
             if (_panels == null)
             {
@@ -24,8 +30,35 @@ namespace Manager
                         int idx = i * Height + j;
                         _panels[idx] = Instantiate(panel, new Vector3(j * 4, 0.2f, i * 3), Quaternion.identity);
                     }
-                }   
+                }
             }
         }
+
+        #endregion
+
+
+        #region Logic methods
+        private void CardSelection()
+        {
+
+        }
+
+        private void InvokeTurn()
+        {
+
+        }
+
+        #endregion
+
+
+        #region Coroutines
+
+        IEnumerator Timer()
+        {
+            yield return null;
+        }
+
+
+        #endregion
     }
 }

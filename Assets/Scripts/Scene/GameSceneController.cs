@@ -11,12 +11,13 @@ namespace Scene
     {
         public GameObject cam;
         public GameObject panel;
+        public GameObject scroll3D;
 
-        private float x = -150;
-        
+        private float x = -120;
+
         void Init()
         {
-            GameManager.Instance.Init(panel);
+            GameManager.Instance.InitPanel(panel);
         }
 
         private void Awake()
@@ -26,16 +27,16 @@ namespace Scene
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Alpha0))
             {
-                SceneManager.LoadScene("NetworkTestScene");
+                scroll3D.GetComponent<ScrollScript3D>().OpenOrCloseScroll();
             }
 
             if (x < 30)
             {
                 cam.transform.localEulerAngles = new Vector3(x, 0, 0);
-                x += 2.25f;
+                x += 2.5f;
             }
         }
-    }   
+    }
 }

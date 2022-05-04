@@ -14,7 +14,7 @@ public class ScrollScript2D : MonoBehaviour
     // Public Variables set in Inspector
     public GameObject MenuContent;
     public bool playSound = false;
-   
+
     //other variables:
     private Animator _animator;
     private AudioSource _audioSource;
@@ -89,14 +89,14 @@ public class ScrollScript2D : MonoBehaviour
     {
         if (!isOpen)
         {
-            GetComponentInParent<CanvasGroup>().alpha = 1;
+            //GetComponentInParent<CanvasGroup>().alpha = 1;
             _animator.SetTrigger("OpenTrig");
             PlaySound();
             isOpen = true;
         }
         else if (isOpen)
         {
-            GetComponentInParent<CanvasGroup>().alpha = 0;
+            //GetComponentInParent<CanvasGroup>().alpha = 0;
             _animator.SetTrigger("CloseTrig");
             PlaySound();
             isOpen = false;

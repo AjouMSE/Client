@@ -28,7 +28,7 @@ RectTransform:
   m_GameObject: {fileID: 1661922359412783380}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.0241, y: 3.1038, z: 1.7992}
+  m_LocalScale: {x: 0.35, y: 0.5, z: 1}
   m_Children:
   - {fileID: 5631393445982555919}
   - {fileID: 1730032533930111997}
@@ -92,8 +92,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: {fileID: 7541630136410817035}
   value: {fileID: 5919070657810499781}
-  skillname: 
-  skillvalue: 0
 --- !u!1 &2983824370478908651
 GameObject:
   m_ObjectHideFlags: 0

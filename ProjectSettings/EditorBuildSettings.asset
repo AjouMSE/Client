@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Test/NetworkTestScene.unity
     guid: 56d88c3ed7e6fe443a73d59d520a1899
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Test/LogicTest.unity
     guid: 304eb7a2682ba7747bbd0ee07d3a08f7
   m_configObjects: {}

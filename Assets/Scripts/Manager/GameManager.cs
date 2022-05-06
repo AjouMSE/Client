@@ -13,6 +13,9 @@ namespace Manager
         private GameObject[] _panels;
         private const int Width = 6, Height = 5;
         private int _selectionTimer;
+        
+        public readonly List<int> selectedCardList = new List<int>();
+        public readonly List<int> selectedCardListHostile = new List<int>();
 
         #endregion
 
@@ -28,20 +31,19 @@ namespace Manager
                     for (int j = 0; j < Width; j++)
                     {
                         int idx = i * Height + j;
-                        _panels[idx] = Instantiate(panel, new Vector3(j * 4, 0.2f, i * 3), Quaternion.identity);
+                        _panels[idx] = Instantiate(panel, new Vector3(j * 4.2f, 0.2f, i * 3.2f), Quaternion.identity);
                     }
                 }
             }
         }
 
         #endregion
+        
+        
 
 
         #region Logic methods
-        private void CardSelection()
-        {
-
-        }
+        
 
         private void InvokeTurn()
         {

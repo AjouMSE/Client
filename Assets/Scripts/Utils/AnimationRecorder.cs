@@ -1,18 +1,16 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor.Animations;
+#endif
 
 namespace Utils
 {
     public class AnimationRecorder : MonoBehaviour
     {
+#if UNITY_EDITOR
         public AnimationClip clip;
-
         private GameObjectRecorder _recorder;
         
-
         // Start is called before the first frame update
         void Start()
         {
@@ -38,5 +36,6 @@ namespace Utils
                 _recorder.SaveToClip(clip);
             }
         }
+#endif
     }   
 }

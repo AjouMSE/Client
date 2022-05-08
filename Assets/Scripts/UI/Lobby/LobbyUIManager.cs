@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class LobbyUIManager : MonoBehaviour
 {
+    ScrollScriptLobby scroll = new ScrollScriptLobby();
     public GameObject basicui;
     public GameObject settingobject;
     public GameObject rankingobject;
@@ -63,6 +64,7 @@ public class LobbyUIManager : MonoBehaviour
 
     public void SettingOn()
     {
+
         basicui.SetActive(false);
         settingobject.SetActive(true);
         soundon.SetActive(false);

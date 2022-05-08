@@ -4,6 +4,7 @@ using Manager;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utils;
 
@@ -11,16 +12,10 @@ namespace UI.Login
 {
     public class HUDSigninController : MonoBehaviour
     {
-        #region Static variables
-        private const string NotifyEmptyIdField = "Please enter your Id.";
-        private const string NotifyEmptyPwField = "Please enter your Password.";
-        private const string NotifyInvalidIdForm = "Invalid Id form. Enter it like 'ooo@ooooo.ooo'";
-        private const string NotifyInvalidAccount = "Id or Password do not match.";
-        
-        #endregion
-
-
         #region Private variables
+
+        private const string DestSceneName = "LobbyScene";
+        
         [SerializeField] private TMP_InputField inputFieldId, inputFieldPw;
         [SerializeField] private Text textInformation;
         [SerializeField] private GameObject scrollSignup, scrollSignin;
@@ -33,15 +28,15 @@ namespace UI.Login
         public void SignInResultCallback(UnityWebRequest req)
         {
             if (req.result == UnityWebRequest.Result.Success) {
-                // Show results as text
-                Debug.Log(req.downloadHandler.text);
- 
-                // Or retrieve results as binary data
-                byte[] results = req.downloadHandler.data;
-                
-                //todo-process result of sign-in post request
+                // Init user info
+                string json = req.downloadHandler.text;
+                UserManager.Instance.InitUserInfo(json);
+                SceneManager.LoadScene(DestSceneName);
             }
-            else {
+            else
+            {
+                // Occured Error (Account does not exist, Wrong password etc..)
+                textInformation.text = LoginSceneHUDNotify.NotifyInvalidAccount;
                 Debug.Log(req.error);
             }
         }
@@ -49,11 +44,11 @@ namespace UI.Login
         public void OnSignInBtnClick()
         {
             if (inputFieldId.text.Length == 0)
-                textInformation.text = NotifyEmptyIdField;
+                textInformation.text = LoginSceneHUDNotify.NotifyEmptyIdField;
             else if (inputFieldPw.text.Length == 0)
-                textInformation.text = NotifyEmptyPwField;
+                textInformation.text = LoginSceneHUDNotify.NotifyEmptyPwField;
             else if (!CustomUtils.IsValidEmail(inputFieldId.text))
-                textInformation.text = NotifyInvalidIdForm;
+                textInformation.text = LoginSceneHUDNotify.NotifyInvalidIdForm;
             else
             {
                 Packet.Account account = new Packet.Account { 

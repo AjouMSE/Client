@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Manager;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -13,6 +14,7 @@ namespace UI.Login
         
         private const int RotCamDirLeft = -1, RotCamDirRight = 1;
         private const int RotAngleMaxLeft = -60, RotAngleMaxRight = 60;
+        private const float FadeEffectDuration = 2f;
         
         #endregion
         
@@ -21,7 +23,7 @@ namespace UI.Login
         
         [SerializeField] private Text titleText;
         [SerializeField] private Camera mainCamera;
-        [SerializeField] private Canvas titleCanvas;
+        [SerializeField] private CanvasGroup titleCanvasGroup;
         [SerializeField] private ScrollScript3D signinScroll;
         
         private float _mainCamRotSpd = 6.0f, _mainCamRotAngle = 0;
@@ -55,7 +57,7 @@ namespace UI.Login
         
         public void OnToStartBtnClick()
         {
-            titleCanvas.gameObject.SetActive(false);
+            titleCanvasGroup.gameObject.SetActive(false);
             signinScroll.OpenScroll();
         }
         
@@ -79,6 +81,7 @@ namespace UI.Login
         private void Start()
         {
             InitTitle();
+            FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeIn, titleCanvasGroup, FadeEffectDuration);
         }
         
         private void Update()

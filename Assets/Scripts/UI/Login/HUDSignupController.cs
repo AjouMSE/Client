@@ -11,11 +11,15 @@ namespace UI.Login
 {
     public class HUDSignupController : MonoBehaviour
     {
+        #region Private variables
+
         [SerializeField] private TMP_InputField inputFieldId, inputFieldPw;
         [SerializeField] private TMP_InputField inputFieldPwConfirm, inputFieldNickname;
         [SerializeField] private Text textInformation;
+
+        #endregion
         
-        
+
         #region Callbacks
         
         private void SignupReqCallback(UnityWebRequest req)
@@ -32,17 +36,17 @@ namespace UI.Login
         public void OnSubmitBtnClick()
         {
             if (inputFieldId.text.Length == 0)
-                textInformation.text = HUDNotify.NotifyEmptyIdField;
+                textInformation.text = LoginSceneHUDNotify.NotifyEmptyIdField;
             else if (!CustomUtils.IsValidEmail(inputFieldId.text))
-                textInformation.text = HUDNotify.NotifyInvalidIdForm;
+                textInformation.text = LoginSceneHUDNotify.NotifyInvalidIdForm;
             else if (inputFieldPw.text.Length == 0)
-                textInformation.text = HUDNotify.NotifyEmptyPwField;
+                textInformation.text = LoginSceneHUDNotify.NotifyEmptyPwField;
             else if (inputFieldPwConfirm.text.Length == 0)
-                textInformation.text = HUDNotify.NotifyEmptyPwConfirmField;
+                textInformation.text = LoginSceneHUDNotify.NotifyEmptyPwConfirmField;
             else if (!inputFieldPw.text.Equals(inputFieldPwConfirm.text))
-                textInformation.text = HUDNotify.NotifyPwMismatch;
+                textInformation.text = LoginSceneHUDNotify.NotifyPwMismatch;
             else if (inputFieldNickname.text.Length == 0)
-                textInformation.text = HUDNotify.NotifyEmptyNicknameField;
+                textInformation.text = LoginSceneHUDNotify.NotifyEmptyNicknameField;
             else
             {
                 Packet.Account account = new Packet.Account

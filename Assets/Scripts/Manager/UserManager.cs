@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,15 +8,23 @@ namespace Manager
 {
     public class UserManager : MonoSingleton<UserManager>
     {
-        private long _id { get; }
-        private string _nickname { get; set; }
-        private int _score { get; set; }
-        private int _win { get; }
-        private int _lose { get; }
-        private int _ranking { get; }
+        private Packet.User _user;
+        private bool isInitialized;
 
-        public void InitUserInfo()
+        public void InitUserInfo(string json)
         {
+            if (!isInitialized)
+            {
+                try
+                {
+                    _user = JsonUtility.FromJson<Packet.User>(json);
+                    isInitialized = true;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                }
+            }
         }
     }   
 }

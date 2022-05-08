@@ -33,13 +33,11 @@ public class LobbyUIManager : MonoBehaviour
     public void GoGameScene()
     {
         SceneManager.LoadScene("LogicTest");
-      
-
     }
     public void GameOver()
     {
         UnityEditor.EditorApplication.isPlaying = false;
-        //Application.Quit(); ºôµåÇÒ ¶§ ÀÌ°É·Î
+        //Application.Quit(); ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì°É·ï¿½
     }
     public void CardLibraryon()
     {

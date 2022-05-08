@@ -20,9 +20,9 @@ public class SoundManager : MonoBehaviour
     }
     // Start is called before the first frame update
     void Start()
-    {
-       soundslider.value = 0.75f;
-       soundslider.value = PlayerPrefs.GetFloat("Music", 0.75f);
+    { 
+        soundslider.value = 0.75f; 
+        soundslider.value = PlayerPrefs.GetFloat("Music", 0.75f);
     }
 
     // Update is called once per frame

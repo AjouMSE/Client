@@ -18,6 +18,8 @@ namespace Utils
         private static T _instance;
         private static object _lockObject = new object();
         private static bool onDestroyed = false;
+        
+        protected static bool isCreated = false;
 
         // Public static instance variables
         public static T Instance
@@ -54,7 +56,8 @@ namespace Utils
                             // Make new instance 
                             GameObject singletonObject = new GameObject();
                             _instance = singletonObject.AddComponent<T>();
-                            singletonObject.name = "(@s)" + typeof(T).ToString();
+                            singletonObject.name = "(s)" + typeof(T);
+                            isCreated = true;
                             Debug.Log("Singleton GameObject " + _instance.gameObject.name + " is created in "
                                       + SceneManager.GetActiveScene().name);
 

@@ -25,7 +25,7 @@ namespace UI.Login
 
         #region Callbacks
         
-        public void SignInResultCallback(UnityWebRequest req)
+        private void SignInResultCallback(UnityWebRequest req)
         {
             if (req.result == UnityWebRequest.Result.Success) {
                 // Init user info
@@ -62,9 +62,8 @@ namespace UI.Login
         
         public void OnSignUpBtnClick()
         {
-            ScrollScript2D scroll2D = scrollSignup.GetComponent<ScrollScript2D>();
             ScrollScript3D scroll3D = scrollSignin.GetComponent<ScrollScript3D>();
-            scroll2D.ScrollDown();
+            GetComponent<HUDSignupController>().ScrollMoveDown();
             scroll3D.CloseScroll();
         }
 

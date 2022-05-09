@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
@@ -13,9 +14,24 @@ namespace UI.Login
     {
         #region Private variables
 
+        private const int MinScrollYPos = 0, MaxScrollYPos = 240;
+        private const string SignUpReqPath = "/user/sign-up";
+
         [SerializeField] private TMP_InputField inputFieldId, inputFieldPw;
         [SerializeField] private TMP_InputField inputFieldPwConfirm, inputFieldNickname;
         [SerializeField] private Text textInformation;
+        [SerializeField] private GameObject scrollSignup, scrollSignin;
+
+        #endregion
+
+
+        #region Public variables
+
+        public enum ScrollMoveType
+        {
+            Down,
+            Up
+        }
 
         #endregion
         
@@ -24,13 +40,29 @@ namespace UI.Login
         
         private void SignupReqCallback(UnityWebRequest req)
         {
-            Debug.Log(req.downloadHandler.text);
-            if (req.result == UnityWebRequest.Result.Success) {
-                
+            string jsonPayload = req.downloadHandler.text;
+            if (req.result == UnityWebRequest.Result.Success)
+            {
+                // close the scroll
+                scrollSignup.GetComponent<ScrollScript2D>().ScrollClose();
+                ScrollMoveUp();
             }
-            else {
-                Debug.Log(req.error);
+            else
+            {
+                Packet.WebServerException exception = JsonUtility.FromJson<Packet.WebServerException>(jsonPayload);
+                Debug.Log(exception.ToString());
+                textInformation.text = exception.message;
             }
+        }
+
+        private void ScrollMoveDownCallback()
+        {
+            scrollSignup.GetComponent<ScrollScript2D>().ScrollOpen();
+        }
+
+        private void ScrollMoveUpCallback()
+        {
+            scrollSignin.GetComponent<ScrollScript3D>().OpenScroll();
         }
 
         public void OnSubmitBtnClick()
@@ -56,7 +88,60 @@ namespace UI.Login
                     nickname = inputFieldNickname.text
                 };
                 string json = JsonUtility.ToJson(account);
-                HttpRequestManager.Instance.Post("/user/sign-up", json, SignupReqCallback);
+                HttpRequestManager.Instance.Post(SignUpReqPath, json, SignupReqCallback);
+            }
+        }
+
+        #endregion
+
+
+        #region Custom methods
+
+        public void ScrollMoveDown()
+        {
+            StartCoroutine(ScrollMovement(ScrollMoveType.Down, ScrollMoveDownCallback));
+        }
+
+        public void ScrollMoveUp()
+        {
+            StartCoroutine(ScrollMovement(ScrollMoveType.Up, ScrollMoveUpCallback));
+        }
+
+        #endregion
+
+
+        #region Coroutines
+
+        IEnumerator ScrollMovement(ScrollMoveType type, Action callback = null)
+        {
+            RectTransform rectTransform = scrollSignup.GetComponent<RectTransform>();
+            switch (type)
+            {
+                case ScrollMoveType.Down:
+                    while (rectTransform.anchoredPosition.y > MinScrollYPos)
+                    {
+                        Vector2 tmpPos = rectTransform.anchoredPosition;
+                        tmpPos.y -= MaxScrollYPos * Time.deltaTime;
+                        rectTransform.anchoredPosition = tmpPos;
+                        yield return null;
+                    }
+                    if(callback != null) callback();
+                    break;
+                
+                case ScrollMoveType.Up:
+                    while (rectTransform.anchoredPosition.y < MaxScrollYPos)
+                    {
+                        Vector2 tmpPos = rectTransform.anchoredPosition;
+                        tmpPos.y += MaxScrollYPos * Time.deltaTime;
+                        rectTransform.anchoredPosition = tmpPos;
+                        yield return null;
+                    }
+                    if(callback != null) callback();
+                    break;
+                
+                default:
+                    Debug.LogError("UndefinedScrollMoveTypeException");
+                    yield break;
             }
         }
 

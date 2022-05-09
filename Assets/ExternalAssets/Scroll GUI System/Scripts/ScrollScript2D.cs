@@ -18,9 +18,7 @@ public class ScrollScript2D : MonoBehaviour
     //other variables:
     private Animator _animator;
     private AudioSource _audioSource;
-    private Vector2 _anchorPos;
     private bool isOpen = false;
-    private bool isDown = false;
 
 
     // Here, we use the Start function to assign the anim variable to the Animator, and the Sound variable to the AudioSource 
@@ -34,24 +32,6 @@ public class ScrollScript2D : MonoBehaviour
         gameObject.GetComponentInParent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("HUDCamera").GetComponent<Camera>();
     }
 
-    public void ScrollDown()
-    {
-        if (!isDown)
-        {
-            _animator.SetTrigger("DownTrig");
-            isDown = true;
-        }
-    }
-
-    public void ScrollUp()
-    {
-        if (isDown)
-        {
-            _animator.SetTrigger("UpTrig");
-            isDown = false;
-        }
-    }
-
     public void ScrollOpen()
     {
         if (!isOpen)
@@ -59,6 +39,7 @@ public class ScrollScript2D : MonoBehaviour
             _animator.SetTrigger("OpenTrig");
             isOpen = true;
         }
+        PlaySound();
     }
 
     public void ScrollClose()
@@ -67,20 +48,9 @@ public class ScrollScript2D : MonoBehaviour
         {
             _animator.SetTrigger("CloseTrig");
             isOpen = false;
+            MakeTextGoAway();
         }
-    }
-
-    private void Update()
-    {
-        if (isOpen)
-        {
-            GetComponent<RectTransform>().anchoredPosition = _anchorPos;
-        }
-    }
-
-    public void SaveCurrentPos()
-    {
-        _anchorPos = GetComponent<RectTransform>().anchoredPosition;
+        PlaySound();
     }
 
     // the 'animate' function is responsible for triggering events (open and close) in the Animator,
@@ -89,19 +59,16 @@ public class ScrollScript2D : MonoBehaviour
     {
         if (!isOpen)
         {
-            //GetComponentInParent<CanvasGroup>().alpha = 1;
             _animator.SetTrigger("OpenTrig");
-            PlaySound();
             isOpen = true;
         }
         else if (isOpen)
         {
-            //GetComponentInParent<CanvasGroup>().alpha = 0;
             _animator.SetTrigger("CloseTrig");
-            PlaySound();
             isOpen = false;
             MakeTextGoAway();
         }
+        PlaySound();
 
         //the following are called in the above "animate" function. simple enough.
     }

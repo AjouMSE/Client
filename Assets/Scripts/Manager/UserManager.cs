@@ -8,17 +8,31 @@ namespace Manager
 {
     public class UserManager : MonoSingleton<UserManager>
     {
-        private Packet.User _user;
-        private bool isInitialized;
+        #region Private variables
 
-        public void InitUserInfo(string json)
+        private Packet.User _user;
+        private bool _isSignedIn;
+
+        #endregion
+        
+        
+        #region Public variables
+        
+        public Packet.User User => _user;
+        
+        #endregion
+
+        
+        #region Custom methods
+        
+        public void SignInUserInfo(string json)
         {
-            if (!isInitialized)
+            if (!_isSignedIn)
             {
                 try
                 {
                     _user = JsonUtility.FromJson<Packet.User>(json);
-                    isInitialized = true;
+                    _isSignedIn = true;
                 }
                 catch (Exception e)
                 {
@@ -26,5 +40,23 @@ namespace Manager
                 }
             }
         }
+
+        public void SignOutUserInfo()
+        {
+            if (_isSignedIn)
+            {
+                try
+                {
+                    _user = default;
+                    _isSignedIn = false;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                }
+            }
+        }
+        
+        #endregion
     }   
 }

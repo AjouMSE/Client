@@ -30,7 +30,7 @@ namespace UI.Login
             if (req.result == UnityWebRequest.Result.Success) {
                 // Init user info
                 string json = req.downloadHandler.text;
-                UserManager.Instance.InitUserInfo(json);
+                UserManager.Instance.SignInUserInfo(json);
                 SceneManager.LoadScene(DestSceneName);
             }
             else

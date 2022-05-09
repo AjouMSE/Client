@@ -27,7 +27,12 @@ namespace Utils
 
             public override string ToString()
             {
-                return $"User: [ id: {id}, nickname: {nickname}, win: {win}, lose: {lose}, draw: {draw}, ranking: {ranking}]";
+                return $"User: [ id: {id.ToString()}, " +
+                       $"nickname: {nickname}, " +
+                       $"win: {win.ToString()}, " +
+                       $"lose: {lose.ToString()}, " +
+                       $"draw: {draw.ToString()}, " +
+                       $"ranking: {ranking.ToString()}]";
             }
         }
 
@@ -40,6 +45,28 @@ namespace Utils
             public override string ToString()
             {
                 return $"WebServerException: [ code: {code}, message: {message} ]";
+            }
+        }
+
+        [Serializable]
+        public struct Auth
+        {
+            public int id;
+
+            public override string ToString()
+            {
+                return $"Auth: [ idx: {id.ToString()}]";
+            }
+        }
+
+        [Serializable]
+        public struct AuthResult
+        {
+            public string result;
+
+            public override string ToString()
+            {
+                return $"AuthResult: [ result: {result}]";
             }
         }
     }

@@ -69,7 +69,7 @@ namespace Manager
             _sio.Instance.On(SioEventReceiveMatchCode, OnReceiveMatchCodeCallback);
         }
 
-        public void StartMatch()
+        public void MatchMaking()
         {
             _sio.Instance.Emit(SioEventStartMatch);
         }

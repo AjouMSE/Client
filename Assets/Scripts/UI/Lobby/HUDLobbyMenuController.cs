@@ -2,7 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Test.Networking;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using Utils;
 
 namespace UI.Lobby
 {
@@ -10,17 +14,27 @@ namespace UI.Lobby
     {
         #region Private variables
 
+        [SerializeField] private CanvasGroup lobbyCanvasGroup;
+        [SerializeField] private Text titleText;
         [SerializeField] private GameObject menuScroll3D;
+        
+        
 
 
         #endregion
 
 
         #region Callbacks
+        
+        private void FadeInCallback()
+        {
+            menuScroll3D.GetComponent<ScrollScript3D>().OpenScroll();
+        }
 
         public void OnPvpBtnClick()
         {
             //todo-Send Match making event to socket.io server
+            MatchMakingManager.Instance.MatchMaking();
         }
 
         public void OnLeaderBoardBtnClick()
@@ -50,7 +64,11 @@ namespace UI.Lobby
 
         private void Init()
         {
+            // Set title color
+            titleText.text = CustomUtils.MakeTitleColor();
             
+            // Start fade in effect
+            FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeIn, lobbyCanvasGroup, 2f, FadeInCallback);
         }
 
         #endregion

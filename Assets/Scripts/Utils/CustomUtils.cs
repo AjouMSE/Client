@@ -10,20 +10,40 @@ namespace Utils
     {
         public const int SHA256 = 0, SHA512 = 1;
         
+        public static bool IsValidEmail(string email)
+        {
+            Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
+            return regex.IsMatch(email);
+        }
+        
+        #region UI methods
         public static string GenColorText(string text, int r, int g, int b)
         {
             string strR = r.ToString("x");
             string strG = g.ToString("x");
             string strB = b.ToString("x");
 
-            return String.Format("<color='#{0}{1}{2}'>{3}</color>", strR, strG, strB, text);
+            return $"<color='#{strR}{strG}{strB}'>{text}</color>";
         }
 
-        public static bool IsValidEmail(string email)
+        public static string MakeTitleColor()
         {
-            Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
-            return regex.IsMatch(email);
+            StringBuilder sb = new StringBuilder();
+            sb.Append(GenColorText("m", 140, 128, 255));
+            sb.Append('a');
+            sb.Append(GenColorText("g", 140, 128, 255));
+            sb.Append('i');
+            sb.Append(GenColorText("c", 140, 128, 255));
+            sb.Append("a ");
+            sb.Append(GenColorText("d", 140, 128, 255));
+            sb.Append('u');
+            sb.Append(GenColorText("e", 140, 128, 255));
+            sb.Append('l');
+
+            return sb.ToString();
         }
+        
+        #endregion
 
         #region hash methods
 

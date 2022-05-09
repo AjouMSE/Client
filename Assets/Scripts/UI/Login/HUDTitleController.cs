@@ -32,22 +32,11 @@ namespace UI.Login
         #endregion
 
         
-        #region Init methods
+        #region Custom methods
 
         void InitTitle()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(CustomUtils.GenColorText("m", 140, 128, 255));
-            sb.Append('a');
-            sb.Append(CustomUtils.GenColorText("g", 140, 128, 255));
-            sb.Append('i');
-            sb.Append(CustomUtils.GenColorText("c", 140, 128, 255));
-            sb.Append("a ");
-            sb.Append(CustomUtils.GenColorText("d", 140, 128, 255));
-            sb.Append('u');
-            sb.Append(CustomUtils.GenColorText("e", 140, 128, 255));
-            sb.Append('l');
-            titleText.text = sb.ToString();
+            titleText.text = CustomUtils.MakeTitleColor();
         }
 
         #endregion

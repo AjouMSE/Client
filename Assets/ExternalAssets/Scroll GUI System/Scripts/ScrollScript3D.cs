@@ -89,6 +89,7 @@ public class ScrollScript3D : MonoBehaviour
         if (!scrollOpen) {
             anim.SetTrigger("Opentrig");
             scrollOpen = true;
+            PlaySound();
             // the "EnableMenu" function you might expect to be here is called by an animation event, 
             // to keep it from happening before the animation finishes.
         }
@@ -99,6 +100,7 @@ public class ScrollScript3D : MonoBehaviour
         if (scrollOpen) {
             anim.SetTrigger("Closetrig");
             scrollOpen = false;
+            PlaySound();
             DisableMenu();
         }
     }

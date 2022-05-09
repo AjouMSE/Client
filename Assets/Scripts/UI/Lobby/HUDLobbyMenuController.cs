@@ -11,6 +11,8 @@ namespace UI.Lobby
     public class HUDLobbyMenuController : MonoBehaviour
     {
         #region Private variables
+
+        private const float FadeInDuration = 1f;
         
         [SerializeField] private CanvasGroup lobbyCanvasGroup;
         [SerializeField] private Text titleText;
@@ -65,7 +67,7 @@ namespace UI.Lobby
             titleText.text = CustomUtils.MakeTitleColor();
             
             // Start fade in effect
-            FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeIn, lobbyCanvasGroup, 2f, FadeInCallback);
+            FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeIn, lobbyCanvasGroup, FadeInDuration, FadeInCallback);
             
             BgmManager.Instance.SetBgm(BgmManager.SrcNameMainBgm3);
             BgmManager.Instance.Play();

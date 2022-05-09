@@ -20,7 +20,7 @@ namespace Scene
         #region Private variables
         
         private const int MaxFrameRate = 60;
-        private const float FadeEffectDuration = 2f;
+        private const float FadeEffectDuration = 1.5f;
         private const string DestSceneName = "LoginScene";
 
         [SerializeField] private CanvasGroup canvasGroup;

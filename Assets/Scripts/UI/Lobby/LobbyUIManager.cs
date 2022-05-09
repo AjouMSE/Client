@@ -36,8 +36,11 @@ public class LobbyUIManager : MonoBehaviour
     }
     public void GameOver()
     {
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        //Application.Quit(); ������ �� �̰ɷ�
+#else
+        Application.Quit();
+#endif
     }
     public void CardLibraryon()
     {

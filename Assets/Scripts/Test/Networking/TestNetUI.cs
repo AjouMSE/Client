@@ -1,4 +1,5 @@
 using System;
+using Manager;
 using UnityEngine;
 using Unity.Netcode;
 
@@ -6,6 +7,17 @@ namespace Test.Networking
 {
     public class TestNetUI : MonoBehaviour
     {
+        private void Start()
+        {
+            if (UserManager.Instance.IsHost)
+            {
+                NetworkManager.Singleton.StartHost();
+            }
+            else
+            {
+                NetworkManager.Singleton.StartClient();
+            }
+        }
         private void Update()
         {
             /*Debug.Log(NetworkManager.Singleton.IsClient);
@@ -18,25 +30,16 @@ namespace Test.Networking
         void OnGUI()
         {
             GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-            if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-            {
-                StartButtons();
-            }
-            else
-            {
-                StatusLabels();
-                SubmitNewPosition();
-            }
-
+            StatusLabels();
             GUILayout.EndArea();
         }
 
-        static void StartButtons()
+        /*static void StartButtons()
         {
             if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
             if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
             if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
-        }
+        }*/
 
         static void StatusLabels()
         {
@@ -46,14 +49,11 @@ namespace Test.Networking
             GUILayout.Label("Transport: " +
                             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
             GUILayout.Label("Mode: " + mode);
-            
-            var playerObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-            var player = playerObject.GetComponent<TestNetPlayer>();
-            //GUILayout.Label(player.syncPos.Value + " / HP: " + player.syncHp.Value);
         }
-        static void SubmitNewPosition()
+        
+        /*static void SubmitNewPosition()
         {
-            /*if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Move" : "Request Position Change"))
+            if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Move" : "Request Position Change"))
             {
                 // Host, Client가 아닌 순수 서버인 경우
                 if (NetworkManager.Singleton.IsServer && !NetworkManager.Singleton.IsClient)
@@ -70,7 +70,7 @@ namespace Test.Networking
                     var player = playerObject.GetComponent<TestNetPlayer>();
                     player.Move();
                 }
-            }*/
-        }
+            }
+        }*/
     }
 }

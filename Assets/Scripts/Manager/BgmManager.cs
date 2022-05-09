@@ -41,14 +41,14 @@ namespace Manager
         public const string SrcNameMainBgm4 = "/MainBgm04";
 
         #endregion
-
+        
 
         #region Custom methods
-
+        
         private void Init()
         {
             // Init Audio source & audio mixer
-            _audioSource = GetComponent<AudioSource>();
+            _audioSource = gameObject.AddComponent<AudioSource>();
             _audioMixer = Resources.Load<AudioMixer>(string.Format("{0}{1}", SrcPath, SrcNameMixer));
             
             // Init main bgm 
@@ -61,10 +61,9 @@ namespace Manager
             
             _muteType = MuteType.IsNotMute;
         }
-
+        
         public void SetBgm(string bgmType)
         {
-            Debug.Log(_bgmDict);
             if (_bgmDict[bgmType] != null)
                 _audioSource.clip = _bgmDict[bgmType];
             else
@@ -73,6 +72,8 @@ namespace Manager
 
         public void Play()
         {
+            if(_audioSource.isPlaying) 
+                _audioSource.Stop(); 
             _audioSource.Play();
         }
 
@@ -104,18 +105,6 @@ namespace Manager
 
         private void Awake()
         {
-            Init();
-            //StartCoroutine(InitCoroutine());
-        }
-        
-        #endregion
-        
-        
-        #region Coroutine
-
-        IEnumerator InitCoroutine()
-        {
-            while (!isCreated) yield return null;
             Init();
         }
         

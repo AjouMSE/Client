@@ -55,9 +55,9 @@ namespace Scene
 
             // Set Bgm to Logo bgm
             BgmManager.Instance.SetBgm(BgmManager.SrcNameLogoBgm);
-            BgmManager.Instance.AdjustBgmVolume(-10);
+            BgmManager.Instance.AdjustBgmVolume(-20);
             BgmManager.Instance.Play();
-            
+
             // Start fade effect
             FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeIn, canvasGroup, FadeEffectDuration, FadeInCallback);
         }
@@ -67,7 +67,7 @@ namespace Scene
 
         #region Unity event functions
         
-        void Awake()
+        void Start()
         {
             Init();
         }

@@ -37,6 +37,9 @@ namespace UI.Login
         void InitTitle()
         {
             titleText.text = CustomUtils.MakeTitleColor();
+            BgmManager.Instance.SetBgm(BgmManager.SrcNameMainBgm1);
+            BgmManager.Instance.AdjustBgmVolume(-20);
+            BgmManager.Instance.Play();
         }
 
         #endregion

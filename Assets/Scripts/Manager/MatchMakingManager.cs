@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Firesplash.UnityAssets.SocketIO;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Utils;
 
 namespace Manager
@@ -10,9 +13,16 @@ namespace Manager
     {
         #region Private variables
 
+        private enum MatchMadeType
+        {
+            Host = 0,
+            Client = 1
+        }
+
         private const string SioEventAuth = "Auth";
-        private const string SioEventStartMatch = "StartMatching";
+        private const string SioEventStartMatching = "StartMatching";
         private const string SioEventMatchMade = "MatchMade";
+        private const string SioEventSendMatchCode = "SendMatchCode";
         private const string SioEventReceiveMatchCode = "ReceiveMatchCode";
 
         private SocketIOCommunicator _sio;
@@ -28,26 +38,66 @@ namespace Manager
 
 
         #region Callbacks
-
+        
         private void OnAuthCallback(string data)
         {
-            Debug.Log(JsonUtility.FromJson<Packet.AuthResult>(data).ToString());
-            //todo- indicate connection result with socket.io server to client
+            Packet.SioReqResult rcvPacket = JsonUtility.FromJson<Packet.SioReqResult>(data);
+            Debug.Log("Auth" + rcvPacket.ToString());
+
+            if (rcvPacket.result)
+            {
+                //todo- show auth result in ui
+            }
+            else
+            {
+                //todo- show auth result in ui
+            }
         }
         
-        private void OnStartMatchCallback(string data)
+        private void OnStartMatchingCallback(string data)
         {
-            throw new System.NotImplementedException();
+            Packet.SioReqResult rcvPacket = JsonUtility.FromJson<Packet.SioReqResult>(data);
+            Debug.Log("Start Matching" + rcvPacket.ToString());
+            
+            if (rcvPacket.result)
+            {
+                //todo- show start matching result in ui
+            }
+            else
+            {
+                //todo- show start matching result in ui
+            }
         }
         
-        private void OnMatchMadeCallback(string data)
+        private async void OnMatchMadeCallback(string data)
         {
-            throw new System.NotImplementedException();
+            Packet.MatchMadeResult rcvPacket = JsonUtility.FromJson<Packet.MatchMadeResult>(data);
+            UserManager.Instance.AddHostileInfo(rcvPacket.hostile);
+            
+            Debug.Log("Match Made: " + rcvPacket);
+            Debug.Log("Hostile: " + UserManager.Instance.Hostile);
+
+            if (rcvPacket.type == (int)MatchMadeType.Host)
+            {
+                string joinCode = await RelayManager.Instance.StartHost();
+                Packet.MatchCode sendPacket = new Packet.MatchCode { room = rcvPacket.room, code = joinCode };
+                Debug.Log("Match Code: " + sendPacket);
+                UserManager.Instance.SetHost();
+                _sio.Instance.Emit(SioEventSendMatchCode, JsonUtility.ToJson(sendPacket), false);
+                SceneManager.LoadSceneAsync("NetworkTestScene");
+            }
+            else
+            {
+                UserManager.Instance.SetClient();
+            }
         }
         
-        private void OnReceiveMatchCodeCallback(string data)
+        private async void OnReceiveMatchCodeCallback(string data)
         {
-            throw new System.NotImplementedException();
+            Packet.MatchCode rcvPacket = JsonUtility.FromJson<Packet.MatchCode>(data);
+            await RelayManager.Instance.StartClient(rcvPacket.code);
+            Debug.Log("Client received code: " + rcvPacket);
+            SceneManager.LoadSceneAsync("NetworkTestScene");
         }
 
         #endregion
@@ -55,32 +105,35 @@ namespace Manager
 
         #region Custom methods
 
-        private void Init()
+        public void Init()
         {
-            // Init & Make connection with socket.io server
-            _sio = GetComponent<SocketIOCommunicator>();
+            // Set Up Socket.io
+            _sio = gameObject.AddComponent<SocketIOCommunicator>();
+            _sio.socketIOAddress = "3.38.252.113:8081";
+            _sio.autoReconnect = true;
             _sio.Instance.Connect();
             StartCoroutine(MakeConnection());
-            
-            // Register callbacks to handle socket.io 'On' events.
-            _sio.Instance.On(SioEventAuth, OnAuthCallback);
-            _sio.Instance.On(SioEventStartMatch, OnStartMatchCallback);
-            _sio.Instance.On(SioEventMatchMade, OnMatchMadeCallback);
-            _sio.Instance.On(SioEventReceiveMatchCode, OnReceiveMatchCodeCallback);
         }
 
+        /*public void Auth()
+        {
+            // Auth to socket.io server
+            Packet.Auth sendPacket = new Packet.Auth { id = UserManager.Instance.User.id };
+            string jsonPayload = JsonUtility.ToJson(sendPacket);
+            _sio.Instance.Emit(SioEventAuth, jsonPayload, false);
+        }*/
+        
         public void MatchMaking()
         {
-            _sio.Instance.Emit(SioEventStartMatch);
+            // Send match making request to socket.io server
+            _sio.Instance.Emit(SioEventStartMatching);
         }
 
         #endregion
 
 
         #region Unity event methods
-
         
-
         #endregion
 
 
@@ -95,9 +148,16 @@ namespace Manager
             {
                 yield return null;
             }
-
-            string jsonPayload = JsonUtility.ToJson(new Packet.Auth() { id = UserManager.Instance.User.id });
-            _sio.Instance.Emit(SioEventAuth, jsonPayload);
+                        
+            // Register callbacks to handle socket.io 'On' events.
+            _sio.Instance.On(SioEventAuth, OnAuthCallback);
+            _sio.Instance.On(SioEventStartMatching, OnStartMatchingCallback);
+            _sio.Instance.On(SioEventMatchMade, OnMatchMadeCallback);
+            _sio.Instance.On(SioEventReceiveMatchCode, OnReceiveMatchCodeCallback);
+            
+            Packet.Auth sendPacket = new Packet.Auth { id = UserManager.Instance.User.id };
+            string jsonPayload = JsonUtility.ToJson(sendPacket);
+            _sio.Instance.Emit(SioEventAuth, jsonPayload, false);
         }
 
         #endregion

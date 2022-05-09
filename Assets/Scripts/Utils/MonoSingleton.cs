@@ -18,7 +18,6 @@ namespace Utils
         private static T _instance;
         private static object _lockObject = new object();
         private static bool onDestroyed = false;
-        
         protected static bool isCreated = false;
 
         // Public static instance variables

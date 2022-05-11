@@ -27,7 +27,7 @@ public class ScrollScript_2d : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         Sound = gameObject.GetComponent<AudioSource>();
-        gameObject.GetComponentInParent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("HUDcam").GetComponent<Camera>();
+        gameObject.GetComponentInParent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("HUDcamera").GetComponent<Camera>();
     }
 
     // the 'animate' function is responsible for triggering events (open and close) in the Animator,

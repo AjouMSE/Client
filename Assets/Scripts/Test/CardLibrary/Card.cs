@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public enum SkillType { Move = 1, Attack = 100, Special = 200 }
 public class Card : MonoBehaviour
 {
-    [SerializeField] private Text name;
-    [SerializeField] private Text value;
+    [SerializeField] private TMP_Text name;
+    [SerializeField] private TMP_Text value;
+    [SerializeField] private TMP_Text cost;
+    [SerializeField] private Image skillicon;
 
     public CardData skillData;
 
@@ -16,5 +19,6 @@ public class Card : MonoBehaviour
     {
         name.text = skillData.text.ToString();
         value.text = skillData.value.ToString();
+        cost.text = skillData.cost.ToString();
     }
 }

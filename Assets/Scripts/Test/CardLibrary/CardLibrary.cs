@@ -2,19 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 
 
 public class CardLibrary : MonoBehaviour
 {
     [SerializeField] private GameObject cardGrid;
     [SerializeField] private GameObject cardPrefab;
-    [SerializeField] private Dropdown cardCategory;
+    [SerializeField] private TMP_Dropdown cardCategory;
     [SerializeField] private GameObject scrollPrefab;
 
     List<GameObject> cardlist = new List<GameObject>();
 
-    ScrollScript2D scroll2d;
+    private ScrollScript2D scroll2d;
 
     enum SkillCategory { All = 0, Move = 1, Attack = 2, Special = 3}
 
@@ -22,8 +22,7 @@ public class CardLibrary : MonoBehaviour
     void Start()
     {
         TableLoader.Instance.LoadTableData();   //Test Code
-        scroll2d = scrollPrefab.GetComponent<ScrollScript2D>();
-        scroll2d.animate();
+
 
         foreach(KeyValuePair<int, CardData> cardData in TableDatas.Instance.cardDatas)
         {
@@ -34,6 +33,9 @@ public class CardLibrary : MonoBehaviour
             card.skillData = cardData.Value;
             cardlist.Add(tmp);
         }
+
+        scroll2d =  scrollPrefab.GetComponent<ScrollScript2D>();
+        scroll2d.animate();
     }
 
     // Update is called once per frame

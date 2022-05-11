@@ -84,7 +84,7 @@ namespace Manager
                 Debug.Log("Match Code: " + sendPacket);
                 UserManager.Instance.SetHost();
                 _sio.Instance.Emit(SioEventSendMatchCode, JsonUtility.ToJson(sendPacket), false);
-                SceneManager.LoadSceneAsync("NetworkTestScene");
+                SceneManager.LoadSceneAsync("GameScene");
             }
             else
             {
@@ -97,7 +97,7 @@ namespace Manager
             Packet.MatchCode rcvPacket = JsonUtility.FromJson<Packet.MatchCode>(data);
             await RelayManager.Instance.StartClient(rcvPacket.code);
             Debug.Log("Client received code: " + rcvPacket);
-            SceneManager.LoadSceneAsync("NetworkTestScene");
+            SceneManager.LoadSceneAsync("GameScene");
         }
 
         #endregion

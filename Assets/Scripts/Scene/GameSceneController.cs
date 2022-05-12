@@ -12,15 +12,18 @@ namespace Scene
 {
     public class GameSceneController : MonoBehaviour
     {
-        public GameObject cam;
+        #region Public variables
+        
         public GameObject panel;
         public GameObject scroll3D;
         
+        #endregion
         
+        
+        
+        #region Custom methods
 
-        private float x = -120;
-
-        void Init()
+        private void Init()
         {
             BgmManager.Instance.SetBgm(BgmManager.SrcNameBattleBgm);
             BgmManager.Instance.Play(true);
@@ -32,6 +35,12 @@ namespace Scene
                 NetworkManager.Singleton.StartClient();*/
         }
 
+        #endregion
+
+
+
+        #region Unity event methods
+
         private void Start()
         {
             Init();
@@ -39,12 +48,6 @@ namespace Scene
 
         private void Update()
         {
-            if (x < 30)
-            {
-                cam.transform.localEulerAngles = new Vector3(x, 0, 0);
-                x += 2.5f;
-            }
-
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 scroll3D.GetComponent<ScrollScript3D>().OpenOrCloseScroll();
@@ -59,5 +62,7 @@ namespace Scene
                 NetworkManager.Singleton.StartClient();
             }
         }
+
+        #endregion
     }
 }

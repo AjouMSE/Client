@@ -38,8 +38,7 @@ namespace UI.Login
         {
             titleText.text = CustomUtils.MakeTitleColor();
             BgmManager.Instance.SetBgm(BgmManager.SrcNameMainBgm1);
-            BgmManager.Instance.AdjustBgmVolume(-20);
-            BgmManager.Instance.Play();
+            BgmManager.Instance.Play(true);
         }
 
         #endregion
@@ -73,7 +72,7 @@ namespace UI.Login
         private void Start()
         {
             InitTitle();
-            FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeIn, titleCanvasGroup, FadeEffectDuration);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, titleCanvasGroup, FadeEffectDuration);
         }
         
         private void Update()

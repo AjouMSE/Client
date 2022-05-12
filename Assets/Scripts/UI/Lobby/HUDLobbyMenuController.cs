@@ -12,9 +12,7 @@ namespace UI.Lobby
     {
         #region Private variables
 
-        private const float FadeInDuration = 1f;
-        
-        [SerializeField] private CanvasGroup lobbyCanvasGroup;
+        [SerializeField] private CanvasGroup lobbyCvsGroup, userInfoCvsGroup, settingsCvsGroup, matchMakingCvsGroup;
         [SerializeField] private Text titleText;
         [SerializeField] private GameObject menuScroll3D;
 
@@ -34,6 +32,7 @@ namespace UI.Lobby
             //todo-Send Match making event to socket.io server
             menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
             MatchMakingManager.Instance.MatchMaking();
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, matchMakingCvsGroup, UIManager.LobbyMenuFadeInOutDuration);
         }
 
         public void OnLeaderBoardBtnClick()
@@ -49,11 +48,13 @@ namespace UI.Lobby
         public void OnUserInfoBtnClick()
         {
             menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, userInfoCvsGroup, UIManager.LobbyMenuFadeInOutDuration);
         }
 
         public void OnSettingsBtnClick()
         {
             menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, settingsCvsGroup, UIManager.LobbyMenuFadeInOutDuration);
         }
 
         #endregion
@@ -67,10 +68,10 @@ namespace UI.Lobby
             titleText.text = CustomUtils.MakeTitleColor();
             
             // Start fade in effect
-            FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeIn, lobbyCanvasGroup, FadeInDuration, FadeInCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, lobbyCvsGroup, UIManager.LobbyUIFadeInDuration, FadeInCallback);
             
             BgmManager.Instance.SetBgm(BgmManager.SrcNameMainBgm3);
-            BgmManager.Instance.Play();
+            BgmManager.Instance.Play(true);
         }
 
         #endregion

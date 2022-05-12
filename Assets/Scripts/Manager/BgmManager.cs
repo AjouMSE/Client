@@ -13,7 +13,7 @@ namespace Manager
         
         private const string SrcPath = "Audio/BGM";
         private const string SrcNameMixer = "/BgmMixer";
-        private const float MuteValue = -80;
+        private const float MuteValue = 0f;
 
         private AudioSource _audioSource;
         private AudioMixer _audioMixer;
@@ -39,6 +39,9 @@ namespace Manager
         public const string SrcNameMainBgm2 = "/MainBgm02";
         public const string SrcNameMainBgm3 = "/MainBgm03";
         public const string SrcNameMainBgm4 = "/MainBgm04";
+        public const string SrcNameBattleBgm = "/BattleBgm";
+
+        public MuteType muteType => _muteType;
 
         #endregion
         
@@ -53,11 +56,12 @@ namespace Manager
             
             // Init main bgm 
             _bgmDict = new Dictionary<string, AudioClip>();
-            _bgmDict.Add(SrcNameLogoBgm, Resources.Load<AudioClip>(string.Format("{0}{1}", SrcPath, SrcNameLogoBgm)));
-            _bgmDict.Add(SrcNameMainBgm1, Resources.Load<AudioClip>(string.Format("{0}{1}", SrcPath, SrcNameMainBgm1)));
-            _bgmDict.Add(SrcNameMainBgm2, Resources.Load<AudioClip>(string.Format("{0}{1}", SrcPath, SrcNameMainBgm2)));
-            _bgmDict.Add(SrcNameMainBgm3, Resources.Load<AudioClip>(string.Format("{0}{1}", SrcPath, SrcNameMainBgm3)));
-            _bgmDict.Add(SrcNameMainBgm4, Resources.Load<AudioClip>(string.Format("{0}{1}", SrcPath, SrcNameMainBgm4)));
+            _bgmDict.Add(SrcNameLogoBgm, Resources.Load<AudioClip>($"{SrcPath}{SrcNameLogoBgm}"));
+            _bgmDict.Add(SrcNameMainBgm1, Resources.Load<AudioClip>($"{SrcPath}{SrcNameMainBgm1}"));
+            _bgmDict.Add(SrcNameMainBgm2, Resources.Load<AudioClip>($"{SrcPath}{SrcNameMainBgm2}"));
+            _bgmDict.Add(SrcNameMainBgm3, Resources.Load<AudioClip>($"{SrcPath}{SrcNameMainBgm3}"));
+            _bgmDict.Add(SrcNameMainBgm4, Resources.Load<AudioClip>($"{SrcPath}{SrcNameMainBgm4}"));
+            _bgmDict.Add(SrcNameBattleBgm, Resources.Load<AudioClip>($"{SrcPath}{SrcNameBattleBgm}"));
             
             _muteType = MuteType.IsNotMute;
         }
@@ -70,8 +74,9 @@ namespace Manager
                 throw new Exception("UndefinedBgmTypeException");
         }
 
-        public void Play()
+        public void Play(bool loop)
         {
+            _audioSource.loop = loop;
             if(_audioSource.isPlaying) 
                 _audioSource.Stop(); 
             _audioSource.Play();
@@ -79,23 +84,26 @@ namespace Manager
 
         public void AdjustBgmVolume(float volume)
         {
+            //_audioMixer.SetFloat("BgmVolume", Mathf.Log10(_bgmVolume) * 20);
             _bgmVolume = volume;
-            _audioMixer.SetFloat("BgmVolume", Mathf.Log10(_bgmVolume) * 20);
+            _audioSource.volume = volume;
             PlayerPrefs.SetFloat("BgmVolume", volume);
         }
 
         public void MuteBgm()
         {
-            _audioMixer.SetFloat("BgmVolume", MuteValue);
-            PlayerPrefs.SetInt("IsMute", (int) MuteType.IsMute);
+            //_audioMixer.SetFloat("BgmVolume", MuteValue);
             _muteType = MuteType.IsMute;
+            _audioSource.volume = MuteValue;
+            PlayerPrefs.SetInt("IsMute", (int) MuteType.IsMute);
         }
 
         public void UnmuteBgm()
         {
-            _audioMixer.SetFloat("BgmVolume", _bgmVolume);
-            PlayerPrefs.SetInt("IsMute", (int) MuteType.IsNotMute);
+            //_audioMixer.SetFloat("BgmVolume", _bgmVolume);
             _muteType = MuteType.IsNotMute;
+            _audioSource.volume = _bgmVolume;
+            PlayerPrefs.SetInt("IsMute", (int) MuteType.IsNotMute);
         }
         
         #endregion

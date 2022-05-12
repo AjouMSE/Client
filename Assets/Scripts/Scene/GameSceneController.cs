@@ -22,13 +22,14 @@ namespace Scene
 
         void Init()
         {
-            Application.targetFrameRate = 60;   // test code
+            BgmManager.Instance.SetBgm(BgmManager.SrcNameBattleBgm);
+            BgmManager.Instance.Play(true);
             GameManager.Instance.InitPanel(panel);
 
-            if (UserManager.Instance.IsHost)
+            /*if (UserManager.Instance.IsHost)
                 NetworkManager.Singleton.StartHost();
             else
-                NetworkManager.Singleton.StartClient();
+                NetworkManager.Singleton.StartClient();*/
         }
 
         private void Start()

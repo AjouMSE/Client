@@ -92,6 +92,12 @@ namespace UI.Login
             }
         }
 
+        public void OnBackBtnClick()
+        {
+            scrollSignup.GetComponent<ScrollScript2D>().ScrollClose();
+            ScrollMoveUp();
+        }
+
         #endregion
 
 

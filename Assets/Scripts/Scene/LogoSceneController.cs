@@ -20,7 +20,8 @@ namespace Scene
         #region Private variables
         
         private const int MaxFrameRate = 60;
-        private const float FadeEffectDuration = 1.5f;
+        private const float FadeInDuration = 2f;
+        private const float FadeOutDuration = 1f;
         private const string DestSceneName = "LoginScene";
 
         [SerializeField] private CanvasGroup canvasGroup;
@@ -32,7 +33,7 @@ namespace Scene
 
         private void FadeInCallback()
         {
-            FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeOut, canvasGroup, FadeEffectDuration, FadeOutCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, canvasGroup, FadeOutDuration, FadeOutCallback);
         }
 
         private void FadeOutCallback()
@@ -52,14 +53,15 @@ namespace Scene
             
             // Set Screen orientation : landscape
             Screen.orientation = ScreenOrientation.Landscape;
+            Screen.fullScreenMode = FullScreenMode.Windowed;
 
             // Set Bgm to Logo bgm
             BgmManager.Instance.SetBgm(BgmManager.SrcNameLogoBgm);
-            BgmManager.Instance.AdjustBgmVolume(-20);
-            BgmManager.Instance.Play();
+            BgmManager.Instance.AdjustBgmVolume(1);
+            BgmManager.Instance.Play(false);
 
             // Start fade effect
-            FadeEffectManager.Instance.Fade(FadeEffectManager.FadeType.FadeIn, canvasGroup, FadeEffectDuration, FadeInCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroup, FadeInDuration, FadeInCallback);
         }
         
         #endregion

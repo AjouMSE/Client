@@ -5947,7 +5947,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1490264873}
-  - component: {fileID: 1490264874}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -5969,58 +5968,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1490264874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1490264872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 821d1fafcfc165142972b27acfae83e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  settint_panel: {fileID: 0}
-  Ranking_panel: {fileID: 0}
-  card_library_panel: {fileID: 0}
-  card_library_panel_p1: {fileID: 0}
-  card_library_panel_p2: {fileID: 0}
-  Card:
-  - {fileID: 315174507}
-  - {fileID: 808234017}
-  - {fileID: 1194636780}
-  - {fileID: 865099762}
-  - {fileID: 1391270166}
-  - {fileID: 288947881}
-  - {fileID: 73432191}
-  - {fileID: 179212911}
-  - {fileID: 1046405692}
-  - {fileID: 1062988945}
-  Card2:
-  - {fileID: 1267153957}
-  - {fileID: 1375475366}
-  - {fileID: 2139493286}
-  - {fileID: 1099929309}
-  - {fileID: 216245413}
-  - {fileID: 1046513514}
-  - {fileID: 728516811}
-  - {fileID: 1307019499}
-  - {fileID: 1778782103}
-  - {fileID: 594638808}
-  Card3:
-  - {fileID: 1480803591}
-  - {fileID: 1436344929}
-  - {fileID: 1164370897}
-  - {fileID: 116991735}
-  - {fileID: 1173444396}
-  - {fileID: 1879929706}
-  - {fileID: 1814123485}
-  - {fileID: 971213591}
-  - {fileID: 907701778}
-  - {fileID: 757003280}
-  rightbutton: {fileID: 405513308}
-  leftbutton: {fileID: 25620659}
 --- !u!1 &1558809058
 GameObject:
   m_ObjectHideFlags: 0

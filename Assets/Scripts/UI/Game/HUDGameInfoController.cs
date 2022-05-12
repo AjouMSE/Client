@@ -10,8 +10,8 @@ namespace UI.Game
     {
         #region Private variables
         
-        [SerializeField] private Text userNameText;
-        [SerializeField] private Text hostileNameText;
+        [SerializeField] private Text hostNicknameText;
+        [SerializeField] private Text clientNicknameText;
         
         #endregion
         
@@ -19,8 +19,15 @@ namespace UI.Game
 
         private void Init()
         {
-            userNameText.text = UserManager.Instance.User.nickname;
-            hostileNameText.text = UserManager.Instance.Hostile.nickname;
+            if (!UserManager.Instance.IsHost)
+            {
+                Text tmp = hostNicknameText;
+                hostNicknameText = clientNicknameText;
+                clientNicknameText = tmp;
+            }
+            
+            hostNicknameText.text = UserManager.Instance.User.nickname;
+            clientNicknameText.text = UserManager.Instance.Hostile.nickname;
         }
 
         #endregion
@@ -34,12 +41,6 @@ namespace UI.Game
             Init();
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
-        
         #endregion
     }   
 }

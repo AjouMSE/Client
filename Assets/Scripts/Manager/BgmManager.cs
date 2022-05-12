@@ -86,7 +86,8 @@ namespace Manager
         {
             //_audioMixer.SetFloat("BgmVolume", Mathf.Log10(_bgmVolume) * 20);
             _bgmVolume = volume;
-            _audioSource.volume = volume;
+            if(_muteType == MuteType.IsNotMute)
+                _audioSource.volume = volume;
             PlayerPrefs.SetFloat("BgmVolume", volume);
         }
 

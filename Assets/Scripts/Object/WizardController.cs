@@ -4,6 +4,7 @@ using Manager;
 using Unity.Netcode;
 using UnityEngine;
 
+
 public class WizardController : NetworkBehaviour
 {
     public Material mat1, mat2, mat3;
@@ -16,7 +17,9 @@ public class WizardController : NetworkBehaviour
     }
 
     private Animator _animator;
-
+    
+    #region Network methods
+    
     public override void OnNetworkSpawn()
     {
         if (NetworkManager.Singleton.IsServer)
@@ -40,32 +43,16 @@ public class WizardController : NetworkBehaviour
         }
     }
     
-    [ServerRpc]
-    public void SyncCardServerRpc(int[] args)
-    {
-        if(NetworkManager.Singleton.IsServer)
-        {
-            Debug.Log("Server RPC!");
-            GameManager.Instance.selectedCardListHostile.Clear();
-            for (int i = 0; i < args.Length; i++)
-            {
-                GameManager.Instance.selectedCardListHostile.Add(args[i]);
-            }   
-        }
-    }
+    #endregion
+
     
-    [ClientRpc]
-    public void SyncCardClientRpc(int[] args)
-    {
-        if (NetworkManager.Singleton.IsClient)
-        {
-            GameManager.Instance.selectedCardListHostile.Clear();
-            for (int i = 0; i < args.Length; i++)
-            {
-                GameManager.Instance.selectedCardListHostile.Add(args[i]);
-            }   
-        }
-    }
+    #region Custom methods
+    
+    
+    
+    #endregion
+    
+    
 
     // Start is called before the first frame update
     void Start()

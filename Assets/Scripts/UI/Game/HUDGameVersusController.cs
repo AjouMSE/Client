@@ -17,6 +17,7 @@ namespace UI.Game
         [SerializeField] private Text versusText;
         [SerializeField] private Text[] hostInfoTextArr;
         [SerializeField] private Text[] clientInfoTextArr;
+        [SerializeField] private GameObject scroll3D;
 
         private float x = -120;
         
@@ -100,13 +101,35 @@ namespace UI.Game
         {
             hudUserInfo.SetActive(true);
             hudCardSelection.SetActive(true);
-            
+            GameManager.Instance.timerText = GameObject.Find("Txt_Timer").GetComponent<Text>();
+            GameManager.Instance.turnText = GameObject.Find("Txt_Turn").GetComponent<Text>();
+            GameManager.Instance.scroll3D = GameObject.Find("ScrollObject_Short_WithScript");
+            GameManager.Instance.skillVfx =  GameObject.Find("EvilDeath");
+            GameManager.Instance.skillVfx2 = GameObject.Find("PoisonDeath");
+                
+            // Wait until opponent is ready to run timer
+            StartCoroutine(WaitForReadToRunTimer());
+
+            // Rotate Camera
             while (x < 30)
             {
                 mainCamera.transform.localEulerAngles = new Vector3(x, 0, 0);
                 x += 1.5f;
                 yield return null;
             }
+        }
+
+        IEnumerator WaitForReadToRunTimer()
+        {
+            NetworkSynchronizer.Instance.ReadToRunTimer(true);
+
+            while (!NetworkSynchronizer.Instance.hostReadyToRunTimer.Value || 
+                   !NetworkSynchronizer.Instance.clientReadyToRunTimer.Value)
+            {
+                yield return null;
+            }
+            
+            GameManager.Instance.BeginTimer();
         }
 
         #endregion

@@ -10,8 +10,9 @@ namespace Manager
     {
         #region Private variables
 
-        private const int FhdWidth = 1920, FhdHeight = 1080;
-        private const int HdWidth = 1280, HdHeight = 720;
+        private const int Width1080 = 1920, Height1080 = 1080;
+        private const int Width900 = 1600, Height900 = 900;
+        private const int Width720 = 1280, Height720 = 720;
         private const float MinFadeValue = 0f, MaxFadeValue = 1f;
 
         private bool _isFullScreen = false;
@@ -22,10 +23,11 @@ namespace Manager
         
         #region Public variables
 
-        public enum Resolution
+        public enum Resolution169
         {
-            Fhd,
-            Hd
+            Resolution1080 = 0,
+            Resolution900 = 1,
+            Resolution720 = 2
         }
         
         public enum FadeType
@@ -50,16 +52,20 @@ namespace Manager
             StartCoroutine(FadeEffect(fadeType, group, duration, callback));
         }
         
-        public void SetResolution(Resolution res)
+        public void SetResolution(Resolution169 type)
         {
-            switch (res)
+            switch (type)
             {
-                case Resolution.Fhd:
-                    Screen.SetResolution(FhdWidth, FhdHeight, _isFullScreen);
+                case Resolution169.Resolution1080:
+                    Screen.SetResolution(Width1080, Height1080, _isFullScreen);
                     break;
                 
-                case Resolution.Hd:
-                    Screen.SetResolution(HdWidth, HdHeight, _isFullScreen);
+                case Resolution169.Resolution900:
+                    Screen.SetResolution(Width900, Height900, _isFullScreen);
+                    break;
+                
+                case Resolution169.Resolution720:
+                    Screen.SetResolution(Width720, Height720, _isFullScreen);
                     break;
                 
                 default:

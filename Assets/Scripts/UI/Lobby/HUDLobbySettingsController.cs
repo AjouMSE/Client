@@ -58,14 +58,9 @@ namespace UI.Lobby
             
         }
 
-        public void OnFhdBtnClick()
+        public void OnResolutionBtnClick(int type)
         {
-            UIManager.Instance.SetResolution(UIManager.Resolution.Fhd);
-        }
-
-        public void OnHdBtnClick()
-        {
-            UIManager.Instance.SetResolution(UIManager.Resolution.Hd);
+            UIManager.Instance.SetResolution((UIManager.Resolution169) type);
         }
 
         public void OnScreenModeBtnClick()

@@ -20,7 +20,7 @@ namespace Scene
         #region Private variables
         
         private const int MaxFrameRate = 60;
-        private const float FadeInDuration = 2f;
+        private const float FadeInDuration = 1.5f;
         private const float FadeOutDuration = 1f;
         private const string DestSceneName = "LoginScene";
 
@@ -46,7 +46,12 @@ namespace Scene
 
         #region Custom methods
 
-        void Init()
+        private void InitManager()
+        {
+            AudioManager.Instance.Init();
+        }
+
+        private void InitScene()
         {
             // Set maximum frame rate : 60
             Application.targetFrameRate = MaxFrameRate;
@@ -56,9 +61,8 @@ namespace Scene
             Screen.fullScreenMode = FullScreenMode.Windowed;
 
             // Set Bgm to Logo bgm
-            BgmManager.Instance.SetBgm(BgmManager.SrcNameLogoBgm);
-            BgmManager.Instance.AdjustBgmVolume(1);
-            BgmManager.Instance.Play(false);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Bgm, 1);
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.LogoBgm, false);
 
             // Start fade effect
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroup, FadeInDuration, FadeInCallback);
@@ -68,10 +72,15 @@ namespace Scene
 
 
         #region Unity event functions
+
+        private void Awake()
+        {
+            InitManager();
+        }
         
         void Start()
         {
-            Init();
+            InitScene();
         }
 
         #endregion

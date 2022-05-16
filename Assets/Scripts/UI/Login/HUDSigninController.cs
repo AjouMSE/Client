@@ -15,7 +15,7 @@ namespace UI.Login
         #region Private variables
 
         private const string DestSceneName = "LobbyScene";
-        
+
         [SerializeField] private TMP_InputField inputFieldId, inputFieldPw;
         [SerializeField] private Text textInformation;
         [SerializeField] private GameObject scrollSignup, scrollSignin;
@@ -24,10 +24,11 @@ namespace UI.Login
 
 
         #region Callbacks
-        
+
         private void SignInResultCallback(UnityWebRequest req)
         {
-            if (req.result == UnityWebRequest.Result.Success) {
+            if (req.result == UnityWebRequest.Result.Success)
+            {
                 // Init user info
                 string json = req.downloadHandler.text;
                 UserManager.Instance.SignInUserInfo(json);
@@ -51,15 +52,16 @@ namespace UI.Login
                 textInformation.text = LoginSceneHUDNotify.NotifyInvalidIdForm;
             else
             {
-                Packet.Account account = new Packet.Account { 
-                    email = inputFieldId.text, 
+                Packet.Account account = new Packet.Account
+                {
+                    email = inputFieldId.text,
                     password = CustomUtils.SHA(inputFieldPw.text, CustomUtils.SHA256)
                 };
                 string json = JsonUtility.ToJson(account);
                 HttpRequestManager.Instance.Post("/user/sign-in", json, SignInResultCallback);
             }
         }
-        
+
         public void OnSignUpBtnClick()
         {
             ScrollScript3D scroll3D = scrollSignin.GetComponent<ScrollScript3D>();

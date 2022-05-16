@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -170,4 +171,9 @@ public class NetworkSynchronizer : NetworkBehaviour
     }
     
     #endregion
+
+    private void Update()
+    {
+        Debug.Log(clientReadyToRunTimer.Value);
+    }
 }

@@ -109,7 +109,7 @@ namespace Manager
         {
             // Set Up Socket.io
             _sio = gameObject.AddComponent<SocketIOCommunicator>();
-            _sio.socketIOAddress = "3.38.252.113:8081";
+            _sio.socketIOAddress = "1.238.82.209:8081";
             _sio.autoReconnect = true;
             _sio.Instance.Connect();
             StartCoroutine(MakeConnection());

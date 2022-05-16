@@ -31,7 +31,7 @@ namespace UI.Lobby
 
         public void OnBgmValueChanged()
         {
-            BgmManager.Instance.AdjustBgmVolume(bgmSlider.value);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Bgm, bgmSlider.value);
         }
 
         public void OnSfxValueChanged()
@@ -41,16 +41,11 @@ namespace UI.Lobby
 
         public void OnBgmToggleBtnClick()
         {
-            if (BgmManager.Instance.muteType == BgmManager.MuteType.IsMute)
-            {
+            if (AudioManager.Instance.isBgmMute)
                 bgmToggleBtn.GetComponent<Image>().sprite = _unmuteSprite;
-                BgmManager.Instance.UnmuteBgm();
-            }
             else
-            {
                 bgmToggleBtn.GetComponent<Image>().sprite = _muteSprite;
-                BgmManager.Instance.MuteBgm();
-            }
+            AudioManager.Instance.MuteOrUnmute(AudioManager.VolumeTypes.Bgm, !AudioManager.Instance.isBgmMute);
         }
 
         public void OnSfxToggleBtnClick()

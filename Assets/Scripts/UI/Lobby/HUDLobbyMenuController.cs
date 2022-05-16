@@ -70,8 +70,7 @@ namespace UI.Lobby
             // Start fade in effect
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, lobbyCvsGroup, UIManager.LobbyUIFadeInDuration, FadeInCallback);
             
-            BgmManager.Instance.SetBgm(BgmManager.SrcNameMainBgm3);
-            BgmManager.Instance.Play(true);
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBgm3, true);
         }
 
         #endregion

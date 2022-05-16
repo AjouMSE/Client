@@ -35,8 +35,7 @@ namespace Scene
 
         private void Init()
         {
-            BgmManager.Instance.SetBgm(BgmManager.SrcNameBattleBgm);
-            BgmManager.Instance.Play(true);
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.BattleBgm1, true);
             GameManager.Instance.Init(panel);
             
             if(UserManager.Instance.IsHost) 

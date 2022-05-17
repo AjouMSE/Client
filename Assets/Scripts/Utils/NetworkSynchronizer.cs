@@ -10,10 +10,10 @@ using UnityEngine;
 public class NetworkSynchronizer : NetworkBehaviour
 {
     private static NetworkSynchronizer _instance;
-    
+
     public NetworkVariable<bool> hostReadyToRunTimer, clientReadyToRunTimer;
     public NetworkVariable<bool> hostReadToProcessCard, clientReadyToProcessCard;
-    
+
     public NetworkList<int> hostCardList, clientCardList;
 
     public GameSceneController controller;
@@ -26,7 +26,7 @@ public class NetworkSynchronizer : NetworkBehaviour
             {
                 _instance = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
             }
-            
+
             return _instance;
         }
     }
@@ -41,7 +41,7 @@ public class NetworkSynchronizer : NetworkBehaviour
     {
         ReadToRunTimer(false);
         ReadToProcessCard(false);
-        
+
         hostCardList.OnListChanged += HostCardListOnOnListChanged;
         clientCardList.OnListChanged += ClientCardListOnOnListChanged;
     }
@@ -52,7 +52,7 @@ public class NetworkSynchronizer : NetworkBehaviour
     {
         controller.UpdateCardUI(0);
     }
-    
+
     private void ClientCardListOnOnListChanged(NetworkListEvent<int> e)
     {
         controller.UpdateCardUI(1);
@@ -62,7 +62,7 @@ public class NetworkSynchronizer : NetworkBehaviour
 
 
     #region Network methods 
-    
+
     // Check that user is ready to run card selection timer
     public void ReadToRunTimer(bool isReady)
     {
@@ -71,15 +71,15 @@ public class NetworkSynchronizer : NetworkBehaviour
         else
             ClientReadToRunTimerServerRpc(isReady);
     }
-    
-    [ServerRpc(RequireOwnership = false)] 
+
+    [ServerRpc(RequireOwnership = false)]
     public void ClientReadToRunTimerServerRpc(bool isReady)
     {
         clientReadyToRunTimer.Value = isReady;
     }
-    
-    
-    
+
+
+
     // Add card to cardList
     public void AddCardToList(int id)
     {
@@ -104,9 +104,9 @@ public class NetworkSynchronizer : NetworkBehaviour
             clientCardList.Add(id);
         }
     }
-    
-    
-    
+
+
+
     // Remove a card from cardList
     public void RemoveCardFromList(int idx)
     {
@@ -133,7 +133,7 @@ public class NetworkSynchronizer : NetworkBehaviour
     }
 
 
-    
+
     // Remove all cards from cardList
     public void RemoveAllCardsFromList()
     {
@@ -146,15 +146,15 @@ public class NetworkSynchronizer : NetworkBehaviour
             ClientRemoveAllCardsFromListServerRpc();
         }
     }
-    
+
     [ServerRpc(RequireOwnership = false)]
     public void ClientRemoveAllCardsFromListServerRpc()
     {
         clientCardList.Clear();
     }
-    
-    
-    
+
+
+
     // Check that user is ready to process cardList
     public void ReadToProcessCard(bool isReady)
     {
@@ -169,7 +169,30 @@ public class NetworkSynchronizer : NetworkBehaviour
     {
         clientReadyToProcessCard.Value = isReady;
     }
-    
+
+
+
+    // Get a card from cardList
+    public int GetHostCardFromList(int idx)
+    {
+        int code = 0;
+        if (hostCardList.Count > idx)
+        {
+            code = hostCardList[idx];
+        }
+        return code;
+    }
+
+    public int GetClientCardFromList(int idx)
+    {
+        int code = 0;
+        if (clientCardList.Count > idx)
+        {
+            code = clientCardList[idx];
+        }
+        return code;
+    }
+
     #endregion
 
     private void Update()

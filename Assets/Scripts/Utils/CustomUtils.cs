@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
@@ -9,13 +10,13 @@ namespace Utils
     public class CustomUtils
     {
         public const int SHA256 = 0, SHA512 = 1;
-        
+
         public static bool IsValidEmail(string email)
         {
             Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
             return regex.IsMatch(email);
         }
-        
+
         #region UI methods
         public static string GenColorText(string text, int r, int g, int b)
         {
@@ -42,7 +43,7 @@ namespace Utils
 
             return sb.ToString();
         }
-        
+
         #endregion
 
         #region hash methods
@@ -91,5 +92,25 @@ namespace Utils
         }
 
         #endregion
+
+        public static List<(int i, int j)> ParseRange(int[,] range)
+        {
+            List<(int i, int j)> list = new List<(int, int)>();
+
+            for (int i = 0; i < range.GetLength(0); i++)
+            {
+                for (int j = 0; j < range.GetLength(1); j++)
+                {
+                    if (range[i, j] == 0)
+                    {
+                        continue;
+                    }
+
+                    list.Add((2 - i, j - 2));
+                }
+            }
+
+            return list;
+        }
     }
 }

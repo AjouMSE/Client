@@ -511,6 +511,10 @@ MonoBehaviour:
     m_InternalValue: 0
   clientReadyToProcessCard:
     m_InternalValue: 0
+  hostPosition:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  clientPosition:
+    m_InternalValue: {x: 0, y: 0, z: 0}
   controller: {fileID: 319823944}
 --- !u!114 &71356236
 MonoBehaviour:
@@ -4590,6 +4594,7 @@ GameObject:
   - component: {fileID: 319823944}
   - component: {fileID: 319823945}
   - component: {fileID: 319823946}
+  - component: {fileID: 319823947}
   m_Layer: 0
   m_Name: GameSceneController
   m_TagString: Untagged
@@ -4696,6 +4701,19 @@ MonoBehaviour:
   - {fileID: 1414304141}
   - {fileID: 295952706}
   scroll3D: {fileID: 1330443306403687}
+--- !u!114 &319823947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319823942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cd059201052ce045b2a4442c447eded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panel: {fileID: 6380880903033832869, guid: 647485425aea1434db8045b387dcdb44, type: 3}
 --- !u!1001 &330459463
 PrefabInstance:
   m_ObjectHideFlags: 0

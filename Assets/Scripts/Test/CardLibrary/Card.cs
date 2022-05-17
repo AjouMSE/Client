@@ -20,5 +20,6 @@ public class Card : MonoBehaviour
         name.text = skillData.text.ToString();
         value.text = skillData.value.ToString();
         cost.text = skillData.cost.ToString();
+        //skillicon.sprite = Resources.Load<Sprite>("Image/SkillIcon", skillData.skillIcon);
     }
 }

@@ -9,6 +9,8 @@ public class PlayerControllerTest : MonoBehaviour
     private PanelControllerTest _panelControllerTest;
 
     private const float Speed = 4.0f;
+    private int _idx, _x, _y;
+    private BitMask.Bits30Field _bitsIdx;
 
     enum AnimationState
     {
@@ -20,20 +22,47 @@ public class PlayerControllerTest : MonoBehaviour
 
     private Animator _animator;
 
-    public void Start()
+    private void InitPos()
     {
-        _panelControllerTest = GameObject.Find("GameSceneControllerTest").GetComponent<PanelControllerTest>();
+        _x = 0;
+        _y = 2;
+        _idx = _y * 6 + _x;
+        _bitsIdx.element = 1 << _idx;
+    }
 
+    private void Start()
+    {
         _animator = GetComponent<Animator>();
+        _panelControllerTest = GameObject.Find("GameSceneControllerTest").GetComponent<PanelControllerTest>();
+        InitPos();
 
-        string range = "00100 00000 00000 00000 00000";
+        string range = "00000 00000 00001 00000 00000";
+        BitMask.Bits25Field skillRange = new BitMask.Bits25Field(range);
+        BitMask.PrintBits25(skillRange);
+        BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(skillRange);
+        BitMask.PrintBits30(fieldRange);
+        
+        int dx = _x - 3;
+        int dy = _y - 2;
+        BitMask.ShiftBits30(ref fieldRange, dx, dy);
+        BitMask.PrintBits30(fieldRange);
+
+        int mask = (1 << 29);
+        for (int i = 0; i < 30; i++)
+        {
+            if ((fieldRange.element & mask) > 0)
+            {
+                int px = i % 6;
+                int py = i / 6;
+                Debug.Log($"{i} / {px} / {py}");
+                _panelControllerTest.GetPanel(py, px).GetComponent<MeshRenderer>().material.color = new Color(1, 0.5f, 0.5f);
+            }
+            mask = mask >> 1;
+        }
+        
         Move(range);
     }
 
-    public void Update()
-    {
-
-    }
 
     private void Move(string range)
     {

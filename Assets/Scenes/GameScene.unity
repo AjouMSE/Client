@@ -511,10 +511,6 @@ MonoBehaviour:
     m_InternalValue: 0
   clientReadyToProcessCard:
     m_InternalValue: 0
-  hostPosition:
-    m_InternalValue: {x: 0, y: 0, z: 0}
-  clientPosition:
-    m_InternalValue: {x: 0, y: 0, z: 0}
   controller: {fileID: 319823944}
 --- !u!114 &71356236
 MonoBehaviour:
@@ -7453,7 +7449,6 @@ GameObject:
   - component: {fileID: 490028463}
   - component: {fileID: 490028462}
   - component: {fileID: 490028461}
-  - component: {fileID: 490028464}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -7526,19 +7521,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -150, y: 0, z: 0}
---- !u!114 &490028464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 490028460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 217f7020f664ace40b71684480767f9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clip: {fileID: 0}
 --- !u!1 &493323730
 GameObject:
   m_ObjectHideFlags: 0

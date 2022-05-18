@@ -248,7 +248,7 @@ namespace Utils
         /// </summary>
         /// <param name="bits25">Struct of 25 bits field</param>
         /// <returns>2D string of element</returns>
-        public static string Bits25To2DString(Bits25Field bits25)
+        private static string Bits25To2DString(Bits25Field bits25)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask4) >> 20, 2).PadLeft(Bits5BlockSize, '0')}");
@@ -266,7 +266,7 @@ namespace Utils
         /// </summary>
         /// <param name="bits30">Struct of 30 bits field</param>
         /// <returns> 2D string of element </returns>
-        public static string Bits30To2DString(Bits30Field bits30)
+        private static string Bits30To2DString(Bits30Field bits30)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append($"\n{Convert.ToString((bits30.element & Bits6Mask4) >> 24, 2).PadLeft(Bits6BlockSize, '0')}");
@@ -276,6 +276,24 @@ namespace Utils
             sb.Append($"\n{Convert.ToString((bits30.element & Bits6Mask0), 2).PadLeft(Bits6BlockSize, '0')}");
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Print out 25 bits field
+        /// </summary>
+        /// <param name="bits25">Struct of 25 bits field</param>
+        public static void PrintBits25(Bits25Field bits25)
+        {
+            Debug.Log(Bits25To2DString(bits25));
+        }
+
+        /// <summary>
+        /// Print out 30 bits field
+        /// </summary>
+        /// <param name="bits30">Struct of 30 bits field</param>
+        public static void PrintBits30(Bits30Field bits30)
+        {
+            Debug.Log(Bits30To2DString(bits30));
         }
 
         #endregion

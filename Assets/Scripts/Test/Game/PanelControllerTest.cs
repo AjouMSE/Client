@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using TMPro;
 using UnityEngine;
 
 public class PanelControllerTest : MonoBehaviour
@@ -35,10 +36,16 @@ public class PanelControllerTest : MonoBehaviour
             {
                 for (int j = 0; j < Width; j++)
                 {
-                    _panels[i, j] = Instantiate(panel, new Vector3(j * 4.2f, 0.2f, i * 3.2f), Quaternion.identity);
+                    _panels[i, j] = Instantiate(panel, new Vector3(j * 4.2f, 0.2f, 12.8f - i * 3.2f), Quaternion.identity);
+                    _panels[i, j].GetComponentInChildren<TextMeshPro>().text = (i * Width + j).ToString();
                 }
             }
         }
+    }
+
+    public GameObject GetPanel(int x, int y)
+    {
+        return _panels[y, x];
     }
 
     public (int i, int j) GetIdx(Vector3 position)

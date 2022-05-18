@@ -119,9 +119,10 @@ namespace Utils
         /// </summary>
         /// <param name="bits25">Struct of 25 bits field</param>
         /// <param name="x">Amount to shift along the x-axis</param>
-        /// <returns> Shifted struct of Bits25Field </returns>
-        public static Bits25Field ShiftXBits25(Bits25Field bits25, int x)
+        private static void ShiftXBits25(ref Bits25Field bits25, int x)
         {
+            if (x == 0) return;
+            
             int temp = 0;
             if (x > 0)
             {
@@ -141,12 +142,11 @@ namespace Utils
             }
 
             bits25.element = temp;
-            return bits25;
         }
 
 
         /// <summary>
-        /// Shift 25 bits field to y axis(-y: up, +y: down)
+        /// Shift 25 bits field to y axis (-y: up, +y: down)
         /// ex) 00001                    00000
         ///     10101                    00001
         ///     10001  = shift y: +1 =>  10101
@@ -155,16 +155,27 @@ namespace Utils
         /// </summary>
         /// <param name="bits25">Struct of 25 bits field</param>
         /// <param name="y">Amount to shift along the y-axis</param>
-        /// <returns> Shifted struct of Bits25Field </returns>
-        public static Bits25Field ShiftYBits25(Bits25Field bits25, int y)
+        private static void ShiftYBits25(ref Bits25Field bits25, int y)
         {
+            if (y == 0) return;
             if (y > 0) bits25.element = bits25.element >> (Bits5BlockSize * y);
             else bits25.element = bits25.element << (Bits5BlockSize * -y);
-
-            return bits25;
         }
 
+        
+        /// <summary>
+        /// Shift 25 bits field to x, y axis(-x: left, +x: right, -y: up, +y: down)
+        /// </summary>
+        /// <param name="bits25">Struct of 25 bits field</param>
+        /// <param name="x">Amount to shift along the x-axis</param>
+        /// <param name="y">Amount to shift along the y-axis</param>
+        public static void ShiftBits25(ref Bits25Field bits25, int x, int y)
+        {
+            ShiftXBits25(ref bits25, x);
+            ShiftYBits25(ref bits25, y);
+        }
 
+        
         /// <summary>
         /// Shift 30 bits field to x axis (-x: left, +x: right)
         /// ex) 000001                    000000
@@ -175,9 +186,10 @@ namespace Utils
         /// </summary>
         /// <param name="bits30">Struct of 30 bits field</param>
         /// <param name="x">Amount to shift along the x-axis</param>
-        /// <returns>Shifted struct of Bits30Field</returns>
-        public static Bits30Field ShiftXBits30(Bits30Field bits30, int x)
+        private static void ShiftXBits30(ref Bits30Field bits30, int x)
         {
+            if (x == 0) return;
+            
             int temp = 0;
             if (x > 0)
             {
@@ -197,8 +209,8 @@ namespace Utils
             }
 
             bits30.element = temp;
-            return bits30;
         }
+
 
         /// <summary>
         /// Shift 30 bits field to y axis (-y: up, +y: down)
@@ -210,24 +222,36 @@ namespace Utils
         /// </summary>
         /// <param name="bits30">Struct of 30 bits field</param>
         /// <param name="y">Amount to shift along the y-axis</param>
-        /// <returns>Shifted struct of Bits30Field</returns>
-        public static Bits30Field ShiftYBits30(Bits30Field bits30, int y)
+        private static void ShiftYBits30(ref Bits30Field bits30, int y)
         {
+            if (y == 0) return;
             if (y > 0) bits30.element = bits30.element >> (Bits6BlockSize * y);
             else bits30.element = bits30.element << (Bits6BlockSize * -y);
-
-            return bits30;
         }
-        
+
+
+        /// <summary>
+        /// Shift 30 bits field to x, y axis (-x: left, +x: right, -y: up, +y: down)
+        /// </summary>
+        /// <param name="bits30">Struct of 30 bits field</param>
+        /// <param name="x">Amount to shift along the x-axis</param>
+        /// <param name="y">Amount to shift along the y-axis</param>
+        public static void ShiftBits30(ref Bits30Field bits30, int x, int y)
+        {
+            ShiftXBits30(ref bits30, x);
+            ShiftYBits30(ref bits30, y);
+        }
+
+
         /// <summary>
         /// Convert 25 bits field to 2D string
         /// </summary>
-        /// <param name="bits25"></param>
-        /// <returns></returns>
+        /// <param name="bits25">Struct of 25 bits field</param>
+        /// <returns>2D string of element</returns>
         public static string Bits25To2DString(Bits25Field bits25)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask4)>> 20, 2).PadLeft(Bits5BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask4) >> 20, 2).PadLeft(Bits5BlockSize, '0')}");
             sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask3) >> 15, 2).PadLeft(Bits5BlockSize, '0')}");
             sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask2) >> 10, 2).PadLeft(Bits5BlockSize, '0')}");
             sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask1) >> 5, 2).PadLeft(Bits5BlockSize, '0')}");
@@ -236,11 +260,12 @@ namespace Utils
             return sb.ToString();
         }
 
+        
         /// <summary>
         /// Convert 30 bits field to 2D string
         /// </summary>
-        /// <param name="bits30"></param>
-        /// <returns></returns>
+        /// <param name="bits30">Struct of 30 bits field</param>
+        /// <returns> 2D string of element </returns>
         public static string Bits30To2DString(Bits30Field bits30)
         {
             StringBuilder sb = new StringBuilder();

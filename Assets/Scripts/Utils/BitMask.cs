@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Utils
@@ -9,13 +10,15 @@ namespace Utils
     {
         #region Constants
 
+        private const int Bits5BlockSize = 5, Bits6BlockSize = 6;
+
         // Mask for 5 bits block
         private const int Bits5Mask0 = 0x1f;
         private const int Bits5Mask1 = 0x3e0;
         private const int Bits5Mask2 = 0x7c00;
         private const int Bits5Mask3 = 0xf8000;
         private const int Bits5Mask4 = 0x1f00000;
-        
+
         // Mask for 6 bits block
         private const int Bits6Mask0 = 0x3f;
         private const int Bits6Mask1 = 0xfc0;
@@ -24,10 +27,10 @@ namespace Utils
         private const int Bits6Mask4 = 0x3f000000;
 
         #endregion
-        
-        
+
+
         #region Structs of bit field
-        
+
         /// <summary>
         /// Struct of 25 bits field (5x5)
         /// Used for skill range
@@ -45,6 +48,11 @@ namespace Utils
             {
                 element = Convert.ToInt32(binaryString, 2);
             }
+
+            public override string ToString()
+            {
+                return Convert.ToString(element, 2);
+            }
         }
 
         /// <summary>
@@ -54,7 +62,7 @@ namespace Utils
         public struct Bits30Field
         {
             public int element;
-            
+
             public Bits30Field(int element)
             {
                 this.element = element;
@@ -64,13 +72,18 @@ namespace Utils
             {
                 element = Convert.ToInt32(binaryString, 2);
             }
+
+            public override string ToString()
+            {
+                return Convert.ToString(element, 2);
+            }
         }
-        
+
         #endregion
 
-        
+
         #region Custom static methods
-        
+
         /// <summary>
         /// Convert 25 bits field to 30 bits field (Left zero padding to each 5bits block)
         /// ex) 10101               010101
@@ -92,8 +105,8 @@ namespace Utils
 
             return bits30;
         }
-        
-        
+
+
         /// <summary>
         /// Shift 25 bits field to x axis (-x: left, +x: right)
         /// ex) 00001                    00000
@@ -104,7 +117,8 @@ namespace Utils
         /// </summary>
         /// <param name="bits25">Struct of 25 bits field</param>
         /// <param name="x">Amount to shift along the x-axis</param>
-        public static void ShiftXBits25(Bits25Field bits25, int x)
+        /// <returns> Shifted struct of Bits25Field </returns>
+        public static Bits25Field ShiftXBits25(Bits25Field bits25, int x)
         {
             int temp = 0;
             if (x > 0)
@@ -125,9 +139,10 @@ namespace Utils
             }
 
             bits25.element = temp;
+            return bits25;
         }
 
-        
+
         /// <summary>
         /// Shift 25 bits field to y axis(-y: up, +y: down)
         /// ex) 00001                    00000
@@ -138,13 +153,16 @@ namespace Utils
         /// </summary>
         /// <param name="bits25">Struct of 25 bits field</param>
         /// <param name="y">Amount to shift along the y-axis</param>
-        public static void ShiftYBits25(Bits25Field bits25, int y)
+        /// <returns> Shifted struct of Bits25Field </returns>
+        public static Bits25Field ShiftYBits25(Bits25Field bits25, int y)
         {
-            if (y > 0) bits25.element = bits25.element >> (5 * y);
-            else bits25.element = bits25.element << (5 * -y);
+            if (y > 0) bits25.element = bits25.element >> (Bits5BlockSize * y);
+            else bits25.element = bits25.element << (Bits5BlockSize * -y);
+
+            return bits25;
         }
-        
-        
+
+
         /// <summary>
         /// Shift 30 bits field to x axis (-x: left, +x: right)
         /// ex) 000001                    000000
@@ -155,7 +173,8 @@ namespace Utils
         /// </summary>
         /// <param name="bits30">Struct of 30 bits field</param>
         /// <param name="x">Amount to shift along the x-axis</param>
-        public static void ShiftXBits30(Bits30Field bits30, int x)
+        /// <returns>Shifted struct of Bits30Field</returns>
+        public static Bits30Field ShiftXBits30(Bits30Field bits30, int x)
         {
             int temp = 0;
             if (x > 0)
@@ -176,6 +195,7 @@ namespace Utils
             }
 
             bits30.element = temp;
+            return bits30;
         }
 
         /// <summary>
@@ -188,12 +208,49 @@ namespace Utils
         /// </summary>
         /// <param name="bits30">Struct of 30 bits field</param>
         /// <param name="y">Amount to shift along the y-axis</param>
-        public static void ShiftYBits30(Bits30Field bits30, int y)
+        /// <returns>Shifted struct of Bits30Field</returns>
+        public static Bits30Field ShiftYBits30(Bits30Field bits30, int y)
         {
-            if (y > 0) bits30.element = bits30.element >> (6 * y);
-            else bits30.element = bits30.element << (6 * -y);
+            if (y > 0) bits30.element = bits30.element >> (Bits6BlockSize * y);
+            else bits30.element = bits30.element << (Bits6BlockSize * -y);
+
+            return bits30;
         }
         
+        /// <summary>
+        /// Convert 25 bits field to 2D string
+        /// </summary>
+        /// <param name="bits25"></param>
+        /// <returns></returns>
+        public static string Bits25To2DString(Bits25Field bits25)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask4)>> 20, 2).PadLeft(Bits5BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask3) >> 15, 2).PadLeft(Bits5BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask2) >> 10, 2).PadLeft(Bits5BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask1) >> 5, 2).PadLeft(Bits5BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits25.element & Bits5Mask0), 2).PadLeft(Bits5BlockSize, '0')}");
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Convert 30 bits field to 2D string
+        /// </summary>
+        /// <param name="bits30"></param>
+        /// <returns></returns>
+        public static string Bits30To2DString(Bits30Field bits30)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"\n{Convert.ToString((bits30.element & Bits6Mask4) >> 24, 2).PadLeft(Bits6BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits30.element & Bits6Mask3) >> 18, 2).PadLeft(Bits6BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits30.element & Bits6Mask2) >> 12, 2).PadLeft(Bits6BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits30.element & Bits6Mask1) >> 6, 2).PadLeft(Bits6BlockSize, '0')}");
+            sb.Append($"\n{Convert.ToString((bits30.element & Bits6Mask0), 2).PadLeft(Bits6BlockSize, '0')}");
+
+            return sb.ToString();
+        }
+
         #endregion
     }
 }

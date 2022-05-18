@@ -112,5 +112,22 @@ namespace Utils
 
             return list;
         }
+
+        public static int[,] ConvertRangeToArray(string value)
+        {
+            string[] stringArr = value.Split(' ');
+            int[,] arr = new int[5, 5];
+
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
+                string str = stringArr[i];
+                for (int j = 0; j < arr.GetLength(1); j++)
+                {
+                    arr[i, j] = Convert.ToInt32(str[j]);
+                }
+            }
+
+            return arr;
+        }
     }
 }

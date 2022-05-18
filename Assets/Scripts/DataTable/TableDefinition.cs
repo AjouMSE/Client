@@ -9,7 +9,7 @@ public partial class CardData : TableDataBase
 
     public string text;
     public int type;
-    public int range;
+    public string range;
     public int cost;
     public int priority;
     public int value;
@@ -27,7 +27,7 @@ public partial class CardData : TableDataBase
             data.code = Convert.ToInt32(elements[index]); ++index;
             data.text = Convert.ToString(elements[index]); ++index;
             data.type = Convert.ToInt32(elements[index]); ++index;
-            data.range = Convert.ToInt32(elements[index]); ++index;
+            data.range = Convert.ToString(elements[index]); ++index;
             data.cost = Convert.ToInt32(elements[index]); ++index;
             data.priority = Convert.ToInt32(elements[index]); ++index;
             data.value = Convert.ToInt32(elements[index]); ++index;

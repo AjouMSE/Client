@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Utils;
 
 public class PlayerControllerTest : MonoBehaviour
 {
@@ -25,9 +26,7 @@ public class PlayerControllerTest : MonoBehaviour
 
         _animator = GetComponent<Animator>();
 
-
-        int[,] range = new int[,] { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 1 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
-        // int[,] range = new int[,] { { 0, 0, 1, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
+        string range = "00100 00000 00000 00000 00000";
         Move(range);
     }
 
@@ -36,12 +35,12 @@ public class PlayerControllerTest : MonoBehaviour
 
     }
 
-    private void Move(int[,] range)
+    private void Move(string range)
     {
 
         (int asisI, int asisJ) = _panelControllerTest.GetIdx(transform.position);
-        int tobeI = asisI + ParseRange(range)[0].i;
-        int tobeJ = asisJ + ParseRange(range)[0].j;
+        int tobeI = asisI + CustomUtils.ParseRange(range)[0].i;
+        int tobeJ = asisJ + CustomUtils.ParseRange(range)[0].j;
 
         Vector3 tobePosition = _panelControllerTest.GetPosition(tobeI, tobeJ);
 

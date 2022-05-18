@@ -19,9 +19,6 @@ public class SkillControllerTest : MonoBehaviour
 
     public void Play(int code)
     {
-        // Temp
-        TableLoader.Instance.LoadTableData();
-
         CardData data = TableDatas.Instance.GetCardData(code);
 
         switch (data.type)
@@ -35,8 +32,7 @@ public class SkillControllerTest : MonoBehaviour
 
     private void Move(CardData data)
     {
-        int[,] range = CustomUtils.ConvertRangeToArray(data.range);
-        _wizardController.Move(range);
+        _wizardController.Move(data.range);
     }
 
     private void Attack()

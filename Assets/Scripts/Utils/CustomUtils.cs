@@ -93,41 +93,27 @@ namespace Utils
 
         #endregion
 
-        public static List<(int i, int j)> ParseRange(int[,] range)
+        public static List<(int i, int j)> ParseRange(string stringRange)
         {
+            string[] range = stringRange.Split(' ');
+
             List<(int i, int j)> list = new List<(int, int)>();
 
-            for (int i = 0; i < range.GetLength(0); i++)
+            for (int i = 0; i < Consts.RangeLength; i++)
             {
-                for (int j = 0; j < range.GetLength(1); j++)
+                for (int j = 0; j < Consts.RangeLength; j++)
                 {
-                    if (range[i, j] == 0)
+                    if (range[i][j] == '0')
                     {
                         continue;
                     }
 
-                    list.Add((2 - i, j - 2));
+                    int mid = (int)Math.Floor(Consts.RangeLength / 2.0f);
+                    list.Add((mid - i, j - mid));
                 }
             }
 
             return list;
-        }
-
-        public static int[,] ConvertRangeToArray(string value)
-        {
-            string[] stringArr = value.Split(' ');
-            int[,] arr = new int[5, 5];
-
-            for (int i = 0; i < arr.GetLength(0); i++)
-            {
-                string str = stringArr[i];
-                for (int j = 0; j < arr.GetLength(1); j++)
-                {
-                    arr[i, j] = Convert.ToInt32(str[j]);
-                }
-            }
-
-            return arr;
         }
     }
 }

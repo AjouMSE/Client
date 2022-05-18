@@ -71,12 +71,14 @@ public class WizardController : NetworkBehaviour
 
     }
 
-    public void Move(int[,] range)
+    public void Move(string range)
     {
 
         (int asisI, int asisJ) = _panelController.GetIdx(transform.position);
-        int tobeI = asisI + CustomUtils.ParseRange(range)[0].i;
-        int tobeJ = asisJ + CustomUtils.ParseRange(range)[0].j;
+        (int rangeI, int rangeJ) = CustomUtils.ParseRange(range)[0];
+
+        int tobeI = asisI + rangeI;
+        int tobeJ = asisJ + rangeJ;
 
         Vector3 tobePosition = _panelController.GetPosition(tobeI, tobeJ);
         StartCoroutine(MoveAction(tobePosition));

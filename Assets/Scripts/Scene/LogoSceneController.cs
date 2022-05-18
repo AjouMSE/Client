@@ -67,6 +67,10 @@ namespace Scene
 
             // Start fade effect
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroup, FadeInDuration, FadeInCallback);
+
+            BitMask.Bits25Field field = new BitMask.Bits25Field("10101 00000 01010 00000 00111");
+            Debug.Log(field);
+            
         }
         
         #endregion

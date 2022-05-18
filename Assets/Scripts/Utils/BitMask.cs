@@ -46,6 +46,7 @@ namespace Utils
 
             public Bits25Field(string binaryString)
             {
+                binaryString = binaryString.Replace(" ", "");
                 element = Convert.ToInt32(binaryString, 2);
             }
 
@@ -70,6 +71,7 @@ namespace Utils
 
             public Bits30Field(string binaryString)
             {
+                binaryString = binaryString.Replace(" ", "");
                 element = Convert.ToInt32(binaryString, 2);
             }
 

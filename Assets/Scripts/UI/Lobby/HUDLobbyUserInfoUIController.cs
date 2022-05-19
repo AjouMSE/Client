@@ -6,13 +6,22 @@ using UnityEngine.UI;
 
 namespace UI.Lobby
 {
-    public class HUDLobbyUserInfoController : MonoBehaviour
+    public class HUDLobbyUserInfoUIController : MonoBehaviour
     {
         #region Private variables
         
-        [SerializeField] private GameObject scroll3D;
+        [Header("User Info Canvas Group")]
         [SerializeField] private CanvasGroup userInfoCvsGroup;
-        [SerializeField] private Text nicknameText, winText, loseText, drawText, rankingText;
+
+        [Header("User Info Text")] 
+        [SerializeField] private Text nicknameText;
+        [SerializeField] private Text winText;
+        [SerializeField] private Text loseText;
+        [SerializeField] private Text drawText;
+        [SerializeField] private Text rankingText;
+        
+        [Header("3D Scroll Menu UI")]
+        [SerializeField] private GameObject scroll3D;
 
         #endregion
         
@@ -20,6 +29,9 @@ namespace UI.Lobby
         
         #region Callbacks
         
+        /// <summary>
+        /// Back button callback
+        /// </summary>
         public void OnUserInfoBackBtnClick()
         {
             scroll3D.GetComponent<ScrollScript3D>().OpenScroll();
@@ -43,8 +55,7 @@ namespace UI.Lobby
 
 
         #endregion
-
-
+        
         
         #region Unity event methods
         

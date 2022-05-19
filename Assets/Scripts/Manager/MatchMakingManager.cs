@@ -25,6 +25,8 @@ namespace Manager
         private const string SioEventSendMatchCode = "SendMatchCode";
         private const string SioEventReceiveMatchCode = "ReceiveMatchCode";
 
+        private const string DestSceneName = "GameScene";
+
         private SocketIOCommunicator _sio;
 
         #endregion
@@ -81,10 +83,9 @@ namespace Manager
             {
                 string joinCode = await RelayManager.Instance.StartHost();
                 Packet.MatchCode sendPacket = new Packet.MatchCode { room = rcvPacket.room, code = joinCode };
-                Debug.Log("Match Code: " + sendPacket);
                 UserManager.Instance.SetHost();
                 _sio.Instance.Emit(SioEventSendMatchCode, JsonUtility.ToJson(sendPacket), false);
-                SceneManager.LoadSceneAsync("GameScene");
+                SceneManager.LoadSceneAsync(DestSceneName);
             }
             else
             {
@@ -97,7 +98,7 @@ namespace Manager
             Packet.MatchCode rcvPacket = JsonUtility.FromJson<Packet.MatchCode>(data);
             await RelayManager.Instance.StartClient(rcvPacket.code);
             Debug.Log("Client received code: " + rcvPacket);
-            SceneManager.LoadSceneAsync("GameScene");
+            SceneManager.LoadSceneAsync(DestSceneName);
         }
 
         #endregion
@@ -109,7 +110,7 @@ namespace Manager
         {
             // Set Up Socket.io
             _sio = gameObject.AddComponent<SocketIOCommunicator>();
-            _sio.socketIOAddress = "1.238.82.209:8081";
+            _sio.socketIOAddress = "localhost:8081";
             _sio.autoReconnect = true;
             _sio.Instance.Connect();
             StartCoroutine(MakeConnection());

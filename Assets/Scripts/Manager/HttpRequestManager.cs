@@ -9,7 +9,7 @@ namespace Manager
 {
     public class HttpRequestManager : MonoSingleton<HttpRequestManager>
     {
-        private string host = "1.238.82.209";
+        private string host = "localhost";
         private ushort port = 8080;
         private bool secure = false;
         private string uri;

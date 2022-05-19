@@ -62,7 +62,7 @@ public class WizardController : NetworkBehaviour
 
     void Start()
     {
-        _panelController = GameObject.Find("GameSceneController").GetComponent<PanelController>();
+        _panelController = GameObject.Find("GameSceneUIController").GetComponent<PanelController>();
         _animator = GetComponent<Animator>();
     }
 

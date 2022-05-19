@@ -23,17 +23,21 @@ namespace Utils
         public struct User
         {
             public long id;
-            public string nickname;
+            public string nickname, socketId;
             public int win, lose, draw, ranking;
 
             public override string ToString()
             {
-                return $"User: [ id: {id.ToString()}, " +
-                       $"nickname: {nickname}, " +
-                       $"win: {win.ToString()}, " +
-                       $"lose: {lose.ToString()}, " +
-                       $"draw: {draw.ToString()}, " +
-                       $"ranking: {ranking.ToString()} ]";
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"User: [ id: {id.ToString()}, ");
+                sb.Append($"nickname: {nickname}, ");
+                sb.Append($"win: {win.ToString()}, ");
+                sb.Append($"lose: {lose.ToString()}, ");
+                sb.Append($"draw: {draw.ToString()}, ");
+                sb.Append($"ranking: {ranking.ToString()}, ");
+                sb.Append($"socketId: {socketId} ]");
+
+                return sb.ToString();
             }
         }
 
@@ -76,30 +80,11 @@ namespace Utils
         {
             public int type;
             public string room;
-            public Hostile hostile;
+            public User hostile;
             
             public override string ToString()
             {
                 return $"MatchMadeResult: [ type: {type.ToString()}, room: {room}, hostile: {hostile.ToString()} ]";
-            }
-        }
-
-        [Serializable]
-        public struct Hostile
-        {
-            public int id;
-            public string nickname, socketId;
-            public int win, lose, draw, ranking;
-            
-            public override string ToString()
-            {
-                return $"User: [ id: {id.ToString()}, " +
-                       $"nickname: {nickname}, " +
-                       $"win: {win.ToString()}, " +
-                       $"lose: {lose.ToString()}, " +
-                       $"draw: {draw.ToString()}, " +
-                       $"ranking: {ranking.ToString()}, " + 
-                       $"socketId: {socketId} ]";
             }
         }
 

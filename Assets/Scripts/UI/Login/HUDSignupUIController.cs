@@ -10,24 +10,36 @@ using Utils;
 
 namespace UI.Login
 {
-    public class HUDSignupController : MonoBehaviour
+    public class HUDSignupUIController : MonoBehaviour
     {
-        #region Private variables
-
+        #region Private constants
+        
         private const int MinScrollYPos = 0, MaxScrollYPos = 240;
         private const string SignUpReqPath = "/user/sign-up";
-
-        [SerializeField] private TMP_InputField inputFieldId, inputFieldPw;
-        [SerializeField] private TMP_InputField inputFieldPwConfirm, inputFieldNickname;
-        [SerializeField] private Text textInformation;
-        [SerializeField] private GameObject scrollSignup, scrollSignin;
-
+        
         #endregion
+        
+        
+        #region Private variables
 
+        [Header("Account Information InputFields")] 
+        [SerializeField] private TMP_InputField inputFieldId;
+        [SerializeField] private TMP_InputField inputFieldPw;
+        [SerializeField] private TMP_InputField inputFieldPwConfirm;
+        [SerializeField] private TMP_InputField inputFieldNickname;
+        
+        [Header("Information Text")]
+        [SerializeField] private TextMeshProUGUI textInformation;
 
-        #region Public variables
+        [Header("2D Scroll Sign up UI")] 
+        [SerializeField] private ScrollScript2D scroll2DSignup;
 
-        public enum ScrollMoveType
+        [Header("3D Scroll Sign in UI")] 
+        [SerializeField] private ScrollScript3D scroll3DSignin;
+        
+        
+
+        private enum ScrollMoveType
         {
             Down,
             Up
@@ -35,50 +47,64 @@ namespace UI.Login
 
         #endregion
         
-
+        
         #region Callbacks
         
+        /// <summary>
+        /// Callback for sign up request
+        /// </summary>
+        /// <param name="req"></param>
         private void SignupReqCallback(UnityWebRequest req)
         {
             string jsonPayload = req.downloadHandler.text;
             if (req.result == UnityWebRequest.Result.Success)
             {
-                // close the scroll
-                scrollSignup.GetComponent<ScrollScript2D>().ScrollClose();
+                // close the sign up scroll
+                scroll2DSignup.ScrollClose();
                 ScrollMoveUp();
             }
             else
             {
+                // Fail to sign up
                 Packet.WebServerException exception = JsonUtility.FromJson<Packet.WebServerException>(jsonPayload);
+                ShowInformation(exception.message);
                 Debug.Log(exception.ToString());
-                textInformation.text = exception.message;
             }
         }
-
+        
+        /// <summary>
+        /// Callback for scroll2D move down behavior
+        /// </summary>
         private void ScrollMoveDownCallback()
         {
-            scrollSignup.GetComponent<ScrollScript2D>().ScrollOpen();
+            scroll2DSignup.ScrollOpen();
         }
 
+        /// <summary>
+        /// Callback for scroll2D move up behavior
+        /// </summary>
         private void ScrollMoveUpCallback()
         {
-            scrollSignin.GetComponent<ScrollScript3D>().OpenScroll();
+            scroll3DSignin.OpenScroll();
         }
 
+        /// <summary>
+        /// Callback for submit button
+        /// </summary>
         public void OnSubmitBtnClick()
         {
             if (inputFieldId.text.Length == 0)
-                textInformation.text = LoginSceneHUDNotify.NotifyEmptyIdField;
+                ShowInformation(LoginSceneHUDNotify.NotifyEmptyIdField);
             else if (!CustomUtils.IsValidEmail(inputFieldId.text))
-                textInformation.text = LoginSceneHUDNotify.NotifyInvalidIdForm;
+                ShowInformation(LoginSceneHUDNotify.NotifyInvalidIdForm);
             else if (inputFieldPw.text.Length == 0)
-                textInformation.text = LoginSceneHUDNotify.NotifyEmptyPwField;
+                ShowInformation(LoginSceneHUDNotify.NotifyEmptyPwField);
             else if (inputFieldPwConfirm.text.Length == 0)
-                textInformation.text = LoginSceneHUDNotify.NotifyEmptyPwConfirmField;
+                ShowInformation(LoginSceneHUDNotify.NotifyEmptyPwConfirmField);
             else if (!inputFieldPw.text.Equals(inputFieldPwConfirm.text))
-                textInformation.text = LoginSceneHUDNotify.NotifyPwMismatch;
+                ShowInformation(LoginSceneHUDNotify.NotifyPwMismatch);
             else if (inputFieldNickname.text.Length == 0)
-                textInformation.text = LoginSceneHUDNotify.NotifyEmptyNicknameField;
+                ShowInformation(LoginSceneHUDNotify.NotifyEmptyNicknameField);
             else
             {
                 Packet.Account account = new Packet.Account
@@ -92,9 +118,12 @@ namespace UI.Login
             }
         }
 
+        /// <summary>
+        /// Callback for back button
+        /// </summary>
         public void OnBackBtnClick()
         {
-            scrollSignup.GetComponent<ScrollScript2D>().ScrollClose();
+            scroll2DSignup.ScrollClose();
             ScrollMoveUp();
         }
 
@@ -102,17 +131,23 @@ namespace UI.Login
 
 
         #region Custom methods
+        private void ShowInformation(string text)
+        {
+            StopCoroutine(ClearInformationText());
+            StartCoroutine(ClearInformationText());
+            textInformation.text = text;
+        }
+        
+        private void ScrollMoveUp()
+        {
+            StartCoroutine(ScrollMovement(ScrollMoveType.Up, ScrollMoveUpCallback));
+        }
 
         public void ScrollMoveDown()
         {
             StartCoroutine(ScrollMovement(ScrollMoveType.Down, ScrollMoveDownCallback));
         }
-
-        public void ScrollMoveUp()
-        {
-            StartCoroutine(ScrollMovement(ScrollMoveType.Up, ScrollMoveUpCallback));
-        }
-
+        
         #endregion
 
 
@@ -120,7 +155,7 @@ namespace UI.Login
 
         IEnumerator ScrollMovement(ScrollMoveType type, Action callback = null)
         {
-            RectTransform rectTransform = scrollSignup.GetComponent<RectTransform>();
+            RectTransform rectTransform = scroll2DSignup.gameObject.GetComponent<RectTransform>();
             switch (type)
             {
                 case ScrollMoveType.Down:
@@ -149,6 +184,12 @@ namespace UI.Login
                     Debug.LogError("UndefinedScrollMoveTypeException");
                     yield break;
             }
+        }
+        
+        IEnumerator ClearInformationText()
+        {
+            yield return new WaitForSeconds(2f);
+            textInformation.text = "";
         }
 
         #endregion

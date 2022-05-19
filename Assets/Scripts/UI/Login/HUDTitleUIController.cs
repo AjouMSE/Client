@@ -1,51 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Manager;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
 
 namespace UI.Login
 {
-    public class HUDTitleControllerLobby : MonoBehaviour
+    public class HUDTitleUIController : MonoBehaviour
     {
-        #region Static variables
-        
+        #region Private constants
+
+        private const string HudNameTitle = "HUD_Title";
+            
         private const int RotCamDirLeft = -1, RotCamDirRight = 1;
         private const int RotAngleMaxLeft = -60, RotAngleMaxRight = 60;
+        private const float FadeInDuration = 1.5f, FadeOutDuration = 0.5f;
         
         #endregion
         
         
         #region Private variables
         
-        [SerializeField] private Text titleText;
+        [Header("Camera")]
         [SerializeField] private Camera mainCamera;
-        [SerializeField] private Canvas titleCanvas;
-        [SerializeField] private ScrollScript3D signinScroll;
+        [SerializeField] private Camera hudCamera;
         
+        [Header("Title Text")]
+        [SerializeField] private Text titleText;
+
+        [Header("3D Scroll UI")]
+        [SerializeField] private ScrollScript3D signinScroll;
+
+        private CanvasGroup _titleCvsGroup;
         private float _mainCamRotSpd = 6.0f, _mainCamRotAngle = 0;
         private int _rotCamCurrDir = RotCamDirRight;
         
         #endregion
 
         
-        #region Init methods
+        #region Custom methods
 
-        void InitTitle()
+        void InitUI()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(CustomUtils.GenColorText("m", 140, 128, 255));
-            sb.Append('a');
-            sb.Append(CustomUtils.GenColorText("g", 140, 128, 255));
-            sb.Append('i');
-            sb.Append(CustomUtils.GenColorText("c", 140, 128, 255));
-            sb.Append("a ");
-            sb.Append(CustomUtils.GenColorText("d", 140, 128, 255));
-            sb.Append('u');
-            sb.Append(CustomUtils.GenColorText("e", 140, 128, 255));
-            sb.Append('l');
-            titleText.text = sb.ToString();
+            _titleCvsGroup = hudCamera.transform.Find(HudNameTitle).GetComponent<CanvasGroup>();
+            titleText.text = CustomUtils.MakeTitleColor();
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBgm1, true);
         }
 
         #endregion
@@ -53,12 +54,20 @@ namespace UI.Login
         
         #region Callbacks
         
-        public void OnToStartBtnClick()
+        private void TitleFadeOutCallback()
         {
-            titleCanvas.gameObject.SetActive(false);
+            _titleCvsGroup.gameObject.SetActive(false);
             signinScroll.OpenScroll();
         }
         
+        public void OnToStartBtnClick()
+        {
+            //todo-Have to fix a bug where SpriteRenderer is not affected by CanvasGroup's alpha value
+            //UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _titleCvsGroup, FadeOutDuration, TitleFadeOutCallback);
+            _titleCvsGroup.gameObject.SetActive(false);
+            signinScroll.OpenScroll();
+        }
+
         #endregion
         
 
@@ -78,7 +87,8 @@ namespace UI.Login
         
         private void Start()
         {
-            InitTitle();
+            InitUI();
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _titleCvsGroup, FadeInDuration);
         }
         
         private void Update()

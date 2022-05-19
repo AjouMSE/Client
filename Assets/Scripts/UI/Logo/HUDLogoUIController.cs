@@ -6,25 +6,26 @@ using UnityEngine.SceneManagement;
 namespace Scene
 {
     /// <summary>
-    /// LogoSceneController.cs
-    /// Author: Lee Hong Jun (Arcane22, hong3883@naver.com)
-    /// Version: 1.0.1
-    /// Last Modified: 2022. 04. 04
-    /// Description: LogoScene's fade effect controller
-    /// 1.0.0 - Add Basic LogoScene control script
-    /// 1.0.1 - Add BgmManager
-    ///       - Change fade effect coroutine to FadeManager
+    /// HUDLogoUIController.cs
+    /// Author: Lee Hong Jun (github.com/ARC4NE22, hong3883@naver.com)
+    /// Last Modified: 2022. 05. 19
     /// </summary>
-    public class LogoSceneController : MonoBehaviour
+    public class HUDLogoUIController : MonoBehaviour
     {
-        #region Private variables
+        #region Private constants
         
         private const int MaxFrameRate = 60;
         private const float FadeInDuration = 1.5f;
         private const float FadeOutDuration = 1f;
         private const string DestSceneName = "LoginScene";
-
-        [SerializeField] private CanvasGroup canvasGroup;
+        
+        #endregion
+        
+        
+        #region Private variables
+        
+        [Header("LogoScene UI Canvas Group")]
+        [SerializeField] private CanvasGroup logoCvsGroup;
 
         #endregion
 
@@ -33,7 +34,7 @@ namespace Scene
 
         private void FadeInCallback()
         {
-            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, canvasGroup, FadeOutDuration, FadeOutCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, logoCvsGroup, FadeOutDuration, FadeOutCallback);
         }
 
         private void FadeOutCallback()
@@ -46,26 +47,32 @@ namespace Scene
 
         #region Custom methods
 
+        /// <summary>
+        /// Generate & Initialize instance of singleton
+        /// </summary>
         private void InitManager()
         {
             AudioManager.Instance.Init();
         }
 
-        private void InitScene()
+        /// <summary>
+        /// Initialize basic game settings
+        /// </summary>
+        private void InitUI()
         {
             // Set maximum frame rate : 60
             Application.targetFrameRate = MaxFrameRate;
             
             // Set Screen orientation : landscape
             Screen.orientation = ScreenOrientation.Landscape;
-            Screen.fullScreenMode = FullScreenMode.Windowed;
+            UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
 
             // Set Bgm to Logo bgm
-            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Bgm, 1);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Bgm, 0.5f);
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.LogoBgm, false);
 
             // Start fade effect
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroup, FadeInDuration, FadeInCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, logoCvsGroup, FadeInDuration, FadeInCallback);
         }
         
         #endregion
@@ -80,7 +87,7 @@ namespace Scene
         
         void Start()
         {
-            InitScene();
+            InitUI();
         }
 
         #endregion

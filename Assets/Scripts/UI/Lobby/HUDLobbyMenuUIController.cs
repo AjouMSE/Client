@@ -8,12 +8,35 @@ using Utils;
 
 namespace UI.Lobby
 {
-    public class HUDLobbyMenuController : MonoBehaviour
+    public class HUDLobbyMenuUIController : MonoBehaviour
     {
+        #region Private constants
+
+        private const string CvsNameLobby = "HUD_Lobby";
+        private const string CvsNameLobbyUI = "Cvs_Lobby_UI";
+        private const string CvsNameUserInfo = "Cvs_Lobby_UserInfo";
+        private const string CvsNameSettings = "Cvs_Lobby_Settings";
+        private const string CvsNameMatchMaking = "Obj_Lobby_MatchMaking";
+
+
+        #endregion
+        
+        
         #region Private variables
 
-        [SerializeField] private CanvasGroup lobbyCvsGroup, userInfoCvsGroup, settingsCvsGroup, matchMakingCvsGroup;
+        [Header("Camera")] 
+        [SerializeField] private Camera hudCamera;
+
+        [Header("Canvas Groups")] 
+        [SerializeField] private CanvasGroup lobbyCvsGroup;
+        [SerializeField] private CanvasGroup userInfoCvsGroup;
+        [SerializeField] private CanvasGroup settingsCvsGroup;
+        [SerializeField] private CanvasGroup matchMakingCvsGroup;
+        
+        [Header("Title text")]
         [SerializeField] private Text titleText;
+        
+        [Header("3D Scroll menu UI")]
         [SerializeField] private GameObject menuScroll3D;
 
         #endregion
@@ -29,7 +52,6 @@ namespace UI.Lobby
         
         public void OnPvpBtnClick()
         {
-            //todo-Send Match making event to socket.io server
             menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
             MatchMakingManager.Instance.MatchMaking();
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, matchMakingCvsGroup, UIManager.LobbyMenuFadeInOutDuration);

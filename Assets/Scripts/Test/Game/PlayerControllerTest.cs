@@ -35,32 +35,40 @@ public class PlayerControllerTest : MonoBehaviour
         _animator = GetComponent<Animator>();
         _panelControllerTest = GameObject.Find("GameSceneControllerTest").GetComponent<PanelControllerTest>();
         InitPos();
+    }
 
-        string range = "00000 00000 00001 00000 00000";
-        BitMask.Bits25Field skillRange = new BitMask.Bits25Field(range);
-        BitMask.PrintBits25(skillRange);
-        BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(skillRange);
-        BitMask.PrintBits30(fieldRange);
-        
-        int dx = _x - 3;
-        int dy = _y - 2;
-        BitMask.ShiftBits30(ref fieldRange, dx, dy);
-        BitMask.PrintBits30(fieldRange);
-
-        int mask = (1 << 29);
-        for (int i = 0; i < 30; i++)
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
         {
-            if ((fieldRange.element & mask) > 0)
-            {
-                int px = i % 6;
-                int py = i / 6;
-                Debug.Log($"{i} / {px} / {py}");
-                _panelControllerTest.GetPanel(py, px).GetComponent<MeshRenderer>().material.color = new Color(1, 0.5f, 0.5f);
-            }
-            mask = mask >> 1;
-        }
+            string range = "00000 00000 00001 00000 00000";
+            BitMask.Bits25Field skillRange = new BitMask.Bits25Field(range);
+            BitMask.PrintBits25(skillRange);
+            BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(skillRange);
+            BitMask.PrintBits30(fieldRange);
         
-        Move(range);
+            int dx = _x - 3;
+            int dy = _y - 2;
+            BitMask.ShiftBits30(ref fieldRange, dx, dy);
+            BitMask.PrintBits30(fieldRange);
+
+            int mask = (1 << 29);
+            for (int i = 0; i < 30; i++)
+            {
+                if ((fieldRange.element & mask) > 0)
+                {
+                    int px = i % 6;
+                    int py = i / 6;
+                    Debug.Log($"{i} / {px} / {py}");
+                    _panelControllerTest.GetPanel(px, py).GetComponent<MeshRenderer>().material.color = new Color(1, 0.5f, 0.5f);
+                }
+                mask = mask >> 1;
+            }
+
+            _x += 2;
+        
+            Move(range);
+        }
     }
 
 

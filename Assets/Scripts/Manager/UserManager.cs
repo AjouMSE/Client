@@ -6,12 +6,11 @@ using Utils;
 
 namespace Manager
 {
-    public class UserManager : MonoSingleton<UserManager>
+    public class  UserManager : MonoSingleton<UserManager>
     {
         #region Private variables
 
-        private Packet.User _user;
-        private Packet.Hostile _hostile;
+        private Packet.User _user, _hostile;
         private bool _isSignedIn;
         private bool _isHostileExist;
         private bool _isHost;
@@ -22,7 +21,7 @@ namespace Manager
         #region Public variables
         
         public Packet.User User => _user;
-        public Packet.Hostile Hostile => _hostile;
+        public Packet.User Hostile => _hostile;
         public bool IsHost => _isHost;
 
         #endregion
@@ -62,7 +61,7 @@ namespace Manager
             }
         }
 
-        public void AddHostileInfo(Packet.Hostile hostile)
+        public void AddHostileInfo(Packet.User hostile)
         {
             if (!_isHostileExist)
             {

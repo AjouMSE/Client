@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 
 namespace UI.Game
 {
-    public class HUDGameInfoController : MonoBehaviour
+    public class HUDUserInfoUIController : MonoBehaviour
     {
         #region Private variables
         
+        [Header("Nickname Text")]
         [SerializeField] private Text hostNicknameText;
         [SerializeField] private Text clientNicknameText;
         
@@ -19,15 +22,21 @@ namespace UI.Game
 
         private void Init()
         {
-            if (!UserManager.Instance.IsHost)
+            Packet.User host, client;
+            
+            if (NetworkManager.Singleton.IsHost)
             {
-                Text tmp = hostNicknameText;
-                hostNicknameText = clientNicknameText;
-                clientNicknameText = tmp;
+                host = UserManager.Instance.User;
+                client = UserManager.Instance.Hostile;
+            }
+            else
+            {
+                host = UserManager.Instance.Hostile;
+                client = UserManager.Instance.User;
             }
             
-            hostNicknameText.text = UserManager.Instance.User.nickname;
-            clientNicknameText.text = UserManager.Instance.Hostile.nickname;
+            hostNicknameText.text = host.nickname;
+            clientNicknameText.text = client.nickname;
         }
 
         #endregion
@@ -35,7 +44,6 @@ namespace UI.Game
         
         #region Unity event methods
         
-        // Start is called before the first frame update
         void Start()
         {
             Init();

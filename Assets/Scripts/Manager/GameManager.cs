@@ -104,45 +104,45 @@ namespace Manager
 
         IEnumerator ProcessCard()
         {
-            // for (int i = 0; i < 3; i++)
-            // {
-            //     NetworkSynchronizer.Instance.RemoveCardFromList(0);
-            //     GameObject.Find("GameSceneController").GetComponent<GameSceneController>().UpdateHostCardUI();
-            //     GameObject.Find("GameSceneController").GetComponent<GameSceneController>().UpdateClientCardUI();
-
-            //     GameObject obj1 = Instantiate(skillVfx, new Vector3(UnityEngine.Random.Range(0f, 7f), 1.5f, UnityEngine.Random.Range(0f, 7f)), Quaternion.identity);
-            //     obj1.transform.localScale = new Vector3(4f, 4f, 4f);
-            //     GameObject obj2 = Instantiate(skillVfx2, new Vector3(UnityEngine.Random.Range(6f, 14f), 1.5f, UnityEngine.Random.Range(0f, 7f)), Quaternion.identity);
-            //     obj2.transform.localScale = new Vector3(4f, 4f, 4f);
-
-            //     yield return new WaitForSeconds(2f);
-            // }
-
             for (int i = 0; i < 3; i++)
             {
-                int hostCardCode = NetworkSynchronizer.Instance.GetHostCardFromList(0);
-                int clientCardCode = NetworkSynchronizer.Instance.GetClientCardFromList(0);
-
                 NetworkSynchronizer.Instance.RemoveCardFromList(0);
-                GameObject.Find("GameSceneController").GetComponent<GameSceneController>().UpdateHostCardUI();
-                GameObject.Find("GameSceneController").GetComponent<GameSceneController>().UpdateClientCardUI();
+                GameObject.Find("GameSceneUIController").GetComponent<GameSceneController>().UpdateHostCardUI();
+                GameObject.Find("GameSceneUIController").GetComponent<GameSceneController>().UpdateClientCardUI();
 
-
-                if (NetworkManager.Singleton.IsServer)
-                {
-                    // // @todo - get range from table
-                    // int[,] hostRange = new int[,] { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 1, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
-                    // int[,] clientRange = new int[,] { { 0, 0, 0, 0, 0 }, { 0, 0, 1, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
-                    // NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject().GetComponent<WizardController>().Move(hostRange);
-                    // NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.ConnectedClientsIds[1]).GetComponent<WizardController>().Move(clientRange);
-
-                    // Test Code
-                    NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject().GetComponent<SkillControllerTest>().Play(101000000);
-                    NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.ConnectedClientsIds[1]).GetComponent<SkillControllerTest>().Play(101000001);
-                }
+                GameObject obj1 = Instantiate(skillVfx, new Vector3(UnityEngine.Random.Range(0f, 7f), 1.5f, UnityEngine.Random.Range(0f, 7f)), Quaternion.identity);
+                obj1.transform.localScale = new Vector3(4f, 4f, 4f);
+                GameObject obj2 = Instantiate(skillVfx2, new Vector3(UnityEngine.Random.Range(6f, 14f), 1.5f, UnityEngine.Random.Range(0f, 7f)), Quaternion.identity);
+                obj2.transform.localScale = new Vector3(4f, 4f, 4f);
 
                 yield return new WaitForSeconds(2f);
             }
+
+            // for (int i = 0; i < 3; i++)
+            // {
+            //     int hostCardCode = NetworkSynchronizer.Instance.GetHostCardFromList(0);
+            //     int clientCardCode = NetworkSynchronizer.Instance.GetClientCardFromList(0);
+            //
+            //     NetworkSynchronizer.Instance.RemoveCardFromList(0);
+            //     GameObject.Find("GameSceneController").GetComponent<GameSceneController>().UpdateHostCardUI();
+            //     GameObject.Find("GameSceneController").GetComponent<GameSceneController>().UpdateClientCardUI();
+            //
+            //
+            //     if (NetworkManager.Singleton.IsServer)
+            //     {
+            //         // // @todo - get range from table
+            //         // int[,] hostRange = new int[,] { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 1, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
+            //         // int[,] clientRange = new int[,] { { 0, 0, 0, 0, 0 }, { 0, 0, 1, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
+            //         // NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject().GetComponent<WizardController>().Move(hostRange);
+            //         // NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.ConnectedClientsIds[1]).GetComponent<WizardController>().Move(clientRange);
+            //
+            //         // Test Code
+            //         NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject().GetComponent<SkillControllerTest>().Play(101000000);
+            //         NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.ConnectedClientsIds[1]).GetComponent<SkillControllerTest>().Play(101000001);
+            //     }
+            //
+            //     yield return new WaitForSeconds(2f);
+            // }
 
             _turnCnt++;
             StartCoroutine(WaitForReadToRunTimer());

@@ -8,28 +8,78 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Scene
+namespace UI.Game
 {
-    public class GameSceneController : MonoBehaviour
+    public class HUDGameCardSelectionUIController : MonoBehaviour
     {
-        #region Public variables
+        #region Private Variables
 
-        public GameObject panel, scroll3D;
-
+        [Header("Host Card Selections")]
         [SerializeField] private Button[] hostCards;
+        
+        [Header("Client Card Selections")]
         [SerializeField] private Button[] clientCards;
+
+        [Header("Host Confirm Button")] 
+        [SerializeField] private Button hostConfirmBtn;
+
+        [Header("Client Confirm Button")] 
+        [SerializeField] private Button clientConfirmBtn;
+        
         [SerializeField] private Sprite[] cardImgs;
         [SerializeField] private Sprite baseCardImg;
-        [SerializeField] private Button hostConfirm, clientConfirm;
+
+        [Header("3D card scroll UI")]
+        [SerializeField] private ScrollScript3D cardScroll3D;
 
         #endregion
+        
+        
+        #region Unity event methods
+
+        private void Start()
+        {
+            Init();
+        }
+
+        #endregion
+        
+
+        #region Callbacks
 
         public void OnConfirmBtnClick()
         {
-            GameManager.Instance.StopTimer();
+            if(GameManager.Instance.canSelect)
+                GameManager.Instance.StopTimer();
         }
 
+        #endregion
 
+
+        #region Custom methods
+
+        private void Init()
+        {
+            if (UserManager.Instance.IsHost) clientConfirmBtn.gameObject.SetActive(false);
+            else hostConfirmBtn.gameObject.SetActive(false);
+        }
+
+        public void OpenCardScroll()
+        {
+            cardScroll3D.OpenScroll();
+        }
+
+        public void CloseCardScroll()
+        {
+            cardScroll3D.CloseScroll();
+        }
+        
+        #endregion
+
+        /*public void OnConfirmBtnClick()
+        {
+            GameManager.Instance.StopTimer();
+        }
 
         #region Custom methods
 
@@ -132,19 +182,6 @@ namespace Scene
                     UpdateClientCardUI();
                 }
             }
-        }
-
-        #endregion
-
-
-
-        #region Unity event methods
-
-        private void Start()
-        {
-            Init();
-        }
-
-        #endregion
+        }*/
     }
 }

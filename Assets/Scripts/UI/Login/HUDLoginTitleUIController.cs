@@ -8,7 +8,7 @@ using Utils;
 
 namespace UI.Login
 {
-    public class HUDTitleUIController : MonoBehaviour
+    public class HUDLoginTitleUIController : MonoBehaviour
     {
         #region Private constants
 

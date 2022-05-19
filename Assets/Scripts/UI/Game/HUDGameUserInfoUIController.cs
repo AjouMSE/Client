@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Manager;
 using Unity.Netcode;
 using UnityEngine;
@@ -8,18 +9,26 @@ using Utils;
 
 namespace UI.Game
 {
-    public class HUDUserInfoUIController : MonoBehaviour
+    public class HUDGameUserInfoUIController : MonoBehaviour
     {
         #region Private variables
         
         [Header("Nickname Text")]
         [SerializeField] private Text hostNicknameText;
         [SerializeField] private Text clientNicknameText;
+
+        [Header("Timer, Turn Text")] 
+        [SerializeField] private Text timerText;
+
+        [SerializeField] private Text turnText;
         
         #endregion
         
         #region Custom methods
 
+        /// <summary>
+        /// Initialize host, client information UI
+        /// </summary>
         private void Init()
         {
             Packet.User host, client;
@@ -37,6 +46,24 @@ namespace UI.Game
             
             hostNicknameText.text = host.nickname;
             clientNicknameText.text = client.nickname;
+        }
+
+        /// <summary>
+        /// Update timer text area
+        /// </summary>
+        public void UpdateTimerText()
+        {
+            float timer = GameManager.Instance.timerValue;
+            if (timer >= 10) timerText.text = $"{Mathf.Round(timer).ToString(CultureInfo.CurrentCulture)}";
+            else timerText.text = $"{timer:0.0}";
+        }
+
+        /// <summary>
+        /// Update turn text area
+        /// </summary>
+        public void UpdateTurnText()
+        {
+            turnText.text = $"Turn {GameManager.Instance.turnValue.ToString()}";
         }
 
         #endregion

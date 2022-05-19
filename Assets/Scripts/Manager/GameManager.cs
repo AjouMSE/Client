@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using Object;
+using Core;
+using InGame;
 using Scene;
+using UI.Game;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -13,42 +15,62 @@ namespace Manager
 {
     public class GameManager : MonoSingleton<GameManager>
     {
+        #region Private constants
 
+        private const int DefaultTurnValue = 0;
+        private const float DefaultTimerValue = 60;
+        
+        #endregion
+        
+        
         #region Private variables
 
-        private float _selectionTimer;
-        private int _turnCnt;
+        private NetworkSynchronizer _netSync;
+        private PanelController _panelController; 
+        private HUDGameUserInfoUIController _userInfoUIController;
+        private HUDGameCardSelectionUIController _cardSelectionUIController;
+
+        private int _turnValue;
+        private float _timerValue;
         private bool _canSelect;
 
         #endregion
 
 
         #region Public variables
-
-        public GameObject scroll3D, skillVfx, skillVfx2;
-        public Text timerText, turnText;
-
+        
+        public int turnValue => _turnValue;
+        public float timerValue => _timerValue;
+        public bool canSelect => _canSelect;
+        
         #endregion
 
 
         #region Custom methods
 
-        public void Init(GameObject panel)
+        public void Init()
         {
-            _selectionTimer = 60;
-            _turnCnt = 1;
-            NetworkSynchronizer.Instance.Init();
+            _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
+            _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
+            
+            GameObject uiController = GameObject.Find("GameSceneUIController");
+            _userInfoUIController = uiController.GetComponent<HUDGameUserInfoUIController>();
+            _cardSelectionUIController = uiController.GetComponent<HUDGameCardSelectionUIController>();
+
+            _turnValue = DefaultTurnValue;
+            _timerValue = DefaultTimerValue;
+            _canSelect = false;
         }
 
-        public void BeginTimer()
+        public void CheckTimerReady()
         {
-            StartCoroutine(CardSelectionTimer());
+            StartCoroutine(WaitForRunningTimer());
         }
 
         public void StopTimer()
         {
-            _selectionTimer = 0;
-            timerText.text = Math.Ceiling(_selectionTimer).ToString(CultureInfo.CurrentCulture);
+            _timerValue = 0;
+            _userInfoUIController.UpdateTimerText();
         }
 
         #endregion
@@ -58,10 +80,11 @@ namespace Manager
 
         #region Unity event functions
 
-        void Awake()
+        private void Update()
         {
-
+            Debug.Log($"Turn value is {_turnValue}");
         }
+        
 
         #endregion
 
@@ -69,40 +92,109 @@ namespace Manager
 
         #region Coroutines
 
-        public IEnumerator CardSelectionTimer()
+        /// <summary>
+        /// Wait for running timer
+        /// Checks if both host and client are ready to run timer
+        /// </summary>
+        private IEnumerator WaitForRunningTimer()
         {
-            turnText.text = $"TURN {_turnCnt}";
-            _selectionTimer = 60f;
+            Debug.Log("wait for running timer");
+            _netSync.ReadyToRunTimer(true);
+            _netSync.ReadyToProcessCards(false);
+
+            while (!_netSync.BothReadyToRunTimer())
+            {
+                yield return null;
+            }
+
+            StartCoroutine(RunTimer());
+        }
+
+        /// <summary>
+        /// Run card selection timer
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator RunTimer()
+        {
+            _turnValue++;
+            _timerValue = DefaultTimerValue;
             _canSelect = true;
-            scroll3D.GetComponent<ScrollScript3D>().OpenScroll();
+            
+            _userInfoUIController.UpdateTimerText();
+            _userInfoUIController.UpdateTurnText();
+            _cardSelectionUIController.OpenCardScroll();
 
-            while (_selectionTimer > 0)
+            while (_timerValue > 0)
             {
-                _selectionTimer -= Time.deltaTime;
-                timerText.text = Math.Ceiling(_selectionTimer).ToString(CultureInfo.CurrentCulture);
+                _timerValue -= Time.deltaTime;
+                _userInfoUIController.UpdateTimerText();
                 yield return null;
             }
 
-            StartCoroutine(WaitForReadToProcessCard());
+            StartCoroutine(WaitForProcessingCards());
         }
 
-        public IEnumerator WaitForReadToProcessCard()
+        /// <summary>
+        /// Wait for processing cards
+        /// Checks if both host and client are ready to process cards in card list
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator WaitForProcessingCards()
         {
-            NetworkSynchronizer.Instance.ReadToRunTimer(false);
-            NetworkSynchronizer.Instance.ReadToProcessCard(true);
+            Debug.Log("Wait for processing cards");
+            _netSync.ReadyToRunTimer(false);
+            _netSync.ReadyToProcessCards(true);
+            
+            _timerValue = 0;
             _canSelect = false;
-            scroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            
+            _userInfoUIController.UpdateTimerText();
+            _cardSelectionUIController.CloseCardScroll();
 
-            while (!NetworkSynchronizer.Instance.hostReadToProcessCard.Value ||
-                   !NetworkSynchronizer.Instance.clientReadyToProcessCard.Value)
+            while (!_netSync.BothReadyToProcessCards())
             {
                 yield return null;
             }
 
-            StartCoroutine(ProcessCard());
+            StartCoroutine(ProcessCards()); 
         }
 
-        IEnumerator ProcessCard()
+        /// <summary>
+        /// Process cards in card list
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator ProcessCards()
+        {
+            Debug.Log("Process cards");
+            GameObject vfx = GameObject.Find("EvilDeath");
+            // Important logic will come here
+            // process logic
+            for (int i = 0; i < 3; i++)
+            {
+                string range = "10101 00000 10101 00000 10101";
+                BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(new BitMask.Bits25Field(range));
+                BitMask.ShiftBits30(ref fieldRange, -3, 0);
+
+                int mask = 1 << 29;
+                for (int j = 0; j < 30; j++)
+                {
+                    if ((fieldRange.element & mask) > 0)
+                    {
+                        _panelController.ChangeColor(j);
+                    }
+                    
+                    mask = mask >> 1;
+                }
+                Instantiate(vfx, new Vector3(0, 0, 0), Quaternion.identity);
+                yield return new WaitForSeconds(2f);
+            }
+
+            // if the game is not ended,
+            StartCoroutine(WaitForRunningTimer());
+        }
+        
+        
+        /*IEnumerator ProcessCard()
         {
             for (int i = 0; i < 3; i++)
             {
@@ -143,24 +235,8 @@ namespace Manager
             //
             //     yield return new WaitForSeconds(2f);
             // }
-
-            _turnCnt++;
-            StartCoroutine(WaitForReadToRunTimer());
-        }
-
-        IEnumerator WaitForReadToRunTimer()
-        {
-            NetworkSynchronizer.Instance.ReadToRunTimer(true);
-            NetworkSynchronizer.Instance.ReadToProcessCard(false);
-
-            while (!NetworkSynchronizer.Instance.hostReadyToRunTimer.Value ||
-                   !NetworkSynchronizer.Instance.clientReadyToRunTimer.Value)
-            {
-                yield return null;
-            }
-
-            GameManager.Instance.BeginTimer();
-        }
+            
+        }*/
 
         #endregion
     }

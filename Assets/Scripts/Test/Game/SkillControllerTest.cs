@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using InGame;
 using UnityEngine;
 using Utils;
 
@@ -32,7 +33,7 @@ public class SkillControllerTest : MonoBehaviour
 
     private void Move(CardData data)
     {
-        _wizardController.Move(data.range);
+        //_wizardController.Move(data.range);
     }
 
     private void Attack()

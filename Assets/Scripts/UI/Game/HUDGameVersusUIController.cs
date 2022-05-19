@@ -9,17 +9,17 @@ using Utils;
 
 namespace UI.Game
 {
-    public class HUDVersusUIController : MonoBehaviour
+    public class HUDGameVersusUIController : MonoBehaviour
     {
         #region Private constants 
         
-        private readonly string HudNameVersus = "HUD_Versus";
-        private readonly string HudNameUserInfo = "HUD_UserInfo";
-        private readonly string HudNameCardSelection = "HUD_CardSelection";
+        private const string HudNameVersus = "HUD_Versus";
+        private const string HudNameUserInfo = "HUD_UserInfo";
+        private const string HudNameCardSelection = "HUD_CardSelection";
         
-        private readonly float MinMainCameraAngle = -150;
-        private readonly float MaxMainCameraAngle = 30;
-        private readonly float RotationScale = 2f;
+        private const float MinMainCameraAngle = -150;
+        private const float MaxMainCameraAngle = 30;
+        private const float RotationScale = 2f;
         
         #endregion 
         
@@ -71,7 +71,6 @@ namespace UI.Game
             clientInfoTextArr[3].text = client.draw.ToString();
             clientInfoTextArr[4].text = client.ranking.ToString();
         }
-        
         private void Init()
         {
             _mainCameraXAngle = MinMainCameraAngle;
@@ -84,8 +83,9 @@ namespace UI.Game
                 NetworkManager.Singleton.StartHost();
             else 
                 NetworkManager.Singleton.StartClient();
-
+            
             InitVersusIntoText();
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.BattleBgm1, true);
             StartCoroutine(ShowVersus());
         }
 
@@ -107,6 +107,10 @@ namespace UI.Game
 
         #region Coroutines
 
+        /// <summary>
+        /// Shows information of host & client
+        /// </summary>
+        /// <returns></returns>
         IEnumerator ShowVersus()
         {
             versusText.fontSize = 125;
@@ -120,6 +124,10 @@ namespace UI.Game
             StartCoroutine(RotateCamera());
         }
 
+        /// <summary>
+        /// Rotate main camera to show battle field
+        /// </summary>
+        /// <returns></returns>
         IEnumerator RotateCamera()
         {
             // Camera rotation effect
@@ -133,28 +141,9 @@ namespace UI.Game
             // Set user info, card selection ui activation to true 
             _hudUserInfo.SetActive(true);
             _hudCardSelection.SetActive(true);
-            
-            GameManager.Instance.timerText = GameObject.Find("Txt_Timer").GetComponent<Text>();
-            GameManager.Instance.turnText = GameObject.Find("Txt_Turn").GetComponent<Text>();
-            GameManager.Instance.scroll3D = GameObject.Find("ScrollObject_Short_WithScript");
-            GameManager.Instance.skillVfx =  GameObject.Find("EvilDeath");
-            GameManager.Instance.skillVfx2 = GameObject.Find("PoisonDeath");
-            
-            // Wait until opponent is ready to run timer
-            StartCoroutine(WaitForReadToRunTimer());
-        }
 
-        IEnumerator WaitForReadToRunTimer()
-        {
-            NetworkSynchronizer.Instance.ReadToRunTimer(true);
-
-            while (!NetworkSynchronizer.Instance.hostReadyToRunTimer.Value || 
-                   !NetworkSynchronizer.Instance.clientReadyToRunTimer.Value)
-            {
-                yield return null;
-            
-            }
-            GameManager.Instance.BeginTimer();
+            // Checks that both host and client are ready to run timer
+            GameManager.Instance.CheckTimerReady();
         }
 
         #endregion

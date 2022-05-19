@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UI.Login
 {
-    public class LoginSceneHUDNotify
+    public class HUDLoginNotify
     {
         public const string NotifyEmptyIdField = "Please enter your Id.";
         public const string NotifyEmptyPwField = "Please enter your Password.";

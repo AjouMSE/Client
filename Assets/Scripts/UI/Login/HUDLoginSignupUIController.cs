@@ -10,7 +10,7 @@ using Utils;
 
 namespace UI.Login
 {
-    public class HUDSignupUIController : MonoBehaviour
+    public class HUDLoginSignupUIController : MonoBehaviour
     {
         #region Private constants
         
@@ -94,17 +94,17 @@ namespace UI.Login
         public void OnSubmitBtnClick()
         {
             if (inputFieldId.text.Length == 0)
-                ShowInformation(LoginSceneHUDNotify.NotifyEmptyIdField);
+                ShowInformation(HUDLoginNotify.NotifyEmptyIdField);
             else if (!CustomUtils.IsValidEmail(inputFieldId.text))
-                ShowInformation(LoginSceneHUDNotify.NotifyInvalidIdForm);
+                ShowInformation(HUDLoginNotify.NotifyInvalidIdForm);
             else if (inputFieldPw.text.Length == 0)
-                ShowInformation(LoginSceneHUDNotify.NotifyEmptyPwField);
+                ShowInformation(HUDLoginNotify.NotifyEmptyPwField);
             else if (inputFieldPwConfirm.text.Length == 0)
-                ShowInformation(LoginSceneHUDNotify.NotifyEmptyPwConfirmField);
+                ShowInformation(HUDLoginNotify.NotifyEmptyPwConfirmField);
             else if (!inputFieldPw.text.Equals(inputFieldPwConfirm.text))
-                ShowInformation(LoginSceneHUDNotify.NotifyPwMismatch);
+                ShowInformation(HUDLoginNotify.NotifyPwMismatch);
             else if (inputFieldNickname.text.Length == 0)
-                ShowInformation(LoginSceneHUDNotify.NotifyEmptyNicknameField);
+                ShowInformation(HUDLoginNotify.NotifyEmptyNicknameField);
             else
             {
                 Packet.Account account = new Packet.Account

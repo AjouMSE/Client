@@ -10,7 +10,7 @@ using Utils;
 
 namespace UI.Login
 {
-    public class HUDSigninUIController : MonoBehaviour
+    public class HUDLoginSigninUIController : MonoBehaviour
     {
         #region Private constants
 
@@ -53,7 +53,7 @@ namespace UI.Login
             else
             {
                 // Occured Error (Account does not exist, Wrong password etc..)
-                ShowInformation(LoginSceneHUDNotify.NotifyInvalidAccount);
+                ShowInformation(HUDLoginNotify.NotifyInvalidAccount);
                 Debug.Log(req.error);
             }
         }
@@ -65,12 +65,13 @@ namespace UI.Login
         {
             StopCoroutine(ClearInformationText());
             StartCoroutine(ClearInformationText());
+            
             if (inputFieldId.text.Length == 0)
-                ShowInformation(LoginSceneHUDNotify.NotifyEmptyIdField);
+                ShowInformation(HUDLoginNotify.NotifyEmptyIdField);
             else if (inputFieldPw.text.Length == 0)
-                ShowInformation(LoginSceneHUDNotify.NotifyEmptyPwField);
+                ShowInformation(HUDLoginNotify.NotifyEmptyPwField);
             else if (!CustomUtils.IsValidEmail(inputFieldId.text))
-                ShowInformation(LoginSceneHUDNotify.NotifyInvalidIdForm);
+                ShowInformation(HUDLoginNotify.NotifyInvalidIdForm);
             else
             {
                 Packet.Account account = new Packet.Account
@@ -90,7 +91,7 @@ namespace UI.Login
         {
             // Close sign in scroll and open sign up scroll
             scroll3DSignin.CloseScroll();
-            GetComponent<HUDSignupUIController>().ScrollMoveDown();
+            GetComponent<HUDLoginSignupUIController>().ScrollMoveDown();
         }
 
         #endregion

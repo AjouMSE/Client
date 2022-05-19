@@ -18,8 +18,12 @@ namespace InGame
 
         #region Private variables
 
-        [Header("Panel Prefab")] 
-        [SerializeField] private GameObject panel;
+        [Header("Panel Prefab")] [SerializeField]
+        private GameObject panel;
+
+        [Header("VFX Prefab")] 
+        [SerializeField] private GameObject vfx;
+        [SerializeField] private GameObject vfx2;
 
         private GameObject[] _panels;
         private MeshRenderer[] _panelRenderers;
@@ -67,10 +71,10 @@ namespace InGame
             return _panels[idx];
         }
 
-        public void ChangeColor(int idx)
+        public void ChangeColor(int idx, int vfxId)
         {
             if (idx > PanelCnt - 1 || idx < 0) return;
-            StartCoroutine(ChangePanelColor(idx));
+            StartCoroutine(ChangePanelColor(idx, vfxId));
         }
 
         #endregion
@@ -78,19 +82,25 @@ namespace InGame
 
         #region Coroutines
 
-        IEnumerator ChangePanelColor(int idx)
+        IEnumerator ChangePanelColor(int idx, int vfxId)
         {
-            for (int i = 0; i < 10; i++)
-            {
-                if (i % 2 == 0) _panelRenderers[idx].material.color = new Color(1, 0.5f, 0.5f);
-                else _panelRenderers[idx].material.color = new Color(1, 1, 1);
-                yield return new WaitForSeconds(0.05f);
-            }
-            
+            // for (int i = 0; i < 10; i++)
+            // {
+            //     if (i % 2 == 0) _panelRenderers[idx].material.color = new Color(1, 0.5f, 0.5f);
+            //     else _panelRenderers[idx].material.color = new Color(0.8f, 0.8f, 0.8f);
+            //     yield return new WaitForSeconds(0.04f);
+            // }
+
+            // show effect here
+            Vector3 vfxPos = _panels[idx].transform.position + new Vector3(0, 0.1f, 0);
+            Vector3 vfxSize = new Vector3(3, 3, 3);
+            if (vfxId == 1) Instantiate(vfx, vfxPos, Quaternion.identity).transform.localScale = vfxSize;
+            else Instantiate(vfx2, vfxPos, Quaternion.identity).transform.localScale = vfxSize;
+
             _panelRenderers[idx].material.color = new Color(1, 0.5f, 0.5f);
-            yield return new WaitForSeconds(1f);
-            
-            _panelRenderers[idx].material.color = new Color(1, 1, 1);
+            yield return new WaitForSeconds(1.5f);
+
+            _panelRenderers[idx].material.color = new Color(0.8f, 0.8f, 0.8f);
         }
 
         #endregion

@@ -4,231 +4,255 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Manager;
 using Scene;
+using UI.Game;
 using Unity.Netcode;
 using UnityEngine;
 
-public class NetworkSynchronizer : NetworkBehaviour
+namespace Core
 {
-    #region Private variables
-
-    private NetworkVariable<bool> _hostReadyToRunTimer, _clientReadyToRunTimer;
-    private NetworkVariable<bool> _hostReadyToProcessCard, _clientReadyToProcessCard;
-    
-    private NetworkList<int> _hostCardList, _clientCardList;
-
-    #endregion
-    
-    
-
-    #region Callbacks
-
-    private void HostCardListOnOnListChanged(NetworkListEvent<int> e)
+    public class NetworkSynchronizer : NetworkBehaviour
     {
+        #region Private constants
         
-    }
-
-    private void ClientCardListOnOnListChanged(NetworkListEvent<int> e)
-    {
+        private const int MaxCardCnt = 3;
         
-    }
-
-    #endregion
-    
-    private void Init()
-    {
-        _hostReadyToRunTimer = new NetworkVariable<bool>();
-        _clientReadyToRunTimer = new NetworkVariable<bool>();
-        _hostReadyToProcessCard = new NetworkVariable<bool>();
-        _clientReadyToProcessCard = new NetworkVariable<bool>();
+        #endregion
         
-        _hostCardList = new NetworkList<int>();
-        _clientCardList = new NetworkList<int>();
         
-        ReadyToRunTimer(false);
-        ReadyToProcessCards(false);
+        #region Private variables
 
-        _hostCardList.OnListChanged += HostCardListOnOnListChanged;
-        _clientCardList.OnListChanged += ClientCardListOnOnListChanged;
-    }
-    
-    
-    #region Custom methods
+        [Header("HUD Game Card Selection UI Controller")]
+        [SerializeField] private HUDGameCardSelectionUIController cardSelectionUIController;
 
-    /// <summary>
-    /// Checks that both host and client are ready to run card selection timer
-    /// </summary>
-    /// <returns></returns>
-    public bool BothReadyToRunTimer()
-    {
-        return _hostReadyToRunTimer.Value && _clientReadyToRunTimer.Value;
-    }
+        private NetworkVariable<bool> _hostReadyToRunTimer, _clientReadyToRunTimer;
+        private NetworkVariable<bool> _hostReadyToProcessCard, _clientReadyToProcessCard;
+        private NetworkVariable<int> _hostHP, _clientHP;
+        private NetworkVariable<int> _hostMana, _clientMana;
 
-    /// <summary>
-    /// Checks that both host and client are ready to process cards in card list
-    /// </summary>
-    /// <returns></returns>
-    public bool BothReadyToProcessCards()
-    {
-        return _hostReadyToProcessCard.Value && _clientReadyToProcessCard.Value;
-    }
-    
-    
-    #endregion
+        private NetworkList<int> _hostCardList, _clientCardList;
 
+        #endregion
+        
+        
+        #region Unity event methods
 
-    #region Network methods 
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="isReady"></param>
-    public void ReadyToRunTimer(bool isReady)
-    {
-        if (UserManager.Instance.IsHost)
-            _hostReadyToRunTimer.Value = isReady;
-        else
-            ClientReadyToRunTimerServerRpc(isReady);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="isReady"></param>
-    [ServerRpc(RequireOwnership = false)]
-    private void ClientReadyToRunTimerServerRpc(bool isReady)
-    {
-        _clientReadyToRunTimer.Value = isReady;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="isReady"></param>
-    public void ReadyToProcessCards(bool isReady)
-    {
-        if (UserManager.Instance.IsHost)
-            _hostReadyToProcessCard.Value = isReady;
-        else
-            ClientReadyToProcessCardServerRpc(isReady);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="isReady"></param>
-    [ServerRpc(RequireOwnership = false)]
-    private void ClientReadyToProcessCardServerRpc(bool isReady)
-    {
-        _clientReadyToProcessCard.Value = isReady;
-    }
-
-
-
-    // Add card to cardList
-    public void AddCardToList(int id)
-    {
-        if (UserManager.Instance.IsHost)
+        private void Awake()
         {
-            if (_hostCardList.Count < 3 && !_hostCardList.Contains(id))
+            Init();
+        }
+
+        #endregion
+        
+
+        #region Callbacks
+
+        private void HostCardListOnOnListChanged(NetworkListEvent<int> e)
+        {
+            int[] cards = new int[_hostCardList.Count];
+            for (int i = 0; i < cards.Length; i++) cards[i] = _hostCardList[i];
+            cardSelectionUIController.UpdateHostCardSelectionUI(cards);
+        }
+
+        private void ClientCardListOnOnListChanged(NetworkListEvent<int> e)
+        {
+            int[] cards = new int[_clientCardList.Count];
+            for (int i = 0; i < cards.Length; i++) cards[i] = _clientCardList[i];
+            cardSelectionUIController.UpdateClientCardSelectionUI(cards);
+        }
+
+        #endregion
+
+
+        #region Custom methods
+        
+        
+        private void Init()
+        {
+            _hostReadyToRunTimer = new NetworkVariable<bool>();
+            _clientReadyToRunTimer = new NetworkVariable<bool>();
+            _hostReadyToProcessCard = new NetworkVariable<bool>();
+            _clientReadyToProcessCard = new NetworkVariable<bool>();
+
+            _hostHP = new NetworkVariable<int>();
+            _clientHP = new NetworkVariable<int>();
+            _hostMana = new NetworkVariable<int>();
+            _clientMana = new NetworkVariable<int>();
+
+            _hostCardList = new NetworkList<int>();
+            _clientCardList = new NetworkList<int>();
+
+            ReadyToRunTimer(false);
+            ReadyToProcessCards(false);
+
+            _hostCardList.OnListChanged += HostCardListOnOnListChanged;
+            _clientCardList.OnListChanged += ClientCardListOnOnListChanged;
+        }
+        
+
+        /// <summary>
+        /// Checks that both host and client are ready to run card selection timer
+        /// </summary>
+        /// <returns></returns>
+        public bool BothReadyToRunTimer()
+        {
+            return _hostReadyToRunTimer.Value && _clientReadyToRunTimer.Value;
+        }
+
+        /// <summary>
+        /// Checks that both host and client are ready to process cards in card list
+        /// </summary>
+        /// <returns></returns>
+        public bool BothReadyToProcessCards()
+        {
+            return _hostReadyToProcessCard.Value && _clientReadyToProcessCard.Value;
+        }
+
+
+        #endregion
+
+
+        #region Network methods
+        
+        /// <summary>
+        /// Set bool value of ReadyToRunTimer
+        /// </summary>
+        /// <param name="isReady"></param>
+        public void ReadyToRunTimer(bool isReady)
+        {
+            if (UserManager.Instance.IsHost)
+                _hostReadyToRunTimer.Value = isReady;
+            else
+                ClientReadyToRunTimerServerRpc(isReady);
+        }
+
+        /// <summary>
+        /// Set bool value of ReadyToRunTimer (ServerRpc, client -> server)
+        /// </summary>
+        /// <param name="isReady"></param>
+        [ServerRpc(RequireOwnership = false)]
+        private void ClientReadyToRunTimerServerRpc(bool isReady)
+        {
+            _clientReadyToRunTimer.Value = isReady;
+        }
+
+        /// <summary>
+        /// Set bool value of ReadyToProcessCard
+        /// </summary>
+        /// <param name="isReady"></param>
+        public void ReadyToProcessCards(bool isReady)
+        {
+            if (UserManager.Instance.IsHost)
+                _hostReadyToProcessCard.Value = isReady;
+            else
+                ClientReadyToProcessCardServerRpc(isReady);
+        }
+
+        /// <summary>
+        /// Set bool value of ReadyToProcessCard (ServerRpc, client -> server)
+        /// </summary>
+        /// <param name="isReady"></param>
+        [ServerRpc(RequireOwnership = false)]
+        private void ClientReadyToProcessCardServerRpc(bool isReady)
+        {
+            _clientReadyToProcessCard.Value = isReady;
+        }
+        
+        /// <summary>
+        /// Add card to card list
+        /// </summary>
+        /// <param name="id"></param>
+        public void AddCardToList(int id)
+        {
+            if (UserManager.Instance.IsHost)
             {
-                _hostCardList.Add(id);
+                if (_hostCardList.Count < MaxCardCnt && !_hostCardList.Contains(id))
+                {
+                    _hostCardList.Add(id);
+                }
+            }
+            else
+            {
+                ClientAddCardToListServerRpc(id);
             }
         }
-        else
+
+        /// <summary>
+        /// Add card to card list (ServerRpc, client -> server)
+        /// </summary>
+        /// <param name="id"></param>
+        [ServerRpc(RequireOwnership = false)]
+        private void ClientAddCardToListServerRpc(int id)
         {
-            ClientAddCardToListServerRpc(id);
-        }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void ClientAddCardToListServerRpc(int id)
-    {
-        if (_clientCardList.Count < 3 && !_clientCardList.Contains(id))
-        {
-            _clientCardList.Add(id);
-        }
-    }
-
-
-
-    // Remove a card from cardList
-    public void RemoveCardFromList(int idx)
-    {
-        if (UserManager.Instance.IsHost)
-        {
-            if (_hostCardList.Count > idx)
+            if (_clientCardList.Count < MaxCardCnt && !_clientCardList.Contains(id))
             {
-                _hostCardList.RemoveAt(idx);
+                _clientCardList.Add(id);
             }
         }
-        else
+        
+        /// <summary>
+        /// Remove card from card list
+        /// </summary>
+        /// <param name="idx"></param>
+        public void RemoveCardFromList(int idx)
         {
-            ClientRemoveCardFromListServerRpc(idx);
+            if (UserManager.Instance.IsHost)
+            {
+                if (_hostCardList.Count > idx)
+                {
+                    _hostCardList.RemoveAt(idx);
+                }
+            }
+            else
+            {
+                ClientRemoveCardFromListServerRpc(idx);
+            }
         }
-    }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void ClientRemoveCardFromListServerRpc(int idx)
-    {
-        if (_clientCardList.Count > idx)
+        /// <summary>
+        /// Remove card from card list (ServerRpc, client -> server)
+        /// </summary>
+        /// <param name="idx"></param>
+        [ServerRpc(RequireOwnership = false)]
+        private void ClientRemoveCardFromListServerRpc(int idx)
         {
-            _clientCardList.RemoveAt(idx);
+            if (_clientCardList.Count > idx)
+            {
+                _clientCardList.RemoveAt(idx);
+            }
         }
-    }
-
-
-
-    // Remove all cards from cardList
-    public void RemoveAllCardsFromList()
-    {
-        if (UserManager.Instance.IsHost)
+        
+        /// <summary>
+        /// Pop element from front of the host card list
+        /// </summary>
+        /// <returns></returns>
+        public int PopCardFromHostCardList()
         {
-            _hostCardList.Clear();
+            int element = -1;
+            if (_hostCardList.Count > 0)
+            {
+                element = _hostCardList[0];
+                _hostCardList.RemoveAt(0);
+            }
+
+            return element;
         }
-        else
+
+        /// <summary>
+        /// Pop element from front of the client card list
+        /// </summary>
+        /// <returns></returns>
+        public int PopCardFromClientCardList()
         {
-            ClientRemoveAllCardsFromListServerRpc();
+            int element = -1;
+            if (_clientCardList.Count > 0)
+            {
+                element = _clientCardList[0];
+                _clientCardList.RemoveAt(0);
+            }
+
+            return element;
         }
+        
+        #endregion
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void ClientRemoveAllCardsFromListServerRpc()
-    {
-        _clientCardList.Clear();
-    }
-
-    
-
-    // Get a card from cardList
-    public int GetHostCardFromList(int idx)
-    {
-        int code = 0;
-        if (_hostCardList.Count > idx)
-        {
-            code = _hostCardList[idx];
-        }
-        return code;
-    }
-
-    public int GetClientCardFromList(int idx)
-    {
-        int code = 0;
-        if (_clientCardList.Count > idx)
-        {
-            code = _clientCardList[idx];
-        }
-        return code;
-    }
-
-    #endregion
-    
-    
-    #region Unity event methods
-
-    private void Awake()
-    {
-        Init();
-    }
-    #endregion
 }

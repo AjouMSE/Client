@@ -6,6 +6,7 @@ using Core;
 using InGame;
 using Scene;
 using UI.Game;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -73,17 +74,28 @@ namespace Manager
             _userInfoUIController.UpdateTimerText();
         }
 
+        private void ProcessRange(BitMask.Bits30Field fieldRange, int vfxId)
+        {
+            int mask = 0x20000000;
+            for (int j = 0; j < 30; j++)
+            {
+                if ((fieldRange.element & mask) > 0)
+                {
+                    _panelController.ChangeColor(j, vfxId);
+                }
+                    
+                mask = mask >> 1;
+            }
+            
+            
+        }
+
         #endregion
 
 
 
 
         #region Unity event functions
-
-        private void Update()
-        {
-            Debug.Log($"Turn value is {_turnValue}");
-        }
         
 
         #endregion
@@ -98,7 +110,6 @@ namespace Manager
         /// </summary>
         private IEnumerator WaitForRunningTimer()
         {
-            Debug.Log("wait for running timer");
             _netSync.ReadyToRunTimer(true);
             _netSync.ReadyToProcessCards(false);
 
@@ -141,7 +152,6 @@ namespace Manager
         /// <returns></returns>
         private IEnumerator WaitForProcessingCards()
         {
-            Debug.Log("Wait for processing cards");
             _netSync.ReadyToRunTimer(false);
             _netSync.ReadyToProcessCards(true);
             
@@ -165,27 +175,21 @@ namespace Manager
         /// <returns></returns>
         private IEnumerator ProcessCards()
         {
-            Debug.Log("Process cards");
-            GameObject vfx = GameObject.Find("EvilDeath");
             // Important logic will come here
+            string range = "10101 00000 10101 00000 10101";
+            BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(new BitMask.Bits25Field(range));
+            
             // process logic
             for (int i = 0; i < 3; i++)
             {
-                string range = "10101 00000 10101 00000 10101";
-                BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(new BitMask.Bits25Field(range));
                 BitMask.ShiftBits30(ref fieldRange, -3, 0);
+                ProcessRange(fieldRange, 1);
+                _netSync.PopCardFromHostCardList();
+                yield return new WaitForSeconds(2f);
 
-                int mask = 1 << 29;
-                for (int j = 0; j < 30; j++)
-                {
-                    if ((fieldRange.element & mask) > 0)
-                    {
-                        _panelController.ChangeColor(j);
-                    }
-                    
-                    mask = mask >> 1;
-                }
-                Instantiate(vfx, new Vector3(0, 0, 0), Quaternion.identity);
+                BitMask.ShiftBits30(ref fieldRange, 2, 0);
+                ProcessRange(fieldRange, 2);
+                _netSync.PopCardFromClientCardList();
                 yield return new WaitForSeconds(2f);
             }
 

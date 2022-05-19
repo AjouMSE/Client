@@ -24,16 +24,17 @@ namespace UI.Game
         
         #endregion
         
+        
         #region Custom methods
 
         /// <summary>
         /// Initialize host, client information UI
         /// </summary>
-        private void Init()
+        public void Init()
         {
             Packet.User host, client;
             
-            if (NetworkManager.Singleton.IsHost)
+            if (UserManager.Instance.IsHost)
             {
                 host = UserManager.Instance.User;
                 client = UserManager.Instance.Hostile;
@@ -64,16 +65,6 @@ namespace UI.Game
         public void UpdateTurnText()
         {
             turnText.text = $"Turn {GameManager.Instance.turnValue.ToString()}";
-        }
-
-        #endregion
-        
-        
-        #region Unity event methods
-        
-        void Start()
-        {
-            Init();
         }
 
         #endregion

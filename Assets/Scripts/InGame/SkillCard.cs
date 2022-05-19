@@ -13,7 +13,7 @@ namespace InGame
 
         public void OnCardAddBtnClickListener()
         {
-
+            
         }
 
         public void OnCardRemoveBtnClickListener()

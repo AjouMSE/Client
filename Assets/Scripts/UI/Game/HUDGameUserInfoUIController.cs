@@ -56,7 +56,8 @@ namespace UI.Game
         {
             float timer = GameManager.Instance.timerValue;
             if (timer >= 10) timerText.text = $"{Mathf.Round(timer).ToString(CultureInfo.CurrentCulture)}";
-            else timerText.text = $"{timer:0.0}";
+            else if (timer > 0) timerText.text = $"{timer:0.0}";
+            else timerText.text = "0";
         }
 
         /// <summary>

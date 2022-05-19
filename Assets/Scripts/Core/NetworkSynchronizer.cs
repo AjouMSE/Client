@@ -13,15 +13,15 @@ namespace Core
     public class NetworkSynchronizer : NetworkBehaviour
     {
         #region Private constants
-        
+
         private const int MaxCardCnt = 3;
-        
+
         #endregion
-        
-        
+
+
         #region Private variables
 
-        [Header("HUD Game Card Selection UI Controller")]
+        [Header("HUD Game Card Selection UI Controller")] 
         [SerializeField] private HUDGameCardSelectionUIController cardSelectionUIController;
 
         private NetworkVariable<bool> _hostReadyToRunTimer, _clientReadyToRunTimer;
@@ -32,8 +32,19 @@ namespace Core
         private NetworkList<int> _hostCardList, _clientCardList;
 
         #endregion
-        
-        
+
+
+        #region Public variables
+
+        public enum UserType
+        {
+            Host,
+            Client
+        }
+
+        #endregion
+
+
         #region Unity event methods
 
         private void Awake()
@@ -42,18 +53,18 @@ namespace Core
         }
 
         #endregion
-        
+
 
         #region Callbacks
 
-        private void HostCardListOnOnListChanged(NetworkListEvent<int> e)
+        private void HostCardListOnChanged(NetworkListEvent<int> e)
         {
             int[] cards = new int[_hostCardList.Count];
             for (int i = 0; i < cards.Length; i++) cards[i] = _hostCardList[i];
             cardSelectionUIController.UpdateHostCardSelectionUI(cards);
         }
 
-        private void ClientCardListOnOnListChanged(NetworkListEvent<int> e)
+        private void ClientCardListOnChanged(NetworkListEvent<int> e)
         {
             int[] cards = new int[_clientCardList.Count];
             for (int i = 0; i < cards.Length; i++) cards[i] = _clientCardList[i];
@@ -64,8 +75,7 @@ namespace Core
 
 
         #region Custom methods
-        
-        
+
         private void Init()
         {
             _hostReadyToRunTimer = new NetworkVariable<bool>();
@@ -84,10 +94,10 @@ namespace Core
             ReadyToRunTimer(false);
             ReadyToProcessCards(false);
 
-            _hostCardList.OnListChanged += HostCardListOnOnListChanged;
-            _clientCardList.OnListChanged += ClientCardListOnOnListChanged;
+            _hostCardList.OnListChanged += HostCardListOnChanged;
+            _clientCardList.OnListChanged += ClientCardListOnChanged;
         }
-        
+
 
         /// <summary>
         /// Checks that both host and client are ready to run card selection timer
@@ -107,12 +117,11 @@ namespace Core
             return _hostReadyToProcessCard.Value && _clientReadyToProcessCard.Value;
         }
 
-
         #endregion
 
 
         #region Network methods
-        
+
         /// <summary>
         /// Set bool value of ReadyToRunTimer
         /// </summary>
@@ -156,7 +165,7 @@ namespace Core
         {
             _clientReadyToProcessCard.Value = isReady;
         }
-        
+
         /// <summary>
         /// Add card to card list
         /// </summary>
@@ -188,7 +197,7 @@ namespace Core
                 _clientCardList.Add(id);
             }
         }
-        
+
         /// <summary>
         /// Remove card from card list
         /// </summary>
@@ -220,7 +229,7 @@ namespace Core
                 _clientCardList.RemoveAt(idx);
             }
         }
-        
+
         /// <summary>
         /// Pop element from front of the host card list
         /// </summary>
@@ -252,7 +261,65 @@ namespace Core
 
             return element;
         }
-        
+
+        /// <summary>
+        /// Remove front value from list
+        /// </summary>
+        /// <param name="type"></param>
+        public void RemoveFrontOfList(UserType type)
+        {
+            switch (type)
+            {
+                case UserType.Host:
+                    if (_hostCardList.Count > 0)
+                        _hostCardList.RemoveAt(0);
+                    break;
+
+                case UserType.Client:
+                    if (_clientCardList.Count > 0)
+                        _clientCardList.RemoveAt(0);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public int[] GetCopyList(UserType type)
+        {
+            int[] cards = null;
+            switch (type)
+            {
+                case UserType.Host:
+                    cards = new int[_hostCardList.Count];
+                    for (int i = 0; i < cards.Length; i++)
+                    {
+                        cards[i] = _hostCardList[i];
+                    }
+
+                    break;
+
+                case UserType.Client:
+                    cards = new int[_clientCardList.Count];
+                    for (int i = 0; i < cards.Length; i++)
+                    {
+                        cards[i] = _clientCardList[i];
+                    }
+
+                    break;
+            }
+
+            return cards;
+        }
+
+        private void Update()
+        {
+            Debug.Log($"Host card count: {_hostCardList.Count}");
+            Debug.Log($"Client card count: {_clientCardList.Count}");
+        }
+
         #endregion
     }
 }

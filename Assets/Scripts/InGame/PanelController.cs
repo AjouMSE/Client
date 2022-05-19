@@ -18,11 +18,12 @@ namespace InGame
 
         #region Private variables
 
-        [Header("Panel Prefab")] [SerializeField]
-        private GameObject panel;
+        [Header("Panel Prefab")] 
+        [SerializeField] private GameObject panel;
 
         [Header("VFX Prefab")] 
         [SerializeField] private GameObject vfx;
+
         [SerializeField] private GameObject vfx2;
 
         private GameObject[] _panels;
@@ -65,16 +66,25 @@ namespace InGame
             }
         }
 
+        private void GenerateVfx(int idx, int vfxId)
+        {
+            // show effect here
+            Vector3 vfxPos = _panels[idx].transform.position + new Vector3(0, 0.1f, 0);
+            Vector3 vfxSize = new Vector3(3, 3, 3);
+            if (vfxId == 1) Instantiate(vfx, vfxPos, Quaternion.identity).transform.localScale = vfxSize;
+            else Instantiate(vfx2, vfxPos, Quaternion.identity).transform.localScale = vfxSize;
+        }
+
         public GameObject GetPanelByIdx(int idx)
         {
             if (idx > PanelCnt - 1 || idx < 0) return null;
             return _panels[idx];
         }
 
-        public void ChangeColor(int idx, int vfxId)
+        public void ChangeColor(int idx, int vfxId, int type)
         {
             if (idx > PanelCnt - 1 || idx < 0) return;
-            StartCoroutine(ChangePanelColor(idx, vfxId));
+            StartCoroutine(ChangePanelColor(idx, vfxId, type));
         }
 
         #endregion
@@ -82,25 +92,28 @@ namespace InGame
 
         #region Coroutines
 
-        IEnumerator ChangePanelColor(int idx, int vfxId)
+        IEnumerator ChangePanelColor(int idx, int vfxId, int type)
         {
-            // for (int i = 0; i < 10; i++)
-            // {
-            //     if (i % 2 == 0) _panelRenderers[idx].material.color = new Color(1, 0.5f, 0.5f);
-            //     else _panelRenderers[idx].material.color = new Color(0.8f, 0.8f, 0.8f);
-            //     yield return new WaitForSeconds(0.04f);
-            // }
-
-            // show effect here
-            Vector3 vfxPos = _panels[idx].transform.position + new Vector3(0, 0.1f, 0);
-            Vector3 vfxSize = new Vector3(3, 3, 3);
-            if (vfxId == 1) Instantiate(vfx, vfxPos, Quaternion.identity).transform.localScale = vfxSize;
-            else Instantiate(vfx2, vfxPos, Quaternion.identity).transform.localScale = vfxSize;
-
-            _panelRenderers[idx].material.color = new Color(1, 0.5f, 0.5f);
+            Color baseColor, changedColor;
+            baseColor = new Color(0.8f, 0.8f, 0.8f);
+            if (type == 0) changedColor = new Color(0.5f, 0.5f, 1f);
+            else changedColor = new Color(0.5f, 1f, 0.5f);
+            
+            for (int i = 0; i < 10; i++)
+            {
+                if (i % 2 == 0) 
+                    _panelRenderers[idx].material.color = changedColor;
+                else 
+                    _panelRenderers[idx].material.color = baseColor;
+                
+                yield return new WaitForSeconds(0.02f);
+            }
+            
+            GenerateVfx(idx, vfxId);
+            _panelRenderers[idx].material.color = changedColor;
             yield return new WaitForSeconds(1.5f);
 
-            _panelRenderers[idx].material.color = new Color(0.8f, 0.8f, 0.8f);
+            _panelRenderers[idx].material.color = baseColor;
         }
 
         #endregion

@@ -20,14 +20,14 @@ namespace Manager
 
         private const int DefaultTurnValue = 0;
         private const float DefaultTimerValue = 60;
-        
+
         #endregion
-        
-        
+
+
         #region Private variables
 
         private NetworkSynchronizer _netSync;
-        private PanelController _panelController; 
+        private PanelController _panelController;
         private HUDGameUserInfoUIController _userInfoUIController;
         private HUDGameCardSelectionUIController _cardSelectionUIController;
 
@@ -39,11 +39,11 @@ namespace Manager
 
 
         #region Public variables
-        
+
         public int turnValue => _turnValue;
         public float timerValue => _timerValue;
         public bool canSelect => _canSelect;
-        
+
         #endregion
 
 
@@ -53,7 +53,7 @@ namespace Manager
         {
             _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
             _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
-            
+
             GameObject uiController = GameObject.Find("GameSceneUIController");
             _userInfoUIController = uiController.GetComponent<HUDGameUserInfoUIController>();
             _cardSelectionUIController = uiController.GetComponent<HUDGameCardSelectionUIController>();
@@ -74,32 +74,28 @@ namespace Manager
             _userInfoUIController.UpdateTimerText();
         }
 
-        private void ProcessRange(BitMask.Bits30Field fieldRange, int vfxId)
+        private void ProcessRange(BitMask.Bits30Field fieldRange, int vfxId, int type)
         {
             int mask = 0x20000000;
             for (int j = 0; j < 30; j++)
             {
                 if ((fieldRange.element & mask) > 0)
                 {
-                    _panelController.ChangeColor(j, vfxId);
+                    _panelController.ChangeColor(j, vfxId, type);
                 }
-                    
+
                 mask = mask >> 1;
             }
             
-            
+            Debug.Log("Process Range");
         }
 
         #endregion
 
 
-
-
         #region Unity event functions
-        
 
         #endregion
-
 
 
         #region Coroutines
@@ -130,7 +126,7 @@ namespace Manager
             _turnValue++;
             _timerValue = DefaultTimerValue;
             _canSelect = true;
-            
+
             _userInfoUIController.UpdateTimerText();
             _userInfoUIController.UpdateTurnText();
             _cardSelectionUIController.OpenCardScroll();
@@ -154,10 +150,10 @@ namespace Manager
         {
             _netSync.ReadyToRunTimer(false);
             _netSync.ReadyToProcessCards(true);
-            
+
             _timerValue = 0;
             _canSelect = false;
-            
+
             _userInfoUIController.UpdateTimerText();
             _cardSelectionUIController.CloseCardScroll();
 
@@ -166,7 +162,7 @@ namespace Manager
                 yield return null;
             }
 
-            StartCoroutine(ProcessCards()); 
+            StartCoroutine(ProcessCards());
         }
 
         /// <summary>
@@ -175,29 +171,61 @@ namespace Manager
         /// <returns></returns>
         private IEnumerator ProcessCards()
         {
-            // Important logic will come here
-            string range = "10101 00000 10101 00000 10101";
-            BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(new BitMask.Bits25Field(range));
+            int cardId = 0;
+            int[] hostCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
+            int[] clientCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
             
-            // process logic
+            string range = "10101 10101 10101 10101 10101";
+            BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(new BitMask.Bits25Field(range));
+
             for (int i = 0; i < 3; i++)
             {
-                BitMask.ShiftBits30(ref fieldRange, -3, 0);
-                ProcessRange(fieldRange, 1);
-                _netSync.PopCardFromHostCardList();
-                yield return new WaitForSeconds(2f);
+                // Process card id
+                if (hostCards.Length > i)
+                {
+                    cardId = hostCards[i];
+                    
+                    BitMask.ShiftBits30(ref fieldRange, -1, 1);
+                    ProcessRange(fieldRange, 1, 0);
 
-                BitMask.ShiftBits30(ref fieldRange, 2, 0);
-                ProcessRange(fieldRange, 2);
-                _netSync.PopCardFromClientCardList();
-                yield return new WaitForSeconds(2f);
+                    if (UserManager.Instance.IsHost)
+                    {
+                        _netSync.RemoveFrontOfList(NetworkSynchronizer.UserType.Host);
+                        if (((1 << 17) & fieldRange.element) > 0)
+                        {
+                            Debug.Log("Client Hit");
+                        }
+                    }
+
+                    yield return new WaitForSeconds(2f);
+                }
+
+                // Process card id
+                if (clientCards.Length > i)
+                {
+                    cardId = clientCards[i];
+                    
+                    BitMask.ShiftBits30(ref fieldRange, 1, 0);
+                    ProcessRange(fieldRange, 2, 1);
+
+                    if (UserManager.Instance.IsHost)
+                    {
+                        _netSync.RemoveFrontOfList(NetworkSynchronizer.UserType.Client);
+                        if (((1 << 12) & fieldRange.element) > 0)
+                        {
+                            Debug.Log("Host Hit");
+                        }
+                    }
+
+                    yield return new WaitForSeconds(2f);
+                }
             }
 
             // if the game is not ended,
             StartCoroutine(WaitForRunningTimer());
         }
-        
-        
+
+
         /*IEnumerator ProcessCard()
         {
             for (int i = 0; i < 3; i++)

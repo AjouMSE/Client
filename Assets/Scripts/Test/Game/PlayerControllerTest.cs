@@ -11,7 +11,7 @@ public class PlayerControllerTest : MonoBehaviour
 
     private const float Speed = 4.0f;
     private int _idx, _x, _y;
-    private BitMask.Bits30Field _bitsIdx;
+    private BitMask.BitField30 _bitsIdx;
 
     enum AnimationState
     {
@@ -25,10 +25,7 @@ public class PlayerControllerTest : MonoBehaviour
 
     private void InitPos()
     {
-        _x = 0;
-        _y = 2;
-        _idx = _y * 6 + _x;
-        _bitsIdx.element = 1 << _idx;
+
     }
 
     private void Start()
@@ -43,15 +40,15 @@ public class PlayerControllerTest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             string range = "00000 00000 00001 00000 00000";
-            BitMask.Bits25Field skillRange = new BitMask.Bits25Field(range);
-            BitMask.PrintBits25(skillRange);
-            BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(skillRange);
-            BitMask.PrintBits30(fieldRange);
+            BitMask.BitField25 skillRange = new BitMask.BitField25(range);
+            skillRange.PrintBy2D();
+            BitMask.BitField30 fieldRange = skillRange.CvtBits25ToBits30();
+            fieldRange.PrintBy2D();
         
             int dx = _x - 3;
             int dy = _y - 2;
-            BitMask.ShiftBits30(ref fieldRange, dx, dy);
-            BitMask.PrintBits30(fieldRange);
+            fieldRange.Shift(dx, dy);
+            fieldRange.PrintBy2D();
 
             int mask = (1 << 29);
             for (int i = 0; i < 30; i++)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using Manager;
+using TMPro;
 using UnityEngine;
 
 
@@ -62,6 +63,7 @@ namespace InGame
                     _panels[idx] = Instantiate(panel, new Vector3(j * 4.2f, 0.2f, 12.8f - i * 3.2f),
                         Quaternion.identity);
                     _panelRenderers[idx] = _panels[idx].GetComponent<MeshRenderer>();
+                    _panels[idx].GetComponentInChildren<TextMeshPro>().text = idx.ToString();
                 }
             }
         }

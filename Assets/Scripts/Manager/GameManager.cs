@@ -74,7 +74,18 @@ namespace Manager
             _userInfoUIController.UpdateTimerText();
         }
 
-        private void ProcessRange(BitMask.Bits30Field fieldRange, int vfxId, int type)
+        private BitMask.BitField30 CvtPlayerIdxToBitField30(int idx)
+        {
+            if (idx < 0 || idx > 29) return default;
+            return new BitMask.BitField30(BitMask.BitField30Msb >> idx);
+        }
+
+        private bool CheckPlayerHit(int idx, BitMask.BitField30 range)
+        {
+            return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0 ? true : false;
+        }
+
+        private void ProcessRange(BitMask.BitField30 fieldRange, int vfxId, int type)
         {
             int mask = 0x20000000;
             for (int j = 0; j < 30; j++)
@@ -86,8 +97,6 @@ namespace Manager
 
                 mask = mask >> 1;
             }
-            
-            Debug.Log("Process Range");
         }
 
         #endregion
@@ -174,9 +183,9 @@ namespace Manager
             int cardId = 0;
             int[] hostCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
             int[] clientCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
-            
+
             string range = "10101 10101 10101 10101 10101";
-            BitMask.Bits30Field fieldRange = BitMask.CvtBits25ToBits30(new BitMask.Bits25Field(range));
+            BitMask.BitField30 fieldRange = new BitMask.BitField25(range).CvtBits25ToBits30();
 
             for (int i = 0; i < 3; i++)
             {
@@ -184,16 +193,17 @@ namespace Manager
                 if (hostCards.Length > i)
                 {
                     cardId = hostCards[i];
-                    
-                    BitMask.ShiftBits30(ref fieldRange, -1, 1);
+
+                    fieldRange.Shift(-1, 1);
                     ProcessRange(fieldRange, 1, 0);
 
                     if (UserManager.Instance.IsHost)
                     {
                         _netSync.RemoveFrontOfList(NetworkSynchronizer.UserType.Host);
-                        if (((1 << 17) & fieldRange.element) > 0)
+                        fieldRange.PrintBy2D();
+                        if (CheckPlayerHit(17, fieldRange))
                         {
-                            Debug.Log("Client Hit");
+                            Debug.Log("Hit Hit!");
                         }
                     }
 
@@ -204,14 +214,15 @@ namespace Manager
                 if (clientCards.Length > i)
                 {
                     cardId = clientCards[i];
-                    
-                    BitMask.ShiftBits30(ref fieldRange, 1, 0);
+
+                    fieldRange.Shift(1, 0);
                     ProcessRange(fieldRange, 2, 1);
 
                     if (UserManager.Instance.IsHost)
                     {
                         _netSync.RemoveFrontOfList(NetworkSynchronizer.UserType.Client);
-                        if (((1 << 12) & fieldRange.element) > 0)
+                        fieldRange.PrintBy2D();
+                        if (CheckPlayerHit(12, fieldRange))
                         {
                             Debug.Log("Host Hit");
                         }

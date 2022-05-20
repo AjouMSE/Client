@@ -314,12 +314,6 @@ namespace Core
             return cards;
         }
 
-        private void Update()
-        {
-            Debug.Log($"Host card count: {_hostCardList.Count}");
-            Debug.Log($"Client card count: {_clientCardList.Count}");
-        }
-
         #endregion
     }
 }

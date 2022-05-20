@@ -131,11 +131,10 @@ namespace UI.Lobby
 
         private void Init()
         {
-            Debug.Log("Init Settings");
-            
             // Set Default volume slider value
-            bgmSlider.value = sfxSlider.value = DefaultVolumeSliderValue;
-
+            bgmSlider.value = AudioManager.Instance.bgmVolume;
+            sfxSlider.value = AudioManager.Instance.sfxVolume;
+            
             // Read mute/unmute image sprite from Resources dir
             _unmuteSprite = Resources.Load<Sprite>($"{SrcPath}{SrcNameSoundOn}");
             _muteSprite = Resources.Load<Sprite>($"{SrcPath}{SrcNameSoundOff}");

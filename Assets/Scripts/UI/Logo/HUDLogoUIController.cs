@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using Manager;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -68,11 +70,21 @@ namespace Scene
             UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
 
             // Set Bgm to Logo bgm
-            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Bgm, 0.5f);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Bgm, 0.05f);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Sfx, 1.0f);
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.LogoBgm, false);
 
             // Start fade effect
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, logoCvsGroup, FadeInDuration, FadeInCallback);
+
+            int mask = 0;
+            for (int i = 0; i < 30; i++)
+            {
+                mask += 1 << i;
+            }
+            
+            
+            Debug.Log(Convert.ToString(mask, 16));
         }
         
         #endregion

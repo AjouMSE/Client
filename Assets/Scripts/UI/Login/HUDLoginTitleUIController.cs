@@ -41,12 +41,40 @@ namespace UI.Login
 
         
         #region Custom methods
+        
+        #region Event methods
 
-        void InitUI()
+        private void Start()
+        {
+            InitUI();
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _titleCvsGroup, FadeInDuration);
+        }
+        
+        private void Update()
+        {
+            RotateMainCamera();
+        }
+
+        #endregion
+        
+
+        private void InitUI()
         {
             _titleCvsGroup = hudCamera.transform.Find(HudNameTitle).GetComponent<CanvasGroup>();
             titleText.text = CustomUtils.MakeTitleColor();
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBgm1, true);
+        }
+        
+        private void RotateMainCamera()
+        {
+            if (_mainCamRotAngle > RotAngleMaxRight) 
+                _rotCamCurrDir = RotCamDirLeft;
+            if (_mainCamRotAngle < RotAngleMaxLeft)
+                _rotCamCurrDir = RotCamDirRight;
+
+            float rotValue = _mainCamRotSpd * _rotCamCurrDir * Time.deltaTime;
+            _mainCamRotAngle += rotValue;
+            mainCamera.transform.Rotate(Vector3.up * rotValue);
         }
 
         #endregion
@@ -66,34 +94,6 @@ namespace UI.Login
             //UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _titleCvsGroup, FadeOutDuration, TitleFadeOutCallback);
             _titleCvsGroup.gameObject.SetActive(false);
             signinScroll.OpenScroll();
-        }
-
-        #endregion
-        
-
-        #region Event methods
-        
-        private void RotateMainCamera()
-        {
-            if (_mainCamRotAngle > RotAngleMaxRight) 
-                _rotCamCurrDir = RotCamDirLeft;
-            if (_mainCamRotAngle < RotAngleMaxLeft)
-                _rotCamCurrDir = RotCamDirRight;
-
-            float rotValue = _mainCamRotSpd * _rotCamCurrDir * Time.deltaTime;
-            _mainCamRotAngle += rotValue;
-            mainCamera.transform.Rotate(Vector3.up * rotValue);
-        }
-        
-        private void Start()
-        {
-            InitUI();
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _titleCvsGroup, FadeInDuration);
-        }
-        
-        private void Update()
-        {
-            RotateMainCamera();
         }
 
         #endregion

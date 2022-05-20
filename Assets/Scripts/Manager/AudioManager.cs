@@ -138,21 +138,22 @@ namespace Manager
         public void SetVolume(VolumeTypes type, float volume)
         {
             if (volume < 0.0001f || volume > 1) return;
-            float convertVolume = Mathf.Log10(volume) * 20;
+            float convertVolume = ConvertVolume(volume);
 
             switch (type)
             {
                 case VolumeTypes.Bgm:
-                    _bgmVolume = convertVolume;
-                    PlayerPrefs.SetFloat(BgmVolume, _bgmVolume);
-                    if (!_isBgmMute) _audioMixer.SetFloat(BgmVolume, _bgmVolume);
+                    _bgmVolume = volume;
+                    PlayerPrefs.SetFloat(BgmVolume, volume);
+                    if (!_isBgmMute) 
+                        _audioMixer.SetFloat(BgmVolume, convertVolume);
                     break;
 
                 case VolumeTypes.Sfx:
-                    _sfxVolume = convertVolume;
-                    PlayerPrefs.SetFloat(SfxVolume, _sfxVolume);
+                    _sfxVolume = volume;
+                    PlayerPrefs.SetFloat(SfxVolume, volume);
                     if (!_isSfxMute)
-                        _audioMixer.SetFloat(SfxVolume, _sfxVolume);
+                        _audioMixer.SetFloat(SfxVolume, convertVolume);
                     break;
             }
         }
@@ -172,15 +173,24 @@ namespace Manager
                 case VolumeTypes.Bgm:
                     _isBgmMute = mute;
                     PlayerPrefs.SetInt($"{BgmVolume}Mute", mute ? 1 : 0);
-                    _audioMixer.SetFloat(BgmVolume, mute ? MuteVolume : _bgmVolume);
+                    _audioMixer.SetFloat(BgmVolume, mute ? MuteVolume : ConvertVolume(_bgmVolume));
                     break;
                 
                 case VolumeTypes.Sfx:
                     _isSfxMute = mute;
                     PlayerPrefs.SetInt($"{SfxVolume}Mute", mute ? 1 : 0);
-                    _audioMixer.SetFloat(SfxVolume, mute ? MuteVolume : _sfxVolume);
+                    _audioMixer.SetFloat(SfxVolume, mute ? MuteVolume : ConvertVolume(_sfxVolume));
                     break;
             }
+        }
+
+        /// <summary>
+        /// Convert volume value
+        /// </summary>
+        /// <param name="volume"> Volume scale value. (Please enter a value between 0.0001 and 1. This value is replaced by -80 to 0.) </param>
+        private float ConvertVolume(float volume)
+        {
+            return Mathf.Log10(volume) * 20;
         }
         
         #endregion

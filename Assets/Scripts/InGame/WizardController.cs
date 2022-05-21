@@ -4,19 +4,34 @@ using Manager;
 using Unity.Netcode;
 using UnityEngine;
 using Utils;
-
+using Core;
 
 namespace InGame
 {
     public class WizardController : NetworkBehaviour
     {
+        #region Private constants
+
+        private const int Width = 6, Height = 5;
+        private const float Speed = 4.0f;
+
+        private const int InitialX = 0, InitialY = 2, InitialIdx = 12;
+
+        #endregion
+
+
         public Material mat1, mat2, mat3;
 
+
+        #region Private variables
+
+        private int _x, _y, _idx;
+        private BitMask.BitField30 _bitIdx; // msb is idx 0, lsb is idx 29 (0 ~ 29)
+
+        private Animator _animator;
         private PanelController _panelController;
 
-        private int hp, cost;
-
-        private const float Speed = 4.0f;
+        #endregion
 
         enum AnimationState
         {
@@ -25,8 +40,6 @@ namespace InGame
             MoveBack = 2,
             Attack = 3
         }
-
-        private Animator _animator;
 
         #region Network methods
 
@@ -59,33 +72,53 @@ namespace InGame
         #region Custom methods
 
 
-
-        #endregion
-
-
-        void Start()
+        public void Start()
         {
-            _panelController = GameObject.Find("GameSceneUIController").GetComponent<PanelController>();
+            _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
             _animator = GetComponent<Animator>();
+            InitPos();
         }
 
-        void Update()
+        public void Update()
         {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                string range = "00000 00000 00000 00100 00000";
+                BitMask.BitField30 fieldRange = new BitMask.BitField25(range).CvtBits25ToBits30();
 
+                fieldRange.Shift(_x - 3, _y - 2);
+                fieldRange.PrintBy2D();
+                int destIdx = GetPanelIdx(fieldRange)[0];
+
+                Move(destIdx);
+            }
         }
 
-        // public void Move(string range)
-        // {
-        //
-        //     (int asisI, int asisJ) = _panelController.GetIdx(transform.position);
-        //     (int rangeI, int rangeJ) = CustomUtils.ParseRange(range)[0];
-        //
-        //     int tobeI = asisI + rangeI;
-        //     int tobeJ = asisJ + rangeJ;
-        //
-        //     Vector3 tobePosition = _panelController.GetPosition(tobeI, tobeJ);
-        //     StartCoroutine(MoveAction(tobePosition));
-        // }
+        private void InitPos()
+        {
+            _x = InitialX;
+            _y = InitialY;
+            _idx = InitialIdx;
+        }
+
+        public void ProcessSkill(int code)
+        {
+            // ~ range
+            // Skill -> 피격판정 -> UpdateClientHp()
+            //       -> VFX + ChangeColor
+            // UpdateUI
+        }
+
+        private void Move(int destIdx)
+        {
+            _x = destIdx % Width;
+            _y = destIdx / Width;
+            _idx = destIdx;
+            _bitIdx = ConvertIdxToBitIdx(_idx);
+
+            Vector3 destPosition = _panelController.GetPanelByIdx(_idx).transform.position;
+            StartCoroutine(MoveAction(destPosition));
+        }
 
         public IEnumerator MoveAction(Vector3 destination)
         {
@@ -109,5 +142,32 @@ namespace InGame
 
             _animator.SetInteger("AnimationState", (int)AnimationState.Idle);
         }
+
+        private List<int> GetPanelIdx(BitMask.BitField30 fieldRange)
+        {
+            List<int> idxes = new List<int>();
+
+            int mask = BitMask.BitField30Msb;
+            for (int i = 0; i < 30; i++)
+            {
+                if ((fieldRange.element & mask) > 0)
+                {
+                    idxes.Add(i);
+                }
+
+                mask = mask >> 1;
+            }
+
+            return idxes;
+        }
+
+        private BitMask.BitField30 ConvertIdxToBitIdx(int idx)
+        {
+            int zero = BitMask.BitField30Msb;
+            return new BitMask.BitField30(zero >> idx);
+        }
+
+
+        #endregion
     }
 }

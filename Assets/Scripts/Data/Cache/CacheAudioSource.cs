@@ -13,20 +13,20 @@ namespace Data.Cache
     {
         #region Private constants
 
-        private const string SrcRootPath = "Audio";
-        private const string SrcBgmPath = "/BGM";
-        private const string SrcSfxPath = "/SFX";
-        private const string SrcMixerPath = "/Mixer";
+        private const string SrcPathRoot = "Audio";
+        private const string SrcPathBgm = "/BGM";
+        private const string SrcPathSfx = "/SFX";
+        private const string SrcPathMixer = "/Mixer";
         
-        private const string SrcLogoBgmPath = "/LogoBgm"; // 0
-        private const string SrcMainBgm1Path = "/MainBgm01"; // 1
-        private const string SrcMainBgm2Path = "/MainBgm02"; // 2
-        private const string SrcMainBgm3Path = "/MainBgm03"; // 3
-        private const string SrcMainBgm4Path = "/MainBgm04"; // 4
-        private const string SrcBattleBgm1Path = "/BattleBgm1"; // 5
-        private const string SrcBattleBgm2Path = "/BattleBgm2"; // 6
-        private const string SrcBattleBgm3Path = "/BattleBgm3"; // 7
-        private const string SrcBattleBgm4Path = "/BattleBgm4"; // 8
+        private const string SrcPathLogoBgm = "/LogoBgm"; // 0
+        private const string SrcPathMainBgm1 = "/MainBgm01"; // 1
+        private const string SrcPathMainBgm2 = "/MainBgm02"; // 2
+        private const string SrcPathMainBgm3 = "/MainBgm03"; // 3
+        private const string SrcPathMainBgm4 = "/MainBgm04"; // 4
+        private const string SrcPathBattleBgm1 = "/BattleBgm1"; // 5
+        private const string SrcPathBattleBgm2 = "/BattleBgm2"; // 6
+        private const string SrcPathBattleBgm3 = "/BattleBgm3"; // 7
+        private const string SrcPathBattleBgm4 = "/BattleBgm4"; // 8
 
         #endregion
 
@@ -45,25 +45,25 @@ namespace Data.Cache
         public IEnumerator Init()
         {
             // Init AudioMixer
-            AudioMixer = Resources.Load<AudioMixer>($"{SrcRootPath}{SrcMixerPath}");
+            AudioMixer = Resources.Load<AudioMixer>($"{SrcPathRoot}{SrcPathMixer}");
             
             // Cache bgm to dictionary
             BGMCache = new Dictionary<AudioManager.BgmTypes, AudioClip>
             {
                 // Logo Bgm
-                { AudioManager.BgmTypes.LogoBGM, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcLogoBgmPath}") },
+                { AudioManager.BgmTypes.LogoBGM, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathLogoBgm}") },
                 
                 // Main Bgm
-                { AudioManager.BgmTypes.MainBGM1, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcMainBgm1Path}") },
-                { AudioManager.BgmTypes.MainBGM2, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcMainBgm2Path}") },
-                { AudioManager.BgmTypes.MainBGM3, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcMainBgm3Path}") },
-                { AudioManager.BgmTypes.MainBGM4, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcMainBgm4Path}") },
+                { AudioManager.BgmTypes.MainBGM1, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm1}") },
+                { AudioManager.BgmTypes.MainBGM2, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm2}") },
+                { AudioManager.BgmTypes.MainBGM3, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm3}") },
+                { AudioManager.BgmTypes.MainBGM4, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm4}") },
                 
                 // Battle Bgm
-                { AudioManager.BgmTypes.BattleBGM1, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcBattleBgm1Path}") },
-                { AudioManager.BgmTypes.BattleBGM2, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcBattleBgm2Path}") },
-                { AudioManager.BgmTypes.BattleBGM3, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcBattleBgm3Path}") },
-                { AudioManager.BgmTypes.BattleBGM4, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcBattleBgm4Path}") }
+                { AudioManager.BgmTypes.BattleBGM1, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm1}") },
+                { AudioManager.BgmTypes.BattleBGM2, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm2}") },
+                { AudioManager.BgmTypes.BattleBGM3, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm3}") },
+                { AudioManager.BgmTypes.BattleBGM4, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm4}") }
             };
 
             yield return null;

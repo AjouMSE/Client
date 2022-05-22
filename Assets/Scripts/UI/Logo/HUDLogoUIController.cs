@@ -42,27 +42,40 @@ namespace Scene
 
         #region Callbacks
 
+        /// <summary>
+        /// Loading ui fade in result callback
+        /// </summary>
         private void LoadingFadeInCallback()
         {
-            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, loadingCvsGroup, LoadingFadeOutDuration, LoadingFadeOutCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, loadingCvsGroup, LoadingFadeOutDuration,
+                LoadingFadeOutCallback);
         }
 
+        /// <summary>
+        /// Loading ui fade out result callback
+        /// </summary>
         private void LoadingFadeOutCallback()
         {
             // Fade in logo canvas
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, logoCvsGroup, LogoFadeInDuration, LogoFadeInCallback);
-            
+
             // Play logo bgm
             AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.BGM, 0.05f);
             AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.SFX, 1.0f);
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.LogoBGM, false);
         }
 
+        /// <summary>
+        /// Logo ui fade in result callback
+        /// </summary>
         private void LogoFadeInCallback()
         {
             UIManager.Instance.Fade(UIManager.FadeType.FadeOut, logoCvsGroup, LogoFadeOutDuration, LogoFadeOutCallback);
         }
 
+        /// <summary>
+        /// Logo ui fade out result callback
+        /// </summary>
         private void LogoFadeOutCallback()
         {
             SceneManager.LoadScene(DestSceneName);
@@ -73,16 +86,22 @@ namespace Scene
 
         #region Private methods
 
+        /// <summary>
+        /// Initialize resources
+        /// </summary>
         private void InitResources()
         {
             // Init Resources
             StartCoroutine(CacheAudioSource.Instance.Init());
             StartCoroutine(CacheSpriteSource.Instance.Init());
             StartCoroutine(CacheVFXSource.Instance.Init());
-            
+
             InitManagers();
         }
 
+        /// <summary>
+        ///  Initialize managers
+        /// </summary>
         private void InitManagers()
         {
             // Init Managers
@@ -90,7 +109,7 @@ namespace Scene
         }
 
         #endregion
-        
+
 
         #region Unity event functions
 
@@ -104,7 +123,8 @@ namespace Scene
             UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
 
             // Init Resources, Managers
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, loadingCvsGroup, LoadingFadeInDuration, LoadingFadeInCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, loadingCvsGroup, LoadingFadeInDuration,
+                LoadingFadeInCallback);
             InitResources();
         }
 

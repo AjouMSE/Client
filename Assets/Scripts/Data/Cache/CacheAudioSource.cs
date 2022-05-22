@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Manager;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -8,7 +9,7 @@ using Utils;
 
 namespace Data.Cache
 {
-    public class CacheAudioSource : MonoSingleton<CacheAudioSource>
+    public class CacheAudioSource : MonoSingleton<CacheAudioSource>, ICacheSource<AudioClip>
     {
         #region Private constants
 
@@ -34,14 +35,14 @@ namespace Data.Cache
 
         public AudioMixer AudioMixer { get; private set; }
         
-        public Dictionary<AudioManager.BgmTypes, AudioClip> BGMCache;
+        public Dictionary<AudioManager.BgmTypes, AudioClip> BGMCache { get; private set; }
 
         #endregion
         
 
         #region Public methods
 
-        public void Init()
+        public IEnumerator Init()
         {
             // Init AudioMixer
             AudioMixer = Resources.Load<AudioMixer>($"{SrcRootPath}{SrcMixerPath}");
@@ -64,6 +65,13 @@ namespace Data.Cache
                 { AudioManager.BgmTypes.BattleBGM3, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcBattleBgm3Path}") },
                 { AudioManager.BgmTypes.BattleBGM4, Resources.Load<AudioClip>($"{SrcRootPath}{SrcBgmPath}{SrcBattleBgm4Path}") }
             };
+
+            yield return null;
+        }
+
+        public AudioClip GetSource(int id)
+        {
+            return null;
         }
 
         #endregion

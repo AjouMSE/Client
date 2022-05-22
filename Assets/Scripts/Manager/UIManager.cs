@@ -111,8 +111,9 @@ namespace Manager
                     }
                     
                     // Fade effect callback
-                    if(callback != null) callback();
-                    break;
+                    if(callback != null) 
+                        callback();
+                    yield break;
 
                 case FadeType.FadeOut:
                     // Init alpha value
@@ -128,8 +129,9 @@ namespace Manager
                     
                     // Fade effect callback
                     group.gameObject.SetActive(false);
-                    if(callback != null) callback();
-                    break;
+                    if(callback != null) 
+                        callback();
+                    yield break;
 
                 default:
                     Debug.LogError("UndefinedFadeTypeException");

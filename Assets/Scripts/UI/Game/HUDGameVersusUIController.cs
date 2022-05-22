@@ -99,7 +99,7 @@ namespace UI.Game
                 NetworkManager.Singleton.StartClient();
 
             InitVersusIntoText();
-            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.BattleBgm1, true);
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.BattleBGM1, true);
             StartCoroutine(ShowVersus());
         }
 

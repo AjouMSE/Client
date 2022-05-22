@@ -62,7 +62,7 @@ namespace UI.Login
         {
             _titleCvsGroup = hudCamera.transform.Find(HudNameTitle).GetComponent<CanvasGroup>();
             titleText.text = CustomUtils.MakeTitleColor();
-            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBgm1, true);
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBGM1, true);
         }
         
         private void RotateMainCamera()

@@ -53,7 +53,7 @@ namespace UI.Lobby
         /// </summary>
         public void OnBgmValueChanged()
         {
-            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Bgm, bgmSlider.value);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.BGM, bgmSlider.value);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace UI.Lobby
         /// </summary>
         public void OnSfxValueChanged()
         {
-            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Sfx, sfxSlider.value);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.SFX, sfxSlider.value);
         }
 
         /// <summary>
@@ -72,12 +72,12 @@ namespace UI.Lobby
             if(ReferenceEquals(_bgmButtonImage, null)) 
                 _bgmButtonImage = bgmToggleBtn.GetComponent<Image>();
             
-            if (AudioManager.Instance.isBgmMute)
+            if (AudioManager.Instance.IsBgmMute)
                 _bgmButtonImage.sprite = _unmuteSprite;
             else
                 _bgmButtonImage.sprite = _muteSprite;
             
-            AudioManager.Instance.MuteOrUnmute(AudioManager.VolumeTypes.Bgm, !AudioManager.Instance.isBgmMute);
+            AudioManager.Instance.MuteOrUnmute(AudioManager.VolumeTypes.BGM, !AudioManager.Instance.IsBgmMute);
         }
 
         /// <summary>
@@ -88,12 +88,12 @@ namespace UI.Lobby
             if (ReferenceEquals(_sfxButtonImage, null))
                 _sfxButtonImage = sfxToggleBtn.GetComponent<Image>();
             
-            if (AudioManager.Instance.isSfxMute)
+            if (AudioManager.Instance.IsSfxMute)
                 _sfxButtonImage.sprite = _unmuteSprite;
             else
                 _sfxButtonImage.sprite = _muteSprite;
             
-            AudioManager.Instance.MuteOrUnmute(AudioManager.VolumeTypes.Sfx, !AudioManager.Instance.isSfxMute);
+            AudioManager.Instance.MuteOrUnmute(AudioManager.VolumeTypes.SFX, !AudioManager.Instance.IsSfxMute);
         }
 
         /// <summary>
@@ -132,8 +132,8 @@ namespace UI.Lobby
         private void Init()
         {
             // Set Default volume slider value
-            bgmSlider.value = AudioManager.Instance.bgmVolume;
-            sfxSlider.value = AudioManager.Instance.sfxVolume;
+            bgmSlider.value = AudioManager.Instance.BGMVolume;
+            sfxSlider.value = AudioManager.Instance.SFXVolume;
             
             // Read mute/unmute image sprite from Resources dir
             _unmuteSprite = Resources.Load<Sprite>($"{SrcPath}{SrcNameSoundOn}");

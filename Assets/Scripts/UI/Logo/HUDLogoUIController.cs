@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
+using Data.Cache;
 using Manager;
 using Unity.Collections;
 using UnityEngine;
@@ -49,10 +51,15 @@ namespace Scene
 
         #region Custom methods
 
+        private void InitResources()
+        {
+            CacheAudioSource.Instance.Init();
+        }
+        
         /// <summary>
         /// Generate & Initialize instance of singleton
         /// </summary>
-        private void InitManager()
+        private void InitManagers()
         {
             AudioManager.Instance.Init();
         }
@@ -70,21 +77,12 @@ namespace Scene
             UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
 
             // Set Bgm to Logo bgm
-            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Bgm, 0.05f);
-            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.Sfx, 1.0f);
-            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.LogoBgm, false);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.BGM, 0.05f);
+            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.SFX, 1.0f);
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.LogoBGM, false);
 
             // Start fade effect
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, logoCvsGroup, FadeInDuration, FadeInCallback);
-
-            int mask = 0;
-            for (int i = 0; i < 30; i++)
-            {
-                mask += 1 << i;
-            }
-            
-            
-            Debug.Log(Convert.ToString(mask, 16));
         }
         
         #endregion
@@ -94,7 +92,8 @@ namespace Scene
 
         private void Awake()
         {
-            InitManager();
+            InitResources();
+            InitManagers();
         }
         
         void Start()

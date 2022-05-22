@@ -22,8 +22,8 @@ namespace Scene
         #region Private constants
 
         private const int MaxFrameRate = 60;
-        private const float LoadingFadeInDuration = 1.5f;
-        private const float LoadingFadeOutDuration = 3f;
+        private const float LoadingFadeInDuration = 4f;
+        private const float LoadingFadeOutDuration = 1f;
         private const float LogoFadeInDuration = 1f;
         private const float LogoFadeOutDuration = 1f;
         private const string DestSceneName = "LoginScene";
@@ -44,7 +44,7 @@ namespace Scene
 
         private void LoadingFadeInCallback()
         {
-            InitResources();
+            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, loadingCvsGroup, LoadingFadeOutDuration, LoadingFadeOutCallback);
         }
 
         private void LoadingFadeOutCallback()
@@ -87,9 +87,6 @@ namespace Scene
         {
             // Init Managers
             AudioManager.Instance.Init();
-            
-            // Fade out loading canvas
-            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, loadingCvsGroup, LoadingFadeOutDuration, LoadingFadeOutCallback);
         }
 
         #endregion
@@ -108,6 +105,7 @@ namespace Scene
 
             // Init Resources, Managers
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, loadingCvsGroup, LoadingFadeInDuration, LoadingFadeInCallback);
+            InitResources();
         }
 
         #endregion

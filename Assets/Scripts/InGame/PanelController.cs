@@ -4,7 +4,7 @@ using System;
 using Manager;
 using TMPro;
 using UnityEngine;
-
+using Core;
 
 namespace InGame
 {
@@ -19,10 +19,10 @@ namespace InGame
 
         #region Private variables
 
-        [Header("Panel Prefab")] 
+        [Header("Panel Prefab")]
         [SerializeField] private GameObject panel;
 
-        [Header("VFX Prefab")] 
+        [Header("VFX Prefab")]
         [SerializeField] private GameObject vfx;
 
         [SerializeField] private GameObject vfx2;
@@ -83,10 +83,22 @@ namespace InGame
             return _panels[idx];
         }
 
-        public void ChangeColor(int idx, int vfxId, int type)
+        public void ProcessEffect(int code, int type, int x, int y)
         {
-            if (idx > PanelCnt - 1 || idx < 0) return;
-            StartCoroutine(ChangePanelColor(idx, vfxId, type));
+            CardData data = TableDatas.Instance.GetCardData(code);
+            BitMask.BitField30 fieldRange = new BitMask.BitField25(data.range).CvtBits25ToBits30();
+            fieldRange.Shift(x - 3, y - 2);
+
+            int mask = BitMask.BitField30Msb;
+            for (int idx = 0; idx < PanelCnt; idx++)
+            {
+                if ((fieldRange.element & mask) > 0)
+                {
+                    StartCoroutine(ShowEffect(idx, 0, type));
+                }
+
+                mask = mask >> 1;
+            }
         }
 
         #endregion
@@ -94,23 +106,23 @@ namespace InGame
 
         #region Coroutines
 
-        IEnumerator ChangePanelColor(int idx, int vfxId, int type)
+        IEnumerator ShowEffect(int idx, int vfxId, int type)
         {
             Color baseColor, changedColor;
             baseColor = new Color(0.8f, 0.8f, 0.8f);
             if (type == 0) changedColor = new Color(0.5f, 0.5f, 1f);
             else changedColor = new Color(0.5f, 1f, 0.5f);
-            
+
             for (int i = 0; i < 10; i++)
             {
-                if (i % 2 == 0) 
+                if (i % 2 == 0)
                     _panelRenderers[idx].material.color = changedColor;
-                else 
+                else
                     _panelRenderers[idx].material.color = baseColor;
-                
+
                 yield return new WaitForSeconds(0.02f);
             }
-            
+
             GenerateVfx(idx, vfxId);
             _panelRenderers[idx].material.color = changedColor;
             yield return new WaitForSeconds(1.5f);

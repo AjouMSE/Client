@@ -28,6 +28,7 @@ namespace Manager
 
         private NetworkSynchronizer _netSync;
         private PanelController _panelController;
+        private WizardController _hostWizardController, _clientWizardController;
         private HUDGameUserInfoUIController _userInfoUIController;
         private HUDGameCardSelectionUIController _cardSelectionUIController;
 
@@ -61,6 +62,9 @@ namespace Manager
             _turnValue = DefaultTurnValue;
             _timerValue = DefaultTimerValue;
             _canSelect = false;
+
+            // 임시
+            TableLoader.Instance.LoadTableData();
         }
 
         public void CheckTimerReady()
@@ -85,18 +89,14 @@ namespace Manager
             return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0 ? true : false;
         }
 
-        private void ProcessRange(BitMask.BitField30 fieldRange, int vfxId, int type)
+        public void SetHostWizardController(WizardController wizardController)
         {
-            int mask = 0x20000000;
-            for (int j = 0; j < 30; j++)
-            {
-                if ((fieldRange.element & mask) > 0)
-                {
-                    _panelController.ChangeColor(j, vfxId, type);
-                }
+            _hostWizardController = wizardController;
+        }
 
-                mask = mask >> 1;
-            }
+        public void SetClientWizardController(WizardController wizardController)
+        {
+            _clientWizardController = wizardController;
         }
 
         #endregion
@@ -181,11 +181,11 @@ namespace Manager
         private IEnumerator ProcessCards()
         {
             int cardId = 0;
-            int[] hostCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
-            int[] clientCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
+            // int[] hostCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
+            // int[] clientCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
 
-            string range = "10101 10101 10101 10101 10101";
-            BitMask.BitField30 fieldRange = new BitMask.BitField25(range).CvtBits25ToBits30();
+            int[] hostCards = new int[] { 101000000, 101000000, 101100000 };
+            int[] clientCards = new int[] { 101000001, 101000001, 101000001 };
 
             for (int i = 0; i < 3; i++)
             {
@@ -194,17 +194,12 @@ namespace Manager
                 {
                     cardId = hostCards[i];
 
-                    fieldRange.Shift(-1, 1);
-                    ProcessRange(fieldRange, 1, 0);
+                    _panelController.ProcessEffect(cardId, 0, _hostWizardController.GetX(), _hostWizardController.GetY());
+                    _hostWizardController.ProcessSkill(cardId);
 
                     if (UserManager.Instance.IsHost)
                     {
                         _netSync.RemoveFrontOfList(NetworkSynchronizer.UserType.Host);
-                        fieldRange.PrintBy2D();
-                        if (CheckPlayerHit(17, fieldRange))
-                        {
-                            Debug.Log("Hit Hit!");
-                        }
                     }
 
                     yield return new WaitForSeconds(2f);
@@ -215,17 +210,12 @@ namespace Manager
                 {
                     cardId = clientCards[i];
 
-                    fieldRange.Shift(1, 0);
-                    ProcessRange(fieldRange, 2, 1);
+                    _panelController.ProcessEffect(cardId, 1, _clientWizardController.GetX(), _clientWizardController.GetY());
+                    _clientWizardController.ProcessSkill(cardId);
 
                     if (UserManager.Instance.IsHost)
                     {
                         _netSync.RemoveFrontOfList(NetworkSynchronizer.UserType.Client);
-                        fieldRange.PrintBy2D();
-                        if (CheckPlayerHit(12, fieldRange))
-                        {
-                            Debug.Log("Host Hit");
-                        }
                     }
 
                     yield return new WaitForSeconds(2f);
@@ -235,7 +225,6 @@ namespace Manager
             // if the game is not ended,
             StartCoroutine(WaitForRunningTimer());
         }
-
 
         /*IEnumerator ProcessCard()
         {

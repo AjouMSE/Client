@@ -15,7 +15,10 @@ namespace InGame
         private const int Width = 6, Height = 5;
         private const float Speed = 4.0f;
 
-        private const int InitialX = 0, InitialY = 2, InitialIdx = 12;
+        private const int InitHostX = 0, InitHostY = 2, InitHostIdx = 12;
+        private const int InitClientX = 5, InitClientY = 2, InitClientIdx = 17;
+
+        private const int DirLeft = -90, DirRight = 90;
 
         #endregion
 
@@ -50,19 +53,35 @@ namespace InGame
                 if (IsOwner)
                 {
                     transform.position = new Vector3(0, 0.3f, 6.4f);
-                    transform.localEulerAngles = new Vector3(0, 90, 0);
+                    transform.localEulerAngles = new Vector3(0, DirRight, 0);
+
+                    InitHostPos();
+                    GameManager.Instance.SetHostWizardController(this);
                 }
                 else
                 {
                     transform.position = new Vector3(21, 0.3f, 6.4f);
-                    transform.localEulerAngles = new Vector3(0, -90, 0);
+                    transform.localEulerAngles = new Vector3(0, DirLeft, 0);
                     GetComponentInChildren<SkinnedMeshRenderer>().material = mat2;
+
+                    InitClientPos();
+                    GameManager.Instance.SetClientWizardController(this);
                 }
             }
             else
             {
                 if (IsOwner)
+                {
                     GetComponentInChildren<SkinnedMeshRenderer>().material = mat2;
+
+                    InitClientPos();
+                    GameManager.Instance.SetClientWizardController(this);
+                }
+                else
+                {
+                    InitHostPos();
+                    GameManager.Instance.SetHostWizardController(this);
+                }
             }
         }
 
@@ -76,7 +95,6 @@ namespace InGame
         {
             _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
             _animator = GetComponent<Animator>();
-            InitPos();
         }
 
         public void Update()
@@ -94,30 +112,96 @@ namespace InGame
             }
         }
 
-        private void InitPos()
+        private void InitHostPos()
         {
-            _x = InitialX;
-            _y = InitialY;
-            _idx = InitialIdx;
+            _x = InitHostX;
+            _y = InitHostY;
+            _idx = InitHostIdx;
+        }
+
+        private void InitClientPos()
+        {
+            _x = InitClientX;
+            _y = InitClientY;
+            _idx = InitClientIdx;
+        }
+
+        public int GetIdx()
+        {
+            return _idx;
+        }
+
+        public int GetX()
+        {
+            return _x;
+        }
+
+        public int GetY()
+        {
+            return _y;
         }
 
         public void ProcessSkill(int code)
         {
-            // ~ range
-            // Skill -> 피격판정 -> UpdateClientHp()
-            //       -> VFX + ChangeColor
-            // UpdateUI
+            CardData data = TableDatas.Instance.GetCardData(code);
+            BitMask.BitField30 range = ParseRangeWthCurrPos(data);
+            List<int> panelIdxes = GetPanelIdx(range);
+
+            switch (data.type)
+            {
+                case (int)Consts.SkillType.Move:
+                    SetPosition(panelIdxes[0]);
+                    if (UserManager.Instance.IsHost)
+                    {
+                        Move(panelIdxes[0]);
+                    }
+                    break;
+
+                case (int)Consts.SkillType.Attack:
+                    if (UserManager.Instance.IsHost)
+                    {
+                        Attack(range, panelIdxes);
+                    }
+                    break;
+            }
         }
 
-        private void Move(int destIdx)
+        private void SetPosition(int destIdx)
         {
             _x = destIdx % Width;
             _y = destIdx / Width;
             _idx = destIdx;
             _bitIdx = ConvertIdxToBitIdx(_idx);
+        }
 
+        private void Move(int destIdx)
+        {
             Vector3 destPosition = _panelController.GetPanelByIdx(_idx).transform.position;
             StartCoroutine(MoveAction(destPosition));
+        }
+
+        private void Attack(BitMask.BitField30 range, List<int> panelIdxes)
+        {
+            // Host만 실행
+
+            // Skill -> 피격판정 -> UpdateClientHp()
+            //       -> VFX + ChangeColor
+            // UpdateUI
+
+            int hostileIdx = -1;
+            if (IsOwner)
+            {
+                hostileIdx = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.ConnectedClientsIds[1]).GetComponent<WizardController>().GetIdx();
+            }
+            else
+            {
+                hostileIdx = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject().GetComponent<WizardController>().GetIdx();
+            }
+
+            if (CheckPlayerHit(hostileIdx, range))
+            {
+                Debug.Log("Hit!");
+            }
         }
 
         public IEnumerator MoveAction(Vector3 destination)
@@ -141,6 +225,13 @@ namespace InGame
             transform.position = destinationPosition;
 
             _animator.SetInteger("AnimationState", (int)AnimationState.Idle);
+        }
+
+        private BitMask.BitField30 ParseRangeWthCurrPos(CardData data)
+        {
+            BitMask.BitField30 fieldRange = new BitMask.BitField25(data.range).CvtBits25ToBits30();
+            fieldRange.Shift(_x - 3, _y - 2);
+            return fieldRange;
         }
 
         private List<int> GetPanelIdx(BitMask.BitField30 fieldRange)
@@ -167,6 +258,16 @@ namespace InGame
             return new BitMask.BitField30(zero >> idx);
         }
 
+        private BitMask.BitField30 CvtPlayerIdxToBitField30(int idx)
+        {
+            if (idx < 0 || idx > 29) return default;
+            return new BitMask.BitField30(BitMask.BitField30Msb >> idx);
+        }
+
+        private bool CheckPlayerHit(int idx, BitMask.BitField30 range)
+        {
+            return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0 ? true : false;
+        }
 
         #endregion
     }

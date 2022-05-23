@@ -25,8 +25,7 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 
     Dictionary<string, UnityEngine.Object> cachedResources = new Dictionary<string, UnityEngine.Object>();
 
-    string localPath = "Assets/Table";
-    private string resourcePath = "Table/";
+    private string resourcePath = "Table";
 
     private void UpdateStep()
     {
@@ -86,19 +85,12 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 
     public T Load<T>(string fileName) where T : UnityEngine.Object
     {
-        T obj = null;
-#if UNITY_EDITOR
-        obj = AssetDatabase.LoadAssetAtPath<T>(string.Format(string.Format("{0}/{1}.bytes", localPath, fileName)));
-#else
-        obj = Resources.Load<T>($"{resourcePath}/{fileName}");
-#endif
+        T obj = Resources.Load<T>($"{resourcePath}/{fileName}");
 
         if (obj != null)
-        {
             cachedResources.Add(fileName, obj);
-        }
         else
-            Debug.LogError(string.Format("{0} 경로에 {1}파일이 없습니다.", localPath, fileName));
+            Debug.LogError(string.Format("{0} 경로에 {1}파일이 없습니다.", resourcePath, fileName));
 
         return obj;
     }

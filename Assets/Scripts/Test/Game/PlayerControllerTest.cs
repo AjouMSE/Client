@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using Core;
+using Manager;
+using Unity.Netcode;
 using UnityEngine;
 using Utils;
 
@@ -22,50 +24,112 @@ public class PlayerControllerTest : MonoBehaviour
     }
 
     private Animator _animator;
+    private string _animationState = "BattleState";
+
+    // public override void OnNetworkSpawn()
+    // {
+    //     if (NetworkManager.Singleton.IsServer)
+    //     {
+    //         if (IsOwner)
+    //         {
+    //             transform.position = new Vector3(0, 0.3f, 6.4f);
+    //             transform.localEulerAngles = new Vector3(0, 90, 0);
+    //             GetComponentInChildren<SkinnedMeshRenderer>().material.color = new Color(0, 0, 1);
+    //         }
+    //         else
+    //         {
+    //             transform.position = new Vector3(21, 0.3f, 6.4f);
+    //             transform.localEulerAngles = new Vector3(0, -90, 0);
+    //             GetComponentInChildren<SkinnedMeshRenderer>().material.color = new Color(0, 1, 0);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         if (IsOwner)
+    //             GetComponentInChildren<SkinnedMeshRenderer>().material.color = new Color(0, 1, 0);
+    //         else
+    //             GetComponentInChildren<SkinnedMeshRenderer>().material.color = new Color(0, 0, 1);
+    //     }
+    // }
 
     private void InitPos()
     {
-
+        _x = 0;
+        _y = 2;
+        _idx = 12;
     }
 
     private void Start()
     {
         _animator = GetComponent<Animator>();
-        _panelControllerTest = GameObject.Find("GameSceneControllerTest").GetComponent<PanelControllerTest>();
+        //_panelControllerTest = GameObject.Find("GameSceneControllerTest").GetComponent<PanelControllerTest>();
         InitPos();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        // if (Input.GetKeyDown(KeyCode.A))
+        // {
+        //     string range = "00000 00000 00001 00000 00000";
+        //     BitMask.BitField25 skillRange = new BitMask.BitField25(range);
+        //     skillRange.PrintBy2D();
+        //     BitMask.BitField30 fieldRange = skillRange.CvtBits25ToBits30();
+        //     fieldRange.PrintBy2D();
+        //
+        //     int dx = _x - 3;
+        //     int dy = _y - 2;
+        //     fieldRange.Shift(dx, dy);
+        //     fieldRange.PrintBy2D();
+        //
+        //     int mask = BitMask.BitField30Msb;
+        //     for (int i = 0; i < 30; i++)
+        //     {
+        //         if ((fieldRange.element & mask) > 0)
+        //         {
+        //             int px = i % 6;
+        //             int py = i / 6;
+        //             Debug.Log($"{i} / {px} / {py}");
+        //             _panelControllerTest.GetPanel(px, py).GetComponent<MeshRenderer>().material.color = new Color(1, 0.5f, 0.5f);
+        //         }
+        //         mask >>= 1;
+        //     }
+        //
+        //     _x += 2;
+        //
+        //     Move(range);
+        // }
+
+        if (!UserManager.Instance.IsHost)
         {
-            string range = "00000 00000 00001 00000 00000";
-            BitMask.BitField25 skillRange = new BitMask.BitField25(range);
-            skillRange.PrintBy2D();
-            BitMask.BitField30 fieldRange = skillRange.CvtBits25ToBits30();
-            fieldRange.PrintBy2D();
-        
-            int dx = _x - 3;
-            int dy = _y - 2;
-            fieldRange.Shift(dx, dy);
-            fieldRange.PrintBy2D();
-
-            int mask = (1 << 29);
-            for (int i = 0; i < 30; i++)
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                if ((fieldRange.element & mask) > 0)
-                {
-                    int px = i % 6;
-                    int py = i / 6;
-                    Debug.Log($"{i} / {px} / {py}");
-                    _panelControllerTest.GetPanel(px, py).GetComponent<MeshRenderer>().material.color = new Color(1, 0.5f, 0.5f);
-                }
-                mask = mask >> 1;
+                _animator.SetInteger(_animationState, 1);
             }
-
-            _x += 2;
         
-            Move(range);
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                _animator.SetInteger(_animationState, 2);
+            }
+        
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                _animator.SetInteger(_animationState, 3);
+            }
+        
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                _animator.SetInteger(_animationState, 4);
+            }
+            
+            if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                _animator.SetInteger(_animationState, 5);
+            }
+        
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                _animator.SetInteger(_animationState, 0);
+            }
         }
     }
 

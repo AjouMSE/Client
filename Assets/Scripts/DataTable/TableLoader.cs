@@ -26,6 +26,7 @@ public partial class TableLoader : MonoSingleton<TableLoader>
     Dictionary<string, UnityEngine.Object> cachedResources = new Dictionary<string, UnityEngine.Object>();
 
     string localPath = "Assets/Table";
+    private string resourcePath = "Table/";
 
     private void UpdateStep()
     {
@@ -88,6 +89,8 @@ public partial class TableLoader : MonoSingleton<TableLoader>
         T obj = null;
 #if UNITY_EDITOR
         obj = AssetDatabase.LoadAssetAtPath<T>(string.Format(string.Format("{0}/{1}.bytes", localPath, fileName)));
+#else
+        obj = Resources.Load<T>($"{resourcePath}/{fileName}");
 #endif
 
         if (obj != null)

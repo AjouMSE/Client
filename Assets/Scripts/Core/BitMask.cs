@@ -27,7 +27,7 @@ namespace Core
         private const int Bits6Mask3 = 0xfc0000;
         private const int Bits6Mask4 = 0x3f000000;
 
-        private const int BitField25Full = 0x1ffffff;   // 11111 11111 11111 11111
+        private const int BitField25Full = 0x1ffffff;   // 11111 11111 11111 11111 11111
         private const int BitField30Full = 0x3fffffff;  // 111111 111111 111111 111111 111111
         private const int BitFieldEmpty = 0x0;
 

@@ -9531,10 +9531,10 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 392462109}
-    PlayerPrefab: {fileID: 7203484073404692962, guid: 3939feb3a8d85fa43a00be6c96deaffe, type: 3}
+    PlayerPrefab: {fileID: 8899991094220859136, guid: 448e9e54a0308e04499f25cc4ab52866, type: 3}
     NetworkPrefabs:
     - Override: 0
-      Prefab: {fileID: 7203484073404692962, guid: 3939feb3a8d85fa43a00be6c96deaffe, type: 3}
+      Prefab: {fileID: 8899991094220859136, guid: 448e9e54a0308e04499f25cc4ab52866, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}

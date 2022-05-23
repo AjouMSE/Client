@@ -21,8 +21,11 @@ namespace Core
 
         #region Private variables
 
-        [Header("HUD Game Card Selection UI Controller")] 
+        [Header("HUD Game Card Selection UI Controller")]
         [SerializeField] private HUDGameCardSelectionUIController cardSelectionUIController;
+
+        [Header("HUD Game User Info UI Controller")]
+        [SerializeField] private HUDGameUserInfoUIController userInfoUIController;
 
         private NetworkVariable<bool> _hostReadyToRunTimer, _clientReadyToRunTimer;
         private NetworkVariable<bool> _hostReadyToProcessCard, _clientReadyToProcessCard;
@@ -83,10 +86,10 @@ namespace Core
             _hostReadyToProcessCard = new NetworkVariable<bool>();
             _clientReadyToProcessCard = new NetworkVariable<bool>();
 
-            _hostHP = new NetworkVariable<int>();
-            _clientHP = new NetworkVariable<int>();
-            _hostMana = new NetworkVariable<int>();
-            _clientMana = new NetworkVariable<int>();
+            _hostHP = new NetworkVariable<int>(100);
+            _clientHP = new NetworkVariable<int>(100);
+            _hostMana = new NetworkVariable<int>(100);
+            _clientMana = new NetworkVariable<int>(100);
 
             _hostCardList = new NetworkList<int>();
             _clientCardList = new NetworkList<int>();
@@ -312,6 +315,54 @@ namespace Core
             }
 
             return cards;
+        }
+
+        public void UpdateHostValue(int type, int value)
+        {
+            switch (type)
+            {
+                case 0:
+                    _hostHP.Value += value;
+                    break;
+            }
+
+            userInfoUIController.UpdateHostUI(type, _hostHP.Value);
+            UpdateHostUIClientRpc(type, _hostHP.Value);
+        }
+
+        [ClientRpc]
+        private void UpdateHostUIClientRpc(int type, int value)
+        {
+            switch (type)
+            {
+                case 0:
+                    userInfoUIController.UpdateHostUI(type, value);
+                    break;
+            }
+        }
+
+        public void UpdateClientValue(int type, int value)
+        {
+            switch (type)
+            {
+                case 0:
+                    _clientHP.Value += value;
+                    break;
+            }
+
+            userInfoUIController.UpdateClientUI(type, _clientHP.Value);
+            UpdateClientUIClientRpc(type, _clientHP.Value);
+        }
+
+        [ClientRpc]
+        private void UpdateClientUIClientRpc(int type, int value)
+        {
+            switch (type)
+            {
+                case 0:
+                    userInfoUIController.UpdateClientUI(type, value);
+                    break;
+            }
         }
 
         #endregion

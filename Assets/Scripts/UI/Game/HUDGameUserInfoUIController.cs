@@ -6,25 +6,34 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
+using TMPro;
 
 namespace UI.Game
 {
     public class HUDGameUserInfoUIController : MonoBehaviour
     {
         #region Private variables
-        
+
         [Header("Nickname Text")]
         [SerializeField] private Text hostNicknameText;
         [SerializeField] private Text clientNicknameText;
 
-        [Header("Timer, Turn Text")] 
+        [Header("HP Text")]
+        [SerializeField] private TextMeshProUGUI hostHPText;
+        [SerializeField] private TextMeshProUGUI clientHPText;
+
+        [Header("Mana Text")]
+        [SerializeField] private TextMeshProUGUI hostManaText;
+        [SerializeField] private TextMeshProUGUI clientManaText;
+
+        [Header("Timer, Turn Text")]
         [SerializeField] private Text timerText;
 
         [SerializeField] private Text turnText;
-        
+
         #endregion
-        
-        
+
+
         #region Custom methods
 
         /// <summary>
@@ -33,7 +42,7 @@ namespace UI.Game
         public void Init()
         {
             Packet.User host, client;
-            
+
             if (UserManager.Instance.IsHost)
             {
                 host = UserManager.Instance.User;
@@ -44,7 +53,7 @@ namespace UI.Game
                 host = UserManager.Instance.Hostile;
                 client = UserManager.Instance.User;
             }
-            
+
             hostNicknameText.text = host.nickname;
             clientNicknameText.text = client.nickname;
         }
@@ -68,6 +77,34 @@ namespace UI.Game
             turnText.text = $"Turn {GameManager.Instance.turnValue.ToString()}";
         }
 
+        public void UpdateHostUI(int type, int value)
+        {
+            switch (type)
+            {
+                case 0:
+                    hostHPText.text = $"{value}";
+                    break;
+
+                case 1:
+                    hostManaText.text = $"{value}";
+                    break;
+            }
+        }
+
+        public void UpdateClientUI(int type, int value)
+        {
+            switch (type)
+            {
+                case 0:
+                    clientHPText.text = $"{value}";
+                    break;
+
+                case 1:
+                    clientManaText.text = $"{value}";
+                    break;
+            }
+        }
+
         #endregion
-    }   
+    }
 }

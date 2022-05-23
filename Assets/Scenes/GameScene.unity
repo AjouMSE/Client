@@ -504,6 +504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardSelectionUIController: {fileID: 319823944}
+  userInfoUIController: {fileID: 319823945}
 --- !u!114 &71356236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4480,6 +4481,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hostNicknameText: {fileID: 487479932}
   clientNicknameText: {fileID: 578634170}
+  hostHPText: {fileID: 1756364344}
+  clientHPText: {fileID: 1626316373}
+  hostManaText: {fileID: 1638955071}
+  clientManaText: {fileID: 148226449}
   timerText: {fileID: 207757994}
   turnText: {fileID: 952581305}
 --- !u!114 &319823946

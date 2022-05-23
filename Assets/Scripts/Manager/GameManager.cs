@@ -89,9 +89,19 @@ namespace Manager
             return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0 ? true : false;
         }
 
+        public WizardController GetHostWizardController()
+        {
+            return _hostWizardController;
+        }
+
         public void SetHostWizardController(WizardController wizardController)
         {
             _hostWizardController = wizardController;
+        }
+
+        public WizardController GetClientWizardController()
+        {
+            return _clientWizardController;
         }
 
         public void SetClientWizardController(WizardController wizardController)
@@ -184,8 +194,8 @@ namespace Manager
             // int[] hostCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
             // int[] clientCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
 
-            int[] hostCards = new int[] { 101000000, 101000000, 101100000 };
-            int[] clientCards = new int[] { 101000001, 101000001, 101000001 };
+            int[] hostCards = new int[] { 101000004, 101100000, 101100002 };
+            int[] clientCards = new int[] { 101000005, 101100002, 101100000 };
 
             for (int i = 0; i < 3; i++)
             {

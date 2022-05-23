@@ -34,6 +34,8 @@ namespace InGame
         private Animator _animator;
         private PanelController _panelController;
 
+        private NetworkSynchronizer _netSync;
+
         #endregion
 
         enum AnimationState
@@ -67,6 +69,7 @@ namespace InGame
                     InitClientPos();
                     GameManager.Instance.SetClientWizardController(this);
                 }
+                _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
             }
             else
             {
@@ -99,17 +102,7 @@ namespace InGame
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                string range = "00000 00000 00000 00100 00000";
-                BitMask.BitField30 fieldRange = new BitMask.BitField25(range).CvtBits25ToBits30();
 
-                fieldRange.Shift(_x - 3, _y - 2);
-                fieldRange.PrintBy2D();
-                int destIdx = GetPanelIdx(fieldRange)[0];
-
-                Move(destIdx);
-            }
         }
 
         private void InitHostPos()
@@ -160,7 +153,7 @@ namespace InGame
                 case (int)Consts.SkillType.Attack:
                     if (UserManager.Instance.IsHost)
                     {
-                        Attack(range, panelIdxes);
+                        Attack(data, range, panelIdxes);
                     }
                     break;
             }
@@ -180,27 +173,27 @@ namespace InGame
             StartCoroutine(MoveAction(destPosition));
         }
 
-        private void Attack(BitMask.BitField30 range, List<int> panelIdxes)
+        private void Attack(CardData data, BitMask.BitField30 range, List<int> panelIdxes)
         {
             // Host만 실행
-
-            // Skill -> 피격판정 -> UpdateClientHp()
-            //       -> VFX + ChangeColor
-            // UpdateUI
-
             int hostileIdx = -1;
             if (IsOwner)
             {
-                hostileIdx = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.ConnectedClientsIds[1]).GetComponent<WizardController>().GetIdx();
+                hostileIdx = GameManager.Instance.GetClientWizardController().GetIdx();
+                if (CheckPlayerHit(hostileIdx, range))
+                {
+                    Debug.Log("Hit!");
+                    _netSync.UpdateClientValue(0, -data.value);
+                }
             }
             else
             {
-                hostileIdx = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject().GetComponent<WizardController>().GetIdx();
-            }
-
-            if (CheckPlayerHit(hostileIdx, range))
-            {
-                Debug.Log("Hit!");
+                hostileIdx = GameManager.Instance.GetHostWizardController().GetIdx();
+                if (CheckPlayerHit(hostileIdx, range))
+                {
+                    Debug.Log("Hit!");
+                    _netSync.UpdateHostValue(0, -data.value);
+                }
             }
         }
 

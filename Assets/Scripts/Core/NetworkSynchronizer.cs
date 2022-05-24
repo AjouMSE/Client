@@ -323,6 +323,10 @@ namespace Core
             {
                 case Consts.GameUIType.HP:
                     _hostHP.Value += value;
+                    if (_hostHP.Value > Consts.MaxHP)
+                        _hostHP.Value = Consts.MaxHP;
+                    else if (_hostHP.Value < 0)
+                        _hostHP.Value = 0;
                     updatedValue = _hostHP.Value;
                     break;
             }
@@ -350,6 +354,10 @@ namespace Core
             {
                 case Consts.GameUIType.HP:
                     _clientHP.Value += value;
+                    if (_clientHP.Value > Consts.MaxHP)
+                        _clientHP.Value = Consts.MaxHP;
+                    else if (_clientHP.Value < 0)
+                        _clientHP.Value = 0;
                     updatedValue = _clientHP.Value;
                     break;
             }
@@ -367,6 +375,16 @@ namespace Core
                     userInfoUIController.UpdateClientUI(type, value);
                     break;
             }
+        }
+
+        public int GetHostHP()
+        {
+            return _hostHP.Value;
+        }
+
+        public int GetClientHP()
+        {
+            return _clientHP.Value;
         }
 
         #endregion

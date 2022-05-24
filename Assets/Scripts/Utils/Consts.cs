@@ -14,5 +14,7 @@ namespace Utils
         public enum SkillType { Move = 1, Attack = 100, Special = 200 }
 
         public enum GameUIType { HP, Mana }
+
+        public enum BattleResult { WIN, LOSE, DRAW }
     }
 }

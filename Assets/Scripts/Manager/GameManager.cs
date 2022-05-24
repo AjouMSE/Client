@@ -106,6 +106,34 @@ namespace Manager
             _clientWizardController = wizardController;
         }
 
+        private bool ValidGameOver()
+        {
+            return _netSync.GetHostHP() <= 0 || _netSync.GetClientHP() <= 0;
+        }
+
+        private void GameOver()
+        {
+            int hostHp = _netSync.GetHostHP();
+            int clientHp = _netSync.GetClientHP();
+
+            if (hostHp <= 0 && clientHp <= 0)
+                Debug.Log(Consts.BattleResult.DRAW);
+            else if (clientHp <= 0)
+            {
+                if (UserManager.Instance.IsHost)
+                    Debug.Log(Consts.BattleResult.WIN);
+                else
+                    Debug.Log(Consts.BattleResult.LOSE);
+            }
+            else if (hostHp <= 0)
+            {
+                if (UserManager.Instance.IsHost)
+                    Debug.Log(Consts.BattleResult.LOSE);
+                else
+                    Debug.Log(Consts.BattleResult.WIN);
+            }
+        }
+
         #endregion
 
 
@@ -230,9 +258,16 @@ namespace Manager
             }
 
             // if the game is not ended,
-            _hostWizardController.GainMana();
-            _clientWizardController.GainMana();
-            StartCoroutine(WaitForRunningTimer());
+            if (!ValidGameOver())
+            {
+                _hostWizardController.GainMana();
+                _clientWizardController.GainMana();
+                StartCoroutine(WaitForRunningTimer());
+            }
+            else
+            {
+                GameOver();
+            }
         }
 
         /*IEnumerator ProcessCard()

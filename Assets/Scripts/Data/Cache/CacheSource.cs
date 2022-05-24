@@ -7,18 +7,18 @@ namespace Data.Cache
 {
     public abstract class CacheSource<TChild, TSource> where TChild : new()
     {
+        private static TChild _instance;
         public static TChild Instance
         {
             get
             {
-                if (Instance == null)
+                if (_instance == null)
                 {
-                    Instance = new TChild();
+                    _instance = new TChild();
                 }
 
-                return Instance;
+                return _instance;
             }
-            private set { }
         }
 
         // cache dictionary

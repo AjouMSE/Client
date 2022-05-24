@@ -6,8 +6,9 @@ using Manager;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-namespace Scene
+namespace UI.Logo
 {
     /// <summary>
     /// HUDLogoUIController.cs
@@ -35,6 +36,7 @@ namespace Scene
 
         [Header("LogoScene UI Canvas Group")] 
         [SerializeField] private CanvasGroup loadingCvsGroup;
+
         [SerializeField] private CanvasGroup logoCvsGroup;
 
         #endregion

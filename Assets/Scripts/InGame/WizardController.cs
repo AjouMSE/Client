@@ -6,6 +6,7 @@ using UnityEngine;
 using Utils;
 using Core;
 using UI.Game;
+using Unity.Netcode.Components;
 
 namespace InGame
 {
@@ -31,6 +32,7 @@ namespace InGame
 
         private int _x, _y, _idx;
         private BitMask.BitField30 _bitIdx; // msb is idx 0, lsb is idx 29 (0 ~ 29)
+        private string _currentAnimation;
 
         private int _currMana;
 
@@ -41,29 +43,20 @@ namespace InGame
         private NetworkSynchronizer _netSync;
 
         #endregion
-
-        enum MoveState
+        
+        
+        #region Unity event methods
+        
+        private void Start()
         {
-            Idle = 0,
-            MoveFront = 1,
-            MoveBack = 2,
-            Attack = 3
+            _animator = GetComponent<Animator>();
+            _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
+            _userInfoUIController = GameObject.Find("GameSceneUIController").GetComponent<HUDGameUserInfoUIController>();
+            if(NetworkManager.Singleton.IsServer) _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
         }
-        enum BattleState
-        {
-            Idle = 0,
-            Defend = 1,
-            GetHit = 2,
-            Dizzy = 3,
-            Die = 4,
-            Recovery = 5
-        }
-        enum AnimationState
-        {
-            Idle = 0,
-            Interact = 1,
-            Victory = 2,
-        }
+        
+        #endregion
+        
 
         #region Network methods
 
@@ -90,7 +83,6 @@ namespace InGame
                     InitClientPos();
                     GameManager.Instance.SetClientWizardController(this);
                 }
-                _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
             }
             else
             {
@@ -115,19 +107,6 @@ namespace InGame
 
 
         #region Custom methods
-
-
-        public void Start()
-        {
-            _animator = GetComponent<Animator>();
-            _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
-            _userInfoUIController = GameObject.Find("GameSceneUIController").GetComponent<HUDGameUserInfoUIController>();
-        }
-
-        public void Update()
-        {
-
-        }
 
         private void InitHostPos()
         {
@@ -156,6 +135,15 @@ namespace InGame
         public int GetY()
         {
             return _y;
+        }
+
+        private void SetAnimation(string animationName)
+        {
+            if(!string.IsNullOrEmpty(_currentAnimation))
+                _animator.SetBool(_currentAnimation, false);
+            
+            _animator.SetBool(animationName, true);
+            _currentAnimation = animationName;
         }
 
         public void ProcessSkill(int code)
@@ -222,10 +210,10 @@ namespace InGame
             }
         }
 
-        public IEnumerator MoveAction(Vector3 destination)
+        private IEnumerator MoveAction(Vector3 destination)
         {
             // Animation Move Front
-            _animator.SetInteger("MoveState", (int)MoveState.MoveFront);
+            SetAnimation(WizardAnimations.WalkForward);
 
             Vector3 destinationPosition = new Vector3(destination.x, transform.position.y, destination.z);
             if (IsOwner)
@@ -251,7 +239,7 @@ namespace InGame
             Rotate();
 
             // Animation Move Idle
-            _animator.SetInteger("MoveState", (int)MoveState.Idle);
+            SetAnimation(WizardAnimations.Idle);
         }
 
         private BitMask.BitField30 ParseRangeWthCurrPos(CardData data)
@@ -357,12 +345,12 @@ namespace InGame
             {
                 case Consts.BattleResult.WIN:
                     // Animation Victory
-                    _animator.SetInteger("AnimationState", (int)AnimationState.Victory);
+                    SetAnimation(WizardAnimations.Victory);
                     break;
 
                 case Consts.BattleResult.LOSE:
                     // Animation Die
-                    _animator.SetInteger("BattleState", (int)BattleState.Die);
+                    SetAnimation(WizardAnimations.Die);
                     break;
             }
         }

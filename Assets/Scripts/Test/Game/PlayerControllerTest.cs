@@ -103,7 +103,7 @@ public class PlayerControllerTest : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                _animator.SetInteger(_animationState, 1);
+                _animator.SetBool("Attack0202", true);
             }
         
             if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -128,7 +128,7 @@ public class PlayerControllerTest : MonoBehaviour
         
             if (Input.GetKeyDown(KeyCode.Alpha0))
             {
-                _animator.SetInteger(_animationState, 0);
+                _animator.SetBool("Attack0202", false);
             }
         }
     }

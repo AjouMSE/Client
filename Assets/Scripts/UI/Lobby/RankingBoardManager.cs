@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RankingBoard : MonoBehaviour
+public class RankingBoardManager : MonoBehaviour
 {
     public GameObject rankingboard;
     public GameObject[] rangkingpanel;

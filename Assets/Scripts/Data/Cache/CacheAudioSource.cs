@@ -9,7 +9,7 @@ using Utils;
 
 namespace Data.Cache
 {
-    public class CacheAudioSource : MonoSingleton<CacheAudioSource>, ICacheSource<AudioClip>
+    public class CacheAudioSource : CacheSource<CacheAudioSource, AudioClip>
     {
         #region Private constants
 
@@ -17,7 +17,7 @@ namespace Data.Cache
         private const string SrcPathBgm = "/BGM";
         private const string SrcPathSfx = "/SFX";
         private const string SrcPathMixer = "/Mixer";
-        
+
         private const string SrcPathLogoBgm = "/LogoBgm"; // 0
         private const string SrcPathMainBgm1 = "/MainBgm01"; // 1
         private const string SrcPathMainBgm2 = "/MainBgm02"; // 2
@@ -34,44 +34,66 @@ namespace Data.Cache
         #region Public variables
 
         public AudioMixer AudioMixer { get; private set; }
-        
+
         public Dictionary<AudioManager.BgmTypes, AudioClip> BGMCache { get; private set; }
 
         #endregion
-        
+
 
         #region Public methods
 
-        public IEnumerator Init()
+        public override IEnumerator Init()
         {
             // Init AudioMixer
             AudioMixer = Resources.Load<AudioMixer>($"{SrcPathRoot}{SrcPathMixer}");
-            
+
             // Cache bgm to dictionary
             BGMCache = new Dictionary<AudioManager.BgmTypes, AudioClip>
             {
                 // Logo Bgm
-                { AudioManager.BgmTypes.LogoBGM, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathLogoBgm}") },
-                
+                {
+                    AudioManager.BgmTypes.LogoBGM,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathLogoBgm}")
+                },
+
                 // Main Bgm
-                { AudioManager.BgmTypes.MainBGM1, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm1}") },
-                { AudioManager.BgmTypes.MainBGM2, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm2}") },
-                { AudioManager.BgmTypes.MainBGM3, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm3}") },
-                { AudioManager.BgmTypes.MainBGM4, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm4}") },
-                
+                {
+                    AudioManager.BgmTypes.MainBGM1,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm1}")
+                },
+                {
+                    AudioManager.BgmTypes.MainBGM2,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm2}")
+                },
+                {
+                    AudioManager.BgmTypes.MainBGM3,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm3}")
+                },
+                {
+                    AudioManager.BgmTypes.MainBGM4,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathMainBgm4}")
+                },
+
                 // Battle Bgm
-                { AudioManager.BgmTypes.BattleBGM1, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm1}") },
-                { AudioManager.BgmTypes.BattleBGM2, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm2}") },
-                { AudioManager.BgmTypes.BattleBGM3, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm3}") },
-                { AudioManager.BgmTypes.BattleBGM4, Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm4}") }
+                {
+                    AudioManager.BgmTypes.BattleBGM1,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm1}")
+                },
+                {
+                    AudioManager.BgmTypes.BattleBGM2,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm2}")
+                },
+                {
+                    AudioManager.BgmTypes.BattleBGM3,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm3}")
+                },
+                {
+                    AudioManager.BgmTypes.BattleBGM4,
+                    Resources.Load<AudioClip>($"{SrcPathRoot}{SrcPathBgm}{SrcPathBattleBgm4}")
+                }
             };
 
             yield return null;
-        }
-
-        public AudioClip GetSource(int id)
-        {
-            return null;
         }
 
         #endregion

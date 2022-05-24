@@ -92,6 +92,7 @@ namespace Scene
         private void InitResources()
         {
             // Init Resources
+            TableLoader.Instance.LoadTableData();
             StartCoroutine(CacheAudioSource.Instance.Init());
             StartCoroutine(CacheSpriteSource.Instance.Init());
             StartCoroutine(CacheVFXSource.Instance.Init());

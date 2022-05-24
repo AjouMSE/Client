@@ -7,18 +7,13 @@ using Utils;
 
 namespace Data.Cache
 {
-    public class CacheVFXSource : MonoSingleton<CacheVFXSource>, ICacheSource<GameObject>
+    public class CacheVFXSource : CacheSource<CacheVFXSource, GameObject>
     {
         #region Public methods
-        
-        public IEnumerator Init()
+
+        public override IEnumerator Init()
         {
             yield return null;
-        }
-
-        public GameObject GetSource(int id)
-        {
-            return null;
         }
 
         #endregion

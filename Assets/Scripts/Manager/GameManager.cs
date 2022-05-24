@@ -62,9 +62,6 @@ namespace Manager
             _turnValue = DefaultTurnValue;
             _timerValue = DefaultTimerValue;
             _canSelect = false;
-
-            // 임시
-            TableLoader.Instance.LoadTableData();
         }
 
         public void CheckTimerReady()

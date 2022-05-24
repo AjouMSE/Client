@@ -22,28 +22,28 @@ namespace UI.Game
 
         #region Private Variables
 
-        [Header("Host Card Selections")] 
+        [Header("Host Card Selections")]
         [SerializeField] private Button[] hostCards;
 
-        [Header("Client Card Selections")] 
+        [Header("Client Card Selections")]
         [SerializeField] private Button[] clientCards;
 
-        [Header("Host Confirm Button")] 
+        [Header("Host Confirm Button")]
         [SerializeField] private Button hostConfirmBtn;
 
-        [Header("Client Confirm Button")] 
+        [Header("Client Confirm Button")]
         [SerializeField] private Button clientConfirmBtn;
 
-        [Header("Card Images")] 
+        [Header("Card Images")]
         [SerializeField] private Sprite[] cardImgs;
 
         [SerializeField] private Sprite baseCardImg;
         [SerializeField] private Sprite confirmCardImg;
 
-        [Header("3D card scroll UI")] 
+        [Header("3D card scroll UI")]
         [SerializeField] private ScrollScript3D cardScroll3D;
 
-        [Header("NetworkSynchronizer")] 
+        [Header("NetworkSynchronizer")]
         [SerializeField] private NetworkSynchronizer _netSync;
 
         private Image[] _hostCardImages;
@@ -68,6 +68,7 @@ namespace UI.Game
             if (GameManager.Instance.canSelect)
             {
                 _netSync.AddCardToList(id);
+                UpdateValidCards();
             }
         }
 
@@ -76,6 +77,7 @@ namespace UI.Game
             if (GameManager.Instance.canSelect)
             {
                 _netSync.RemoveCardFromList(idx);
+                UpdateValidCards();
             }
         }
 
@@ -140,6 +142,15 @@ namespace UI.Game
                 {
                     _clientCardImages[i].sprite = baseCardImg;
                 }
+            }
+        }
+
+        public void UpdateValidCards()
+        {
+            List<int> validCards = GameManager.Instance.GetValidCards();
+            for (int i = 0; i < validCards.Count; i++)
+            {
+                Debug.Log(validCards[i]);
             }
         }
 

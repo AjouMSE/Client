@@ -14,7 +14,6 @@ namespace InGame
     {
         #region Private constants
 
-        private const int Width = 6, Height = 5;
         private const float Speed = 4.0f;
 
         private const int InitHostX = 0, InitHostY = 2, InitHostIdx = 12;
@@ -43,20 +42,20 @@ namespace InGame
         private NetworkSynchronizer _netSync;
 
         #endregion
-        
-        
+
+
         #region Unity event methods
-        
+
         private void Start()
         {
             _animator = GetComponent<Animator>();
             _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
             _userInfoUIController = GameObject.Find("GameSceneUIController").GetComponent<HUDGameUserInfoUIController>();
-            if(NetworkManager.Singleton.IsServer) _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
+            _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
         }
-        
+
         #endregion
-        
+
 
         #region Network methods
 
@@ -137,11 +136,16 @@ namespace InGame
             return _y;
         }
 
+        public int GetMana()
+        {
+            return _currMana;
+        }
+
         private void SetAnimation(string animationName)
         {
-            if(!string.IsNullOrEmpty(_currentAnimation))
+            if (!string.IsNullOrEmpty(_currentAnimation))
                 _animator.SetBool(_currentAnimation, false);
-            
+
             _animator.SetBool(animationName, true);
             _currentAnimation = animationName;
         }
@@ -149,12 +153,13 @@ namespace InGame
         public void ProcessSkill(int code)
         {
             CardData data = TableDatas.Instance.GetCardData(code);
-            BitMask.BitField30 range = ParseRangeWthCurrPos(data);
+            BitMask.BitField30 range = ParseRangeWthCurrPos(data.range);
             List<int> panelIdxes = GetPanelIdx(range);
 
             switch (data.type)
             {
                 case (int)Consts.SkillType.Move:
+                    UseMana(data);
                     SetPosition(panelIdxes[0]);
                     if (UserManager.Instance.IsHost)
                     {
@@ -165,17 +170,15 @@ namespace InGame
                 case (int)Consts.SkillType.Attack:
                     UseMana(data);
                     if (UserManager.Instance.IsHost)
-                    {
                         Attack(data, range, panelIdxes);
-                    }
                     break;
             }
         }
 
         private void SetPosition(int destIdx)
         {
-            _x = destIdx % Width;
-            _y = destIdx / Width;
+            _x = destIdx % Consts.Width;
+            _y = destIdx / Consts.Width;
             _idx = destIdx;
             _bitIdx = ConvertIdxToBitIdx(_idx);
         }
@@ -242,9 +245,9 @@ namespace InGame
             SetAnimation(WizardAnimations.Idle);
         }
 
-        private BitMask.BitField30 ParseRangeWthCurrPos(CardData data)
+        private BitMask.BitField30 ParseRangeWthCurrPos(string range)
         {
-            BitMask.BitField30 fieldRange = new BitMask.BitField25(data.range).CvtBits25ToBits30();
+            BitMask.BitField30 fieldRange = new BitMask.BitField25(range).CvtBits25ToBits30();
             fieldRange.Shift(_x - 3, _y - 2);
             return fieldRange;
         }
@@ -290,7 +293,7 @@ namespace InGame
             {
                 _currMana -= data.cost;
 
-                if (NetworkManager.Singleton.IsServer)
+                if (UserManager.Instance.IsHost)
                     _userInfoUIController.UpdateHostUI(Consts.GameUIType.Mana, _currMana);
                 else
                     _userInfoUIController.UpdateClientUI(Consts.GameUIType.Mana, _currMana);
@@ -307,7 +310,7 @@ namespace InGame
                 if (_currMana > Consts.MaxMana)
                     _currMana = Consts.MaxMana;
 
-                if (NetworkManager.Singleton.IsServer)
+                if (UserManager.Instance.IsHost)
                     _userInfoUIController.UpdateHostUI(Consts.GameUIType.Mana, _currMana);
                 else
                     _userInfoUIController.UpdateClientUI(Consts.GameUIType.Mana, _currMana);
@@ -353,6 +356,62 @@ namespace InGame
                     SetAnimation(WizardAnimations.Die);
                     break;
             }
+        }
+
+        public List<int> ValidCards()
+        {
+            List<int> validCards = new List<int>();
+
+            int saveIdx = _idx;
+            int saveMana = _currMana;
+
+            int[] cardList = null;
+            if (UserManager.Instance.IsHost)
+                cardList = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
+            else
+                cardList = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
+
+            for (int i = 0; i < cardList.Length; i++)
+            {
+                CardData data = TableDatas.Instance.GetCardData(cardList[i]);
+                BitMask.BitField30 range = ParseRangeWthCurrPos(data.range);
+                List<int> panelIdxes = GetPanelIdx(range);
+
+                switch (data.type)
+                {
+                    case (int)Consts.SkillType.Move:
+                        SetPosition(panelIdxes[0]);
+                        break;
+
+                    case (int)Consts.SkillType.Attack:
+                        _currMana -= data.cost;
+                        break;
+                }
+            }
+
+            foreach (KeyValuePair<int, CardData> cardData in TableDatas.Instance.cardDatas)
+            {
+                BitMask.BitField30 range = ParseRangeWthCurrPos(cardData.Value.range);
+                List<int> panelIdxes = GetPanelIdx(range);
+
+                switch (cardData.Value.type)
+                {
+                    case (int)Consts.SkillType.Move:
+                        if (panelIdxes.Count == 1)
+                            validCards.Add(cardData.Value.code);
+                        break;
+
+                    case (int)Consts.SkillType.Attack:
+                        if (_currMana - cardData.Value.cost >= 0)
+                            validCards.Add(cardData.Value.code);
+                        break;
+                }
+            }
+
+            SetPosition(saveIdx);
+            _currMana = saveMana;
+
+            return validCards;
         }
 
         #endregion

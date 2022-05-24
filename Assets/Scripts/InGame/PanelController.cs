@@ -5,18 +5,12 @@ using Manager;
 using TMPro;
 using UnityEngine;
 using Core;
+using Utils;
 
 namespace InGame
 {
     public class PanelController : MonoBehaviour
     {
-        #region Private constants
-
-        private const int Width = 6, Height = 5;
-        private const int PanelCnt = Width * Height;
-
-        #endregion
-
         #region Private variables
 
         [Header("Panel Prefab")]
@@ -52,14 +46,14 @@ namespace InGame
 
         private void InitPanels()
         {
-            _panels = new GameObject[PanelCnt];
-            _panelRenderers = new MeshRenderer[PanelCnt];
+            _panels = new GameObject[Consts.PanelCnt];
+            _panelRenderers = new MeshRenderer[Consts.PanelCnt];
 
-            for (int i = 0; i < Height; i++)
+            for (int i = 0; i < Consts.Height; i++)
             {
-                for (int j = 0; j < Width; j++)
+                for (int j = 0; j < Consts.Width; j++)
                 {
-                    int idx = i * Width + j;
+                    int idx = i * Consts.Width + j;
                     _panels[idx] = Instantiate(panel, new Vector3(j * 4.2f, 0.2f, 12.8f - i * 3.2f),
                         Quaternion.identity);
                     _panelRenderers[idx] = _panels[idx].GetComponent<MeshRenderer>();
@@ -79,7 +73,7 @@ namespace InGame
 
         public GameObject GetPanelByIdx(int idx)
         {
-            if (idx > PanelCnt - 1 || idx < 0) return null;
+            if (idx > Consts.PanelCnt - 1 || idx < 0) return null;
             return _panels[idx];
         }
 
@@ -90,7 +84,7 @@ namespace InGame
             fieldRange.Shift(x - 3, y - 2);
 
             int mask = BitMask.BitField30Msb;
-            for (int idx = 0; idx < PanelCnt; idx++)
+            for (int idx = 0; idx < Consts.PanelCnt; idx++)
             {
                 if ((fieldRange.element & mask) > 0)
                 {

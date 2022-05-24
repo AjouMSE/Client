@@ -144,6 +144,17 @@ namespace Manager
             }
         }
 
+        public List<int> GetValidCards()
+        {
+            WizardController wizardController = null;
+            if (UserManager.Instance.IsHost)
+                wizardController = _hostWizardController;
+            else
+                wizardController = _clientWizardController;
+
+            return wizardController.ValidCards();
+        }
+
         #endregion
 
 
@@ -183,6 +194,7 @@ namespace Manager
 
             _userInfoUIController.UpdateTimerText();
             _userInfoUIController.UpdateTurnText();
+            _cardSelectionUIController.UpdateValidCards();
             _cardSelectionUIController.OpenCardScroll();
 
             while (_timerValue > 0)

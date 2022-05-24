@@ -5,6 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 using Utils;
 using Core;
+using UI.Game;
 
 namespace InGame
 {
@@ -31,8 +32,11 @@ namespace InGame
         private int _x, _y, _idx;
         private BitMask.BitField30 _bitIdx; // msb is idx 0, lsb is idx 29 (0 ~ 29)
 
+        private int _currMana;
+
         private Animator _animator;
         private PanelController _panelController;
+        private HUDGameUserInfoUIController _userInfoUIController;
 
         private NetworkSynchronizer _netSync;
 
@@ -59,6 +63,8 @@ namespace InGame
 
                     InitHostPos();
                     GameManager.Instance.SetHostWizardController(this);
+
+                    _currMana = Consts.StartMana;
                 }
                 else
                 {
@@ -79,6 +85,8 @@ namespace InGame
 
                     InitClientPos();
                     GameManager.Instance.SetClientWizardController(this);
+
+                    _currMana = Consts.StartMana;
                 }
                 else
                 {
@@ -96,8 +104,9 @@ namespace InGame
 
         public void Start()
         {
-            _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
             _animator = GetComponent<Animator>();
+            _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
+            _userInfoUIController = GameObject.Find("GameSceneUIController").GetComponent<HUDGameUserInfoUIController>();
         }
 
         public void Update()
@@ -151,6 +160,7 @@ namespace InGame
                     break;
 
                 case (int)Consts.SkillType.Attack:
+                    UseMana(data);
                     if (UserManager.Instance.IsHost)
                     {
                         Attack(data, range, panelIdxes);
@@ -183,7 +193,7 @@ namespace InGame
                 if (CheckPlayerHit(hostileIdx, range))
                 {
                     Debug.Log("Hit!");
-                    _netSync.UpdateClientValue(0, -data.value);
+                    _netSync.UpdateClientValue(Consts.GameUIType.HP, -data.value);
                 }
             }
             else
@@ -192,14 +202,14 @@ namespace InGame
                 if (CheckPlayerHit(hostileIdx, range))
                 {
                     Debug.Log("Hit!");
-                    _netSync.UpdateHostValue(0, -data.value);
+                    _netSync.UpdateHostValue(Consts.GameUIType.HP, -data.value);
                 }
             }
         }
 
         public IEnumerator MoveAction(Vector3 destination)
         {
-            _animator.SetInteger("AnimationState", (int)AnimationState.MoveFront);
+            _animator.SetInteger("MoveState", (int)AnimationState.MoveFront);
 
             Vector3 destinationPosition = new Vector3(destination.x, transform.position.y, destination.z);
             Vector3 dir = destinationPosition - transform.position;
@@ -217,7 +227,7 @@ namespace InGame
 
             transform.position = destinationPosition;
 
-            _animator.SetInteger("AnimationState", (int)AnimationState.Idle);
+            _animator.SetInteger("MoveState", (int)AnimationState.Idle);
         }
 
         private BitMask.BitField30 ParseRangeWthCurrPos(CardData data)
@@ -260,6 +270,36 @@ namespace InGame
         private bool CheckPlayerHit(int idx, BitMask.BitField30 range)
         {
             return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0 ? true : false;
+        }
+
+        private void UseMana(CardData data)
+        {
+            if (IsOwner)
+            {
+                _currMana -= data.cost;
+
+                if (NetworkManager.Singleton.IsServer)
+                    _userInfoUIController.UpdateHostUI(Consts.GameUIType.Mana, _currMana);
+                else
+                    _userInfoUIController.UpdateClientUI(Consts.GameUIType.Mana, _currMana);
+            }
+        }
+
+        public void GainMana()
+        {
+            if (IsOwner)
+            {
+                int gainManaAmt = GameManager.Instance.turnValue;
+                _currMana += gainManaAmt;
+
+                if (_currMana > Consts.MaxMana)
+                    _currMana = Consts.MaxMana;
+
+                if (NetworkManager.Singleton.IsServer)
+                    _userInfoUIController.UpdateHostUI(Consts.GameUIType.Mana, _currMana);
+                else
+                    _userInfoUIController.UpdateClientUI(Consts.GameUIType.Mana, _currMana);
+            }
         }
 
         #endregion

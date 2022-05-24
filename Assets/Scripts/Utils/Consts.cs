@@ -8,6 +8,11 @@ namespace Utils
     {
         public static int RangeLength = 5;
 
+        public static int MaxHP = 100;
+        public static int StartMana = 3, MaxMana = 10;
+
         public enum SkillType { Move = 1, Attack = 100, Special = 200 }
+
+        public enum GameUIType { HP, Mana }
     }
 }

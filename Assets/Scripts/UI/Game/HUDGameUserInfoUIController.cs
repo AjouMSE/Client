@@ -56,6 +56,11 @@ namespace UI.Game
 
             hostNicknameText.text = host.nickname;
             clientNicknameText.text = client.nickname;
+
+            hostHPText.text = Consts.MaxHP.ToString();
+            clientHPText.text = Consts.MaxHP.ToString();
+            hostManaText.text = Consts.StartMana.ToString();
+            clientManaText.text = Consts.StartMana.ToString();
         }
 
         /// <summary>
@@ -77,29 +82,29 @@ namespace UI.Game
             turnText.text = $"Turn {GameManager.Instance.turnValue.ToString()}";
         }
 
-        public void UpdateHostUI(int type, int value)
+        public void UpdateHostUI(Consts.GameUIType type, int value)
         {
             switch (type)
             {
-                case 0:
+                case Consts.GameUIType.HP:
                     hostHPText.text = $"{value}";
                     break;
 
-                case 1:
+                case Consts.GameUIType.Mana:
                     hostManaText.text = $"{value}";
                     break;
             }
         }
 
-        public void UpdateClientUI(int type, int value)
+        public void UpdateClientUI(Consts.GameUIType type, int value)
         {
             switch (type)
             {
-                case 0:
+                case Consts.GameUIType.HP:
                     clientHPText.text = $"{value}";
                     break;
 
-                case 1:
+                case Consts.GameUIType.Mana:
                     clientManaText.text = $"{value}";
                     break;
             }

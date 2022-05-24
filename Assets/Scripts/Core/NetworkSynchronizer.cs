@@ -7,6 +7,7 @@ using Scene;
 using UI.Game;
 using Unity.Netcode;
 using UnityEngine;
+using Utils;
 
 namespace Core
 {
@@ -30,7 +31,6 @@ namespace Core
         private NetworkVariable<bool> _hostReadyToRunTimer, _clientReadyToRunTimer;
         private NetworkVariable<bool> _hostReadyToProcessCard, _clientReadyToProcessCard;
         private NetworkVariable<int> _hostHP, _clientHP;
-        private NetworkVariable<int> _hostMana, _clientMana;
 
         private NetworkList<int> _hostCardList, _clientCardList;
 
@@ -86,10 +86,8 @@ namespace Core
             _hostReadyToProcessCard = new NetworkVariable<bool>();
             _clientReadyToProcessCard = new NetworkVariable<bool>();
 
-            _hostHP = new NetworkVariable<int>(100);
-            _clientHP = new NetworkVariable<int>(100);
-            _hostMana = new NetworkVariable<int>(100);
-            _clientMana = new NetworkVariable<int>(100);
+            _hostHP = new NetworkVariable<int>(Consts.MaxHP);
+            _clientHP = new NetworkVariable<int>(Consts.MaxHP);
 
             _hostCardList = new NetworkList<int>();
             _clientCardList = new NetworkList<int>();
@@ -317,49 +315,55 @@ namespace Core
             return cards;
         }
 
-        public void UpdateHostValue(int type, int value)
+        public void UpdateHostValue(Consts.GameUIType type, int value)
         {
+            int updatedValue = 0;
+
             switch (type)
             {
-                case 0:
+                case Consts.GameUIType.HP:
                     _hostHP.Value += value;
+                    updatedValue = _hostHP.Value;
                     break;
             }
 
-            userInfoUIController.UpdateHostUI(type, _hostHP.Value);
-            UpdateHostUIClientRpc(type, _hostHP.Value);
+            userInfoUIController.UpdateHostUI(type, updatedValue);
+            UpdateHostUIClientRpc(type, updatedValue);
         }
 
         [ClientRpc]
-        private void UpdateHostUIClientRpc(int type, int value)
+        private void UpdateHostUIClientRpc(Consts.GameUIType type, int value)
         {
             switch (type)
             {
-                case 0:
+                case Consts.GameUIType.HP:
                     userInfoUIController.UpdateHostUI(type, value);
                     break;
             }
         }
 
-        public void UpdateClientValue(int type, int value)
+        public void UpdateClientValue(Consts.GameUIType type, int value)
         {
+            int updatedValue = 0;
+
             switch (type)
             {
-                case 0:
+                case Consts.GameUIType.HP:
                     _clientHP.Value += value;
+                    updatedValue = _clientHP.Value;
                     break;
             }
 
-            userInfoUIController.UpdateClientUI(type, _clientHP.Value);
-            UpdateClientUIClientRpc(type, _clientHP.Value);
+            userInfoUIController.UpdateClientUI(type, updatedValue);
+            UpdateClientUIClientRpc(type, updatedValue);
         }
 
         [ClientRpc]
-        private void UpdateClientUIClientRpc(int type, int value)
+        private void UpdateClientUIClientRpc(Consts.GameUIType type, int value)
         {
             switch (type)
             {
-                case 0:
+                case Consts.GameUIType.HP:
                     userInfoUIController.UpdateClientUI(type, value);
                     break;
             }

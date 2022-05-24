@@ -13,6 +13,7 @@ namespace UI.Login
         public const string NotifyPwMismatch = "Password and Password confirm\nis not same.";
         public const string NotifyInvalidIdForm = "Invalid Id form. Enter it like\n'ooo@ooooo.ooo'";
         public const string NotifyInvalidAccount = "Id or Password do not match.";
+        public const string NotifyServerError = "Cannot connect to server";
         public const string NotifyDuplicateId = "Input id already exist.";
         public const string NotifyDuplicateNickname = "Input nickname already exist.";
     }   

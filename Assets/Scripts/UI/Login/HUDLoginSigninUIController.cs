@@ -16,21 +16,22 @@ namespace UI.Login
 
         private const string SignInReqPath = "/user/sign-in";
         private const string DestSceneName = "LobbyScene";
-        
+
         #endregion
-        
-        
+
+
         #region Private variables
 
-        [Header("Id, Pw InputFields")]
-        [SerializeField] private TMP_InputField inputFieldId;
+        [Header("Id, Pw InputFields")] [SerializeField]
+        private TMP_InputField inputFieldId;
+
         [SerializeField] private TMP_InputField inputFieldPw;
-        
-        [Header("Information Text")]
-        [SerializeField] private Text textInformation;
-        
-        [Header("3D Scroll Sign in UI")]
-        [SerializeField] private ScrollScript3D scroll3DSignin;
+
+        [Header("Information Text")] [SerializeField]
+        private Text textInformation;
+
+        [Header("3D Scroll Sign in UI")] [SerializeField]
+        private ScrollScript3D scroll3DSignin;
 
         #endregion
 
@@ -50,11 +51,17 @@ namespace UI.Login
                 UserManager.Instance.SignInUserInfo(json);
                 SceneManager.LoadSceneAsync(DestSceneName);
             }
-            else
+            else if (req.result == UnityWebRequest.Result.ProtocolError)
             {
                 // Occured Error (Account does not exist, Wrong password etc..)
                 ShowInformation(HUDLoginNotify.NotifyInvalidAccount);
-                Debug.Log(req.error);
+                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+            }
+            else
+            {
+                // Occured Error (Server connection error)
+                ShowInformation(HUDLoginNotify.NotifyServerError);
+                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
             }
         }
 
@@ -65,7 +72,7 @@ namespace UI.Login
         {
             StopCoroutine(ClearInformationText());
             StartCoroutine(ClearInformationText());
-            
+
             if (inputFieldId.text.Length == 0)
                 ShowInformation(HUDLoginNotify.NotifyEmptyIdField);
             else if (inputFieldPw.text.Length == 0)
@@ -95,9 +102,8 @@ namespace UI.Login
         }
 
         #endregion
-        
-        
-        
+
+
         #region Custom methods
 
         private void ShowInformation(string text)
@@ -106,10 +112,10 @@ namespace UI.Login
             StartCoroutine(ClearInformationText());
             textInformation.text = text;
         }
-        
+
         #endregion
 
-        
+
         #region Coroutines
 
         IEnumerator ClearInformationText()

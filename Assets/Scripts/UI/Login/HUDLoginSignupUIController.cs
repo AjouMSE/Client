@@ -63,12 +63,18 @@ namespace UI.Login
                 scroll2DSignup.ScrollClose();
                 ScrollMoveUp();
             }
-            else
+            else if (req.result == UnityWebRequest.Result.ProtocolError)
             {
-                // Fail to sign up
+                // Fail to sign up (duplicate nickname, account etc..)
                 Packet.WebServerException exception = JsonUtility.FromJson<Packet.WebServerException>(jsonPayload);
                 ShowInformation(exception.message);
                 Debug.Log(exception.ToString());
+            }
+            else
+            {
+                // Occured Error (Server connection error)
+                ShowInformation(HUDLoginNotify.NotifyServerError);
+                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
             }
         }
         

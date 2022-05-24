@@ -58,7 +58,7 @@ namespace InGame
             {
                 if (IsOwner)
                 {
-                    transform.position = new Vector3(0, 0.3f, 6.4f);
+                    transform.position = new Vector3(-1, 0.3f, 6.4f);
                     transform.localEulerAngles = new Vector3(0, DirRight, 0);
 
                     InitHostPos();
@@ -68,7 +68,7 @@ namespace InGame
                 }
                 else
                 {
-                    transform.position = new Vector3(21, 0.3f, 6.4f);
+                    transform.position = new Vector3(22, 0.3f, 6.4f);
                     transform.localEulerAngles = new Vector3(0, DirLeft, 0);
                     GetComponentInChildren<SkinnedMeshRenderer>().material = mat2;
 
@@ -212,6 +212,11 @@ namespace InGame
             _animator.SetInteger("MoveState", (int)AnimationState.MoveFront);
 
             Vector3 destinationPosition = new Vector3(destination.x, transform.position.y, destination.z);
+            if (IsOwner)
+                destinationPosition.x -= 1;
+            else
+                destinationPosition.x += 1;
+
             Vector3 dir = destinationPosition - transform.position;
             Vector3 dirNormalized = (destinationPosition - transform.position).normalized;
 
@@ -226,6 +231,8 @@ namespace InGame
             }
 
             transform.position = destinationPosition;
+
+            Rotate();
 
             _animator.SetInteger("MoveState", (int)AnimationState.Idle);
         }
@@ -300,6 +307,31 @@ namespace InGame
                 else
                     _userInfoUIController.UpdateClientUI(Consts.GameUIType.Mana, _currMana);
             }
+        }
+
+        private void Rotate()
+        {
+            WizardController hostileController = null;
+            if (IsOwner)
+                hostileController = GameManager.Instance.GetClientWizardController();
+            else
+                hostileController = GameManager.Instance.GetHostWizardController();
+
+            if (transform.position.x < hostileController.transform.position.x)
+            {
+                RotateDirection(DirRight);
+                hostileController.RotateDirection(DirLeft);
+            }
+            else
+            {
+                RotateDirection(DirLeft);
+                hostileController.RotateDirection(DirRight);
+            }
+        }
+
+        public void RotateDirection(int dir)
+        {
+            transform.localEulerAngles = new Vector3(0, dir, 0);
         }
 
         #endregion

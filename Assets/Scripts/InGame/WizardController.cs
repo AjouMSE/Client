@@ -42,12 +42,27 @@ namespace InGame
 
         #endregion
 
-        enum AnimationState
+        enum MoveState
         {
             Idle = 0,
             MoveFront = 1,
             MoveBack = 2,
             Attack = 3
+        }
+        enum BattleState
+        {
+            Idle = 0,
+            Defend = 1,
+            GetHit = 2,
+            Dizzy = 3,
+            Die = 4,
+            Recovery = 5
+        }
+        enum AnimationState
+        {
+            Idle = 0,
+            Interact = 1,
+            Victory = 2,
         }
 
         #region Network methods
@@ -209,7 +224,8 @@ namespace InGame
 
         public IEnumerator MoveAction(Vector3 destination)
         {
-            _animator.SetInteger("MoveState", (int)AnimationState.MoveFront);
+            // Animation Move Front
+            _animator.SetInteger("MoveState", (int)MoveState.MoveFront);
 
             Vector3 destinationPosition = new Vector3(destination.x, transform.position.y, destination.z);
             if (IsOwner)
@@ -234,7 +250,8 @@ namespace InGame
 
             Rotate();
 
-            _animator.SetInteger("MoveState", (int)AnimationState.Idle);
+            // Animation Move Idle
+            _animator.SetInteger("MoveState", (int)MoveState.Idle);
         }
 
         private BitMask.BitField30 ParseRangeWthCurrPos(CardData data)
@@ -332,6 +349,22 @@ namespace InGame
         public void RotateDirection(int dir)
         {
             transform.localEulerAngles = new Vector3(0, dir, 0);
+        }
+
+        public void BattleResultAction(Consts.BattleResult battleResult)
+        {
+            switch (battleResult)
+            {
+                case Consts.BattleResult.WIN:
+                    // Animation Victory
+                    _animator.SetInteger("AnimationState", (int)AnimationState.Victory);
+                    break;
+
+                case Consts.BattleResult.LOSE:
+                    // Animation Die
+                    _animator.SetInteger("BattleState", (int)BattleState.Die);
+                    break;
+            }
         }
 
         #endregion

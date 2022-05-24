@@ -121,14 +121,24 @@ namespace Manager
             else if (clientHp <= 0)
             {
                 if (UserManager.Instance.IsHost)
+                {
+                    _hostWizardController.BattleResultAction(Consts.BattleResult.WIN);
+                    _clientWizardController.BattleResultAction(Consts.BattleResult.LOSE);
+
                     Debug.Log(Consts.BattleResult.WIN);
+                }
                 else
                     Debug.Log(Consts.BattleResult.LOSE);
             }
             else if (hostHp <= 0)
             {
                 if (UserManager.Instance.IsHost)
+                {
+                    _hostWizardController.BattleResultAction(Consts.BattleResult.LOSE);
+                    _clientWizardController.BattleResultAction(Consts.BattleResult.WIN);
+
                     Debug.Log(Consts.BattleResult.LOSE);
+                }
                 else
                     Debug.Log(Consts.BattleResult.WIN);
             }
@@ -219,7 +229,7 @@ namespace Manager
             // int[] hostCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
             // int[] clientCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
 
-            int[] hostCards = new int[] { 101000004, 101100000, 101100003 };
+            int[] hostCards = new int[] { 101000004, 101100002, 101100002 };
             int[] clientCards = new int[] { 101000005, 101100003, 101100000 };
 
             for (int i = 0; i < 3; i++)

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class CardListScrollTest : MonoBehaviour
 {
-    [SerializeField] private ScrollScript3D scroll3D;
+    [SerializeField] private ScrollScript3DTest scroll3D;
     [SerializeField] private GameObject[] buttons;
 
     private RectTransform[] rectTransforms;
@@ -13,7 +13,7 @@ public class CardListScrollTest : MonoBehaviour
 
     private Color baseColor, selectedColor;
 
-    private int isOpen;
+    private int isOpen = 0b1000;
 
     public void OnSkillCardClick()
     {
@@ -38,6 +38,8 @@ public class CardListScrollTest : MonoBehaviour
             rectTransforms[i] = buttons[i].GetComponent<RectTransform>();
             images[i] = buttons[i].GetComponent<Image>();
         }
+        
+        SortScroll();
     }
 
     // Update is called once per frame
@@ -65,30 +67,35 @@ public class CardListScrollTest : MonoBehaviour
             scroll3D.MoveMenuleft();
         }
     }
-    
-    IEnumerator OpenAndClose()
+
+    private void SortScroll()
     {
-        scroll3D.CloseScroll();
-        yield return new WaitForSeconds(0.8f);
-        scroll3D.OpenScroll();
         int mask = 8;
         for (int i = 0; i < 4; i++)
         {
-            Vector3 tmpPos = rectTransforms[i].localPosition;
+            Vector3 tmpPos;
             Color tmpColor;
             if ((isOpen & mask) > 0)
             {
-                tmpPos.z = 0.03f;
+                tmpPos = new Vector3(rectTransforms[i].localPosition.x, -0.44f, 0.03f);
                 tmpColor = selectedColor;
             }
             else
             {
-                tmpPos.z = 0.04f;
+                tmpPos = new Vector3(rectTransforms[i].localPosition.x, -0.4f, 0.04f);
                 tmpColor = baseColor;
             }
             rectTransforms[i].localPosition = tmpPos;
             images[i].color = tmpColor;
             mask >>= 1;
         }
+    }
+    
+    IEnumerator OpenAndClose()
+    {
+        scroll3D.CloseScroll();
+        yield return new WaitForSeconds(0.8f);
+        scroll3D.OpenScroll();
+        SortScroll();
     }
 }

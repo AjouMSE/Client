@@ -6,16 +6,21 @@ Happy Creating!
 the challenge of this script was to make the 3D scroll object and its UI canvas sibling work in tandem to create the illusion of a scrolling scroll.
 
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
-public class ScrollScript3D : MonoBehaviour
+public class ScrollScript3DTest : MonoBehaviour
 {
     // public variables set in the inspector
     public Canvas MenuCanvas;
-    public GameObject backdrop;
+
+    [SerializeField] private GameObject backDropAll;
+    [SerializeField] private GameObject backDropMove;
+    [SerializeField] private GameObject backDropAttack;
+    [SerializeField] private GameObject backDropSpecial;
 
     public float[] BackdropPositions;
     public int menuPositionInt = 1;
@@ -36,12 +41,12 @@ public class ScrollScript3D : MonoBehaviour
     float menPosY;
     float menPosZ;
 
-    
+
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
         Sound = gameObject.GetComponent<AudioSource>();
-        RecTran = backdrop.GetComponent<RectTransform>();
+        RecTran = backDropAll.GetComponent<RectTransform>();
         menPosY = RecTran.localPosition.y;
         menPosZ = RecTran.localPosition.z;
         MenuCanvas.worldCamera = GameObject.FindGameObjectWithTag("HUDCamera").GetComponent<Camera>();
@@ -56,17 +61,15 @@ public class ScrollScript3D : MonoBehaviour
             OpenOrCloseScroll();
         }
     }
-    DELETE THESE LINES (2 of 2)------------->*/ 
+    DELETE THESE LINES (2 of 2)------------->*/
 
 
     // I use FixedUpdate for anything having to do with animation or physics.
     //Here, I use it to update the scrolling menu backdrop position to the current desired position.
     void FixedUpdate()
     {
-
         SliderPosition = new Vector3(BackdropPositions[menuPositionInt], menPosY, menPosZ);
         RecTran.localPosition = Vector3.MoveTowards(RecTran.localPosition, SliderPosition, MenuSlideSpeed);
-       
     }
 
     // The following functions handle opening and closing the scroll. 
@@ -76,16 +79,18 @@ public class ScrollScript3D : MonoBehaviour
     {
         if (!scrollOpen)
         {
-            OpenScroll();  
+            OpenScroll();
         }
         else if (scrollOpen)
         {
             CloseScroll();
         }
     }
+
     public void OpenScroll()
     {
-        if (!scrollOpen) {
+        if (!scrollOpen)
+        {
             anim.SetTrigger("Opentrig");
             scrollOpen = true;
             PlaySound();
@@ -94,9 +99,10 @@ public class ScrollScript3D : MonoBehaviour
         }
     }
 
-   public void CloseScroll()
+    public void CloseScroll()
     {
-        if (scrollOpen) {
+        if (scrollOpen)
+        {
             anim.SetTrigger("Closetrig");
             scrollOpen = false;
             PlaySound();
@@ -112,25 +118,24 @@ public class ScrollScript3D : MonoBehaviour
         MenuCanvas.gameObject.SetActive(true);
 
         //for fading in - because fading in is fancy.
-        CanvasRenderer canRen = backdrop.GetComponent<CanvasRenderer>();
+        CanvasRenderer canRen = backDropAll.GetComponent<CanvasRenderer>();
         canRen.SetAlpha(0.0f);
-        backdrop.GetComponent<Image>().CrossFadeAlpha(1.0f, MenuFadeInSpeed, false);
+        backDropAll.GetComponent<Image>().CrossFadeAlpha(1.0f, MenuFadeInSpeed, false);
     }
-  
+
     // Called by the CloseScroll() function above
     void DisableMenu()
     {
-
         MenuCanvas.gameObject.SetActive(false);
     }
 
     //----------------------------------------------
     //The following functions trigger the scroll rolling left and right animations and 
     // updates the 'menuPositionInt' for the FixedUpdate() function to slide the menu to the correct position
-     
+
     public void MoveMenuleft()
     {
-        if (menuPositionInt < (BackdropPositions.Length - 1 ))
+        if (menuPositionInt < (BackdropPositions.Length - 1))
         {
             menuPositionInt = (menuPositionInt + 1);
             anim.SetTrigger("RollLeftTrig");
@@ -147,9 +152,29 @@ public class ScrollScript3D : MonoBehaviour
             PlaySound();
         }
     }
+
+    // public void MoveMenuleft()
+    // {
+    //     if (menuPositionInt > 0)
+    //     {
+    //         menuPositionInt = (menuPositionInt - 1);
+    //         anim.SetTrigger("RollRightTrig");
+    //         PlaySound();
+    //     }
+    // }
+    //
+    // public void MoveMenuRight()
+    // {
+    //     if (menuPositionInt < (BackdropPositions.Length - 1 ))
+    //     {
+    //         menuPositionInt = (menuPositionInt + 1);
+    //         anim.SetTrigger("RollLeftTrig");
+    //         PlaySound();
+    //     }
+    // }
 //-----------------------------------------------------
 
-      //If this function is called, a little paper sliding sound clip will play. Settable in the Inspector.
+    //If this function is called, a little paper sliding sound clip will play. Settable in the Inspector.
     void PlaySound()
     {
         if (playSound)
@@ -157,5 +182,4 @@ public class ScrollScript3D : MonoBehaviour
             Sound.Play();
         }
     }
-
 }

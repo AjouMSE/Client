@@ -8,6 +8,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Utils;
 
 namespace Scene
 {
@@ -17,11 +18,9 @@ namespace Scene
 
         private void Init()
         {
-
         }
 
         #endregion
-
 
 
         #region Unity event methods
@@ -35,20 +34,60 @@ namespace Scene
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                ParticleSystem vfx = CacheVFXSource.Instance.GetSource(101100000);
-                vfx.gameObject.SetActive(true);
-                vfx.transform.position = new Vector3(0, 0.3f, 6.4f);
-                vfx.Play();
-            }            
-            
-            if (Input.GetKeyDown(KeyCode.B))
+                StartCoroutine(ShowAllVFXS());
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                ParticleSystem vfx = CacheVFXSource.Instance.GetSource(101100013);
-                vfx.gameObject.SetActive(true);
-                vfx.transform.position = new Vector3(0, 0.3f, 6.4f);
-                vfx.Play();
+                PlayVFX(101100000);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                PlayVFX(101100001);
+            }
+        }
+
+        private void PlayVFX(int id)
+        {
+            ParticleSystem vfx = CacheVFXSource.Instance.GetSource(id);
+            vfx.gameObject.SetActive(true);
+            Debug.Log(vfx.transform.localScale);
+            vfx.transform.position = new Vector3(0, 2f, 6.4f);
+            vfx.transform.LookAt(new Vector3(10, 2f, 6.4f));
+
+            vfx.Stop();
+            vfx.Play();
+            StartCoroutine(MoveVFX(vfx.transform, new Vector3(10, 2f, 6.4f)));
+        }
+
+        IEnumerator ShowAllVFXS()
+        {
+            foreach (KeyValuePair<int, CardData> card in TableDatas.Instance.cardDatas)
+            {
+                if (card.Value.type != (int)Consts.SkillType.Move)
+                {
+                    PlayVFX(card.Key);
+                    yield return new WaitForSeconds(2f);
+                }
+                else
+                {
+                    yield return null;
+                }
+            }
+        }
+
+        IEnumerator MoveVFX(Transform vfx, Vector3 dest)
+        {
+            Vector3 curr = vfx.position;
+
+            while (true)
+            {
+                curr = Vector3.Lerp(vfx.position, dest, 0.1f);
+                vfx.position = curr;
+                yield return null;
             }
         }
 

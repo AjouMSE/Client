@@ -16,7 +16,6 @@ namespace Data.Cache
         #endregion
 
 
-
         #region Public methods
 
         public override IEnumerator Init()
@@ -25,16 +24,13 @@ namespace Data.Cache
 
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
             {
-                CardData card = TableDatas.Instance.cardDatas[key];
-                if (!string.IsNullOrEmpty(card.effect))
-                {
-                    GameObject obj = Object.Instantiate(Resources.Load<GameObject>($"{SrcPathRoot}/{card.effect}"));
-                    obj.transform.localScale = new Vector3(1, 1, 1);
-                    obj.SetActive(false);
-                    Cache.Add(key, obj.GetComponent<ParticleSystem>());
-
-                    Object.DontDestroyOnLoad(obj);
-                }
+                var card = TableDatas.Instance.cardDatas[key];
+                if (string.IsNullOrEmpty(card.effect)) continue;
+                
+                var obj = Object.Instantiate(Resources.Load<GameObject>($"{SrcPathRoot}/{card.effect}"));
+                obj.SetActive(false);
+                Cache.Add(key, obj.GetComponent<ParticleSystem>());
+                Object.DontDestroyOnLoad(obj);
             }
 
             yield break;

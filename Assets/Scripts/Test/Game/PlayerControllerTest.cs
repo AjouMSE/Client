@@ -98,39 +98,6 @@ public class PlayerControllerTest : MonoBehaviour
         //
         //     Move(range);
         // }
-
-        if (!UserManager.Instance.IsHost)
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                _animator.SetBool("Attack0202", true);
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                _animator.SetInteger(_animationState, 2);
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                _animator.SetInteger(_animationState, 3);
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                _animator.SetInteger(_animationState, 4);
-            }
-            
-            if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                _animator.SetInteger(_animationState, 5);
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                _animator.SetBool("Attack0202", false);
-            }
-        }
     }
 
 

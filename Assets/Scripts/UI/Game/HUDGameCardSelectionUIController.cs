@@ -162,7 +162,7 @@ namespace UI.Game
 
             for (int i = 0; i < invalidCards.Count; i++)
             {
-                int id = validCards[i];
+                int id = invalidCards[i];
                 cardScroll3D.cardImageDict[id].material.color = new Color(1, 0.5f, 0.5f);
                 cardScroll3D.buttonDict[id].interactable = false;
             }

@@ -183,6 +183,14 @@ namespace InGame
 
                 case (int)Consts.SkillType.ManaCharge:
                     ManaCharge(data.value);
+                    if (UserManager.Instance.IsHost)
+                        StartCoroutine(HitAction());
+                    break;
+
+                // 임시
+                default:
+                    if (UserManager.Instance.IsHost)
+                        StartCoroutine(HitAction());
                     break;
             }
         }
@@ -246,8 +254,6 @@ namespace InGame
         {
             if (IsOwner)
             {
-                StartCoroutine(HitAction());
-
                 _currMana += value;
 
                 if (UserManager.Instance.IsHost)
@@ -464,15 +470,16 @@ namespace InGame
                 BitMask.BitField30 range = ParseRangeWthCurrPos(data.range);
                 List<int> panelIdxes = GetPanelIdx(range);
 
+                _currMana -= data.cost;
+
                 switch (data.type)
                 {
                     case (int)Consts.SkillType.Move:
-                        _currMana -= data.cost;
                         SetPosition(panelIdxes[0]);
                         break;
 
-                    case (int)Consts.SkillType.Attack:
-                        _currMana -= data.cost;
+                    case (int)Consts.SkillType.ManaCharge:
+                        _currMana += data.value;
                         break;
                 }
             }

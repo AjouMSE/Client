@@ -23,7 +23,7 @@
 [101100013,"Fire Storm",100,"10001 01110 01010 01110 10001",7,2,45,"Fire Buff","Fire Storm"],
 [101200000,"Mana Overload",200,"00000 00000 00100 00000 00000",5,1,0,"LevelupCylinderBlue","Mana Overload"],
 [101200001,"Concentration",200,"00000 00000 00100 00000 00000",3,1,0,"MagicCircleBlue","Concentration"],
-[101200002,"Mana Charge",200,"00000 00000 00100 00000 00000",0,1,0,"MagicSphereBlue","Mana Charge"],
+[101200002,"Mana Charge",201,"00000 00000 00100 00000 00000",0,1,5,"MagicSphereBlue","Mana Charge"],
 [101200003,"Cleanse",200,"00000 00000 00100 00000 00000",4,1,0,"MagicNovaBlue","Cleanse"],
 [101200004,"Mana Disorder",200,"00000 00100 01110 00100 00000",3,1,0,"ShadowMuzzle","Mana Disorder"],
 [101200005,"Life Recovery",200,"00000 00000 00100 00000 00000",3,1,15,"Healing","Life Recovery"],

@@ -54,8 +54,7 @@ namespace InGame
                 for (int j = 0; j < Consts.Width; j++)
                 {
                     int idx = i * Consts.Width + j;
-                    _panels[idx] = Instantiate(panel, new Vector3(j * 4.2f, 0.2f, 12.8f - i * 3.2f),
-                        Quaternion.identity);
+                    _panels[idx] = Instantiate(panel, new Vector3(j * Consts.PanelX, 0.2f, (Consts.Height - i - 1) * Consts.PanelY), Quaternion.identity);
                     _panelRenderers[idx] = _panels[idx].GetComponent<MeshRenderer>();
                     // _panels[idx].GetComponentInChildren<TextMeshPro>().text = idx.ToString();
                 }

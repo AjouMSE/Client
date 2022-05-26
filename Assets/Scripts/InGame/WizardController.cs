@@ -16,10 +16,12 @@ namespace InGame
 
         private const float Speed = 4.0f;
 
-        private const int InitHostX = 0, InitHostY = 2, InitHostIdx = 12;
-        private const int InitClientX = 5, InitClientY = 2, InitClientIdx = 17;
+        private const int InitHostX = 2, InitHostY = 2;
+        private const int InitClientX = 3, InitClientY = 2;
 
         private const int DirLeft = -90, DirRight = 90;
+
+        private const int PaddingX = 1;
 
         #endregion
 
@@ -65,7 +67,7 @@ namespace InGame
             {
                 if (IsOwner)
                 {
-                    transform.position = new Vector3(-1, 0.3f, 6.4f);
+                    transform.position = new Vector3(InitHostX * Consts.PanelX - PaddingX, 0.3f, (Consts.Height - InitHostY - 1) * Consts.PanelY);
                     transform.localEulerAngles = new Vector3(0, DirRight, 0);
 
                     InitHostPos();
@@ -75,7 +77,7 @@ namespace InGame
                 }
                 else
                 {
-                    transform.position = new Vector3(22, 0.3f, 6.4f);
+                    transform.position = new Vector3(InitClientX * Consts.PanelX + PaddingX, 0.3f, (Consts.Height - InitClientY - 1) * Consts.PanelY);
                     transform.localEulerAngles = new Vector3(0, DirLeft, 0);
                     GetComponentInChildren<SkinnedMeshRenderer>().material = mat2;
 
@@ -111,14 +113,14 @@ namespace InGame
         {
             _x = InitHostX;
             _y = InitHostY;
-            _idx = InitHostIdx;
+            _idx = Consts.Width * InitHostY + InitHostX;
         }
 
         private void InitClientPos()
         {
             _x = InitClientX;
             _y = InitClientY;
-            _idx = InitClientIdx;
+            _idx = Consts.Width * InitClientY + InitClientX;
         }
 
         public int GetIdx()
@@ -220,9 +222,9 @@ namespace InGame
 
             Vector3 destinationPosition = new Vector3(destination.x, transform.position.y, destination.z);
             if (IsOwner)
-                destinationPosition.x -= 1;
+                destinationPosition.x -= PaddingX;
             else
-                destinationPosition.x += 1;
+                destinationPosition.x += PaddingX;
 
             Vector3 dir = destinationPosition - transform.position;
             Vector3 dirNormalized = (destinationPosition - transform.position).normalized;
@@ -257,7 +259,7 @@ namespace InGame
             List<int> idxes = new List<int>();
 
             int mask = BitMask.BitField30Msb;
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < Consts.PanelCnt; i++)
             {
                 if ((fieldRange.element & mask) > 0)
                 {
@@ -278,7 +280,7 @@ namespace InGame
 
         private BitMask.BitField30 CvtPlayerIdxToBitField30(int idx)
         {
-            if (idx < 0 || idx > 29) return default;
+            if (idx < 0 || idx > Consts.PanelCnt - 1) return default;
             return new BitMask.BitField30(BitMask.BitField30Msb >> idx);
         }
 

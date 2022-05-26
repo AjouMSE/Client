@@ -8,6 +8,7 @@ namespace Utils
     {
         public static int RangeLength = 5;
         public static int Width = 6, Height = 5;
+        public static float PanelX = 4.2f, PanelY = 3.2f;
         public static int PanelCnt = Width * Height;
 
         public static int MaxHP = 100;

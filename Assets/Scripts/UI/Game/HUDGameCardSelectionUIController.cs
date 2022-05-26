@@ -148,10 +148,23 @@ namespace UI.Game
 
         public void UpdateInvalidCards()
         {
-            List<int> validCards = GameManager.Instance.GetInvalidCards();
-            for (int i = 0; i < validCards.Count; i++)
+            List<int> invalidCards = GameManager.Instance.GetInvalidCards();
+            
+            foreach(Image img in cardScroll3D.cardImageDict.Values)
             {
-                // Debug.Log(validCards[i]);
+                img.material.color = new Color(1, 1, 1);
+            }
+
+            foreach (Button btn in cardScroll3D.buttonDict.Values)
+            {
+                btn.interactable = true;
+            }
+
+            for (int i = 0; i < invalidCards.Count; i++)
+            {
+                int id = validCards[i];
+                cardScroll3D.cardImageDict[id].material.color = new Color(1, 0.5f, 0.5f);
+                cardScroll3D.buttonDict[id].interactable = false;
             }
         }
 

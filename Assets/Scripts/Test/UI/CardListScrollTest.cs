@@ -94,7 +94,7 @@ public class CardListScrollTest : MonoBehaviour
     IEnumerator OpenAndClose()
     {
         scroll3D.CloseScroll();
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(0.6f);
         scroll3D.OpenScroll();
         SortScroll();
     }

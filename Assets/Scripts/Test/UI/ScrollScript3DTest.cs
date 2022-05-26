@@ -24,7 +24,7 @@ public class ScrollScript3DTest : MonoBehaviour
     [Header("HUD GameCard Selection UI Controller")] 
     [SerializeField] private HUDGameCardSelectionUIController controller;
 
-    [Header("Backdrops, SectionButtons")] 
+    [Header("Backdrops, SectionButtons")]
     [SerializeField] private GameObject backdrops;
     [SerializeField] private GameObject cardTemplate;
     [SerializeField] private GameObject[] sectionButtons;
@@ -49,7 +49,6 @@ public class ScrollScript3DTest : MonoBehaviour
     // About section buttons
     private RectTransform[] _buttonRectTrans;
     private Image[] _buttonImages;
-    private List<CardInScroll> _cards;
     private Color _baseColor, _selectedColor;
 
     private int _sectionOpen = 0b1000;
@@ -62,6 +61,16 @@ public class ScrollScript3DTest : MonoBehaviour
         Special = 1,
     }
     
+    #endregion
+
+
+    #region Public variables
+
+    public List<CardInScroll> cards;
+    public Dictionary<int, CardInScroll> cardDict;
+    public Dictionary<int, Image> cardImageDict;
+    public Dictionary<int, Button> buttonDict;
+
     #endregion
 
 
@@ -165,7 +174,11 @@ public class ScrollScript3DTest : MonoBehaviour
         _menuPosZ = _backdropTrans.localPosition.z;
         menuCanvas.worldCamera = GameObject.FindGameObjectWithTag("HUDCamera").GetComponent<Camera>();
 
-        _cards = new List<CardInScroll>();
+        cards = new List<CardInScroll>();
+        cardDict = new Dictionary<int, CardInScroll>();
+        cardImageDict = new Dictionary<int, Image>();
+        buttonDict = new Dictionary<int, Button>();
+        
         foreach (int key in TableDatas.Instance.cardDatas.Keys)
         {
             CardData cardData = TableDatas.Instance.cardDatas[key];
@@ -173,14 +186,17 @@ public class ScrollScript3DTest : MonoBehaviour
             
             // set name & image
             cardObj.name = $"{cardObj.name}{cardData.text}";
-            cardObj.GetComponent<Image>().sprite = CacheSpriteSource.Instance.GetSource(key);
+            Image cardImage = cardObj.GetComponent<Image>();
+            cardImage.sprite = CacheSpriteSource.Instance.GetSource(key);
+            cardImageDict.Add(key, cardImage);
+            buttonDict.Add(key, cardObj.GetComponent<Button>());
             
             // set data & on click event listener
             CardInScroll cardInScroll = cardObj.GetComponent<CardInScroll>();
             cardInScroll.cardData = cardData;
             cardObj.GetComponent<Button>().onClick.AddListener(delegate { controller.OnCardAddBtnClick(key); });
             
-            _cards.Add(cardInScroll);
+            cardDict.Add(key, cardInScroll);
         }
 
         Sort();
@@ -217,45 +233,36 @@ public class ScrollScript3DTest : MonoBehaviour
         {
             case (int) SectionType.All:
                 backdropLength = 6;
-                for (int i = 0; i < _cards.Count; i++)
+                foreach (CardInScroll c in cardDict.Values)
                 {
-                    _cards[i].gameObject.SetActive(true);
+                    c.gameObject.SetActive(true);
                 }
                 break;
             
             case (int) SectionType.Move:
                 backdropLength = 2;
-                for (int i = 0; i < _cards.Count; i++)
+                foreach (CardInScroll c in cardDict.Values)
                 {
-                    GameObject obj = _cards[i].gameObject;
-                    if (_cards[i].cardData.type == (int) Card.SkillType.Move)
-                        obj.SetActive(true);
-                    else
-                        obj.SetActive(false);
+                    var obj = c.gameObject;
+                    obj.SetActive(c.cardData.type == (int)Card.SkillType.Move);
                 }
                 break;
             
             case (int) SectionType.Attack:
                 backdropLength = 3;
-                for (int i = 0; i < _cards.Count; i++)
+                foreach (CardInScroll c in cardDict.Values)
                 {
-                    GameObject obj = _cards[i].gameObject;
-                    if (_cards[i].cardData.type == (int) Card.SkillType.Attack)
-                        obj.SetActive(true);
-                    else
-                        obj.SetActive(false);
+                    var obj = c.gameObject;
+                    obj.SetActive(c.cardData.type == (int)Card.SkillType.Attack);
                 }
                 break;
             
             case (int) SectionType.Special:
                 backdropLength = 2;
-                for (int i = 0; i < _cards.Count; i++)
+                foreach (CardInScroll c in cardDict.Values)
                 {
-                    GameObject obj = _cards[i].gameObject;
-                    if (_cards[i].cardData.type == (int) Card.SkillType.Special)
-                        obj.SetActive(true);
-                    else
-                        obj.SetActive(false);
+                    var obj = c.gameObject;
+                    obj.SetActive(c.cardData.type == (int)Card.SkillType.Special);
                 }
                 break;
         }
@@ -330,7 +337,7 @@ public class ScrollScript3DTest : MonoBehaviour
     IEnumerator SortScroll()
     {
         CloseScroll();
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(0.6f);
         OpenScroll();
         Sort();
     }

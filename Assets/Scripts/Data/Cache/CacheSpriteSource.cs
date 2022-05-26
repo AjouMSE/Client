@@ -39,7 +39,6 @@ namespace Data.Cache
             {
                 CardData card = TableDatas.Instance.cardDatas[key];
                 Cache.Add(key, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathSkillIcon}/{card.icon}"));
-                Debug.Log(key + " / " + card.text);
             }
 
             yield break;

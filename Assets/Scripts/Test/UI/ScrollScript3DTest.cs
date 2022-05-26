@@ -9,136 +9,118 @@ the challenge of this script was to make the 3D scroll object and its UI canvas 
 
 using System.Collections;
 using System.Collections.Generic;
+using Data.Cache;
+using UI.Game;
 using UnityEngine.UI;
 using UnityEngine;
 
 public class ScrollScript3DTest : MonoBehaviour
 {
-    // public variables set in the inspector
-    public Canvas MenuCanvas;
+    #region Private variables
 
-    [SerializeField] private GameObject backDropAll;
-    [SerializeField] private GameObject backDropMove;
-    [SerializeField] private GameObject backDropAttack;
-    [SerializeField] private GameObject backDropSpecial;
+    [Header("Menu Canvas")] 
+    [SerializeField] private Canvas menuCanvas;
+    
+    [Header("HUD GameCard Selection UI Controller")] 
+    [SerializeField] private HUDGameCardSelectionUIController controller;
 
-    public float[] BackdropPositions;
-    public int menuPositionInt = 1;
-    public float MenuSlideSpeed = 0.1f;
-    public float MenuFadeInSpeed = 0.2f;
+    [Header("Backdrops, SectionButtons")] 
+    [SerializeField] private GameObject backdrops;
+    [SerializeField] private GameObject cardTemplate;
+    [SerializeField] private GameObject[] sectionButtons;
 
-    public bool playSound = true;
+    [Header("Options")] 
+    [SerializeField] private int backdropLength = 6;
+    [SerializeField] private int menuPositionInt = 0;
+    [SerializeField] private float menuSlideSpeed = 0.1f;
+    [SerializeField] private float menuFadeInSpeed = 0.2f;
+    [SerializeField] private bool playSound = true;
 
-    //other variables:
-    // 'anim' holds the Animator Controller for this object,
-    // 'scrollOpen' is a simple bool to determine the state of this object(open or closed) used int the "animate" function below.
+    private Animator _animator;
+    private AudioSource _audioSource;
+    private Vector3 _currentSliderPos;
+    private bool _isScrollOpen = false;
 
-    Animator anim;
-    AudioSource Sound;
-    RectTransform RecTran;
-    Vector3 SliderPosition;
-    bool scrollOpen = false;
-    float menPosY;
-    float menPosZ;
+    // About backdrops
+    private RectTransform _backdropTrans;
+    private float _menuPosY;
+    private float _menuPosZ;
 
+    // About section buttons
+    private RectTransform[] _buttonRectTrans;
+    private Image[] _buttonImages;
+    private List<CardInScroll> _cards;
+    private Color _baseColor, _selectedColor;
+
+    private int _sectionOpen = 0b1000;
+
+    enum SectionType
+    {
+        All = 8,
+        Move = 4,
+        Attack = 2,
+        Special = 1,
+    }
+    
+    #endregion
+
+
+    #region Unity event methods
 
     void Start()
     {
-        anim = gameObject.GetComponent<Animator>();
-        Sound = gameObject.GetComponent<AudioSource>();
-        RecTran = backDropAll.GetComponent<RectTransform>();
-        menPosY = RecTran.localPosition.y;
-        menPosZ = RecTran.localPosition.z;
-        MenuCanvas.worldCamera = GameObject.FindGameObjectWithTag("HUDCamera").GetComponent<Camera>();
+        Init();
     }
 
-
-    /* <-----DELETE THESE LINES (1 of 2) if you want to bind the menu activation to a keypress event (TAB by default)
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            OpenOrCloseScroll();
-        }
-    }
-    DELETE THESE LINES (2 of 2)------------->*/
-
-
-    // I use FixedUpdate for anything having to do with animation or physics.
-    //Here, I use it to update the scrolling menu backdrop position to the current desired position.
     void FixedUpdate()
     {
-        SliderPosition = new Vector3(BackdropPositions[menuPositionInt], menPosY, menPosZ);
-        RecTran.localPosition = Vector3.MoveTowards(RecTran.localPosition, SliderPosition, MenuSlideSpeed);
-    }
+        _currentSliderPos = new Vector3(8.75f + (-3.5f * menuPositionInt), _menuPosY, _menuPosZ);
+        _backdropTrans.localPosition =
+            Vector3.MoveTowards(_backdropTrans.localPosition, _currentSliderPos, menuSlideSpeed);
 
-    // The following functions handle opening and closing the scroll. 
-    // These are all 'public' so they can be accessed easily by things like OnClick events (UI buttons), animation events, etc.
-    //------------------------------------------------------
-    public void OpenOrCloseScroll()
-    {
-        if (!scrollOpen)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             OpenScroll();
         }
-        else if (scrollOpen)
-        {
-            CloseScroll();
-        }
     }
 
-    public void OpenScroll()
+    #endregion
+
+
+    #region Callbacks
+
+    public void OnMenuBtnClick(int sectionOpen)
     {
-        if (!scrollOpen)
+        _sectionOpen = sectionOpen;
+        StartCoroutine(SortScroll());
+    }
+
+    public void OnMenuMoveLeftBtnClick()
+    {
+        if (menuPositionInt > 0)
         {
-            anim.SetTrigger("Opentrig");
-            scrollOpen = true;
+            menuPositionInt = (menuPositionInt - 1);
+            _animator.SetTrigger("RollRightTrig");
             PlaySound();
-            // the "EnableMenu" function you might expect to be here is called by an animation event, 
-            // to keep it from happening before the animation finishes.
         }
     }
 
-    public void CloseScroll()
+    public void OnMenuMoveRightBtnClick()
     {
-        if (scrollOpen)
-        {
-            anim.SetTrigger("Closetrig");
-            scrollOpen = false;
-            PlaySound();
-            DisableMenu();
-        }
-    }
-//------------------------------------------------------------------------
-
-    // This function is CALLED BY AN EVENT AT THE END OF THE 'OPEN' ANIMATION, which is triggered by the OpenScroll() function above...
-    // ...which is called by the OpenOrCloseScroll() function above that.
-    void EnableMenu()
-    {
-        MenuCanvas.gameObject.SetActive(true);
-
-        //for fading in - because fading in is fancy.
-        CanvasRenderer canRen = backDropAll.GetComponent<CanvasRenderer>();
-        canRen.SetAlpha(0.0f);
-        backDropAll.GetComponent<Image>().CrossFadeAlpha(1.0f, MenuFadeInSpeed, false);
-    }
-
-    // Called by the CloseScroll() function above
-    void DisableMenu()
-    {
-        MenuCanvas.gameObject.SetActive(false);
-    }
-
-    //----------------------------------------------
-    //The following functions trigger the scroll rolling left and right animations and 
-    // updates the 'menuPositionInt' for the FixedUpdate() function to slide the menu to the correct position
-
-    public void MoveMenuleft()
-    {
-        if (menuPositionInt < (BackdropPositions.Length - 1))
+        if (menuPositionInt < (backdropLength - 1))
         {
             menuPositionInt = (menuPositionInt + 1);
-            anim.SetTrigger("RollLeftTrig");
+            _animator.SetTrigger("RollLeftTrig");
+            PlaySound();
+        }
+    }
+
+    public void MoveMenuLeft()
+    {
+        if (menuPositionInt < (backdropLength - 1))
+        {
+            menuPositionInt = (menuPositionInt + 1);
+            _animator.SetTrigger("RollLeftTrig");
             PlaySound();
         }
     }
@@ -148,38 +130,210 @@ public class ScrollScript3DTest : MonoBehaviour
         if (menuPositionInt > 0)
         {
             menuPositionInt = (menuPositionInt - 1);
-            anim.SetTrigger("RollRightTrig");
+            _animator.SetTrigger("RollRightTrig");
             PlaySound();
         }
     }
 
-    // public void MoveMenuleft()
-    // {
-    //     if (menuPositionInt > 0)
-    //     {
-    //         menuPositionInt = (menuPositionInt - 1);
-    //         anim.SetTrigger("RollRightTrig");
-    //         PlaySound();
-    //     }
-    // }
-    //
-    // public void MoveMenuRight()
-    // {
-    //     if (menuPositionInt < (BackdropPositions.Length - 1 ))
-    //     {
-    //         menuPositionInt = (menuPositionInt + 1);
-    //         anim.SetTrigger("RollLeftTrig");
-    //         PlaySound();
-    //     }
-    // }
-//-----------------------------------------------------
+    #endregion
 
-    //If this function is called, a little paper sliding sound clip will play. Settable in the Inspector.
-    void PlaySound()
+
+    #region Private methods
+
+    private void Init()
+    {
+        TableLoader.Instance.LoadTableData();
+        StartCoroutine(CacheSpriteSource.Instance.Init());
+
+        // Init backdrops, section buttons
+        _baseColor = new Color(1, 0.87f, 0.75f);
+        _selectedColor = new Color(1, 0.75f, 0.36f);
+        _buttonRectTrans = new RectTransform[4];
+        _buttonImages = new Image[4];
+
+        _backdropTrans = backdrops.GetComponent<RectTransform>();
+        for (int i = 0; i < sectionButtons.Length; i++)
+        {
+            _buttonRectTrans[i] = sectionButtons[i].GetComponent<RectTransform>();
+            _buttonImages[i] = sectionButtons[i].GetComponent<Image>();
+        }
+
+        // Init components
+        _animator = gameObject.GetComponent<Animator>();
+        _audioSource = gameObject.GetComponent<AudioSource>();
+        _menuPosY = _backdropTrans.localPosition.y;
+        _menuPosZ = _backdropTrans.localPosition.z;
+        menuCanvas.worldCamera = GameObject.FindGameObjectWithTag("HUDCamera").GetComponent<Camera>();
+
+        _cards = new List<CardInScroll>();
+        foreach (int key in TableDatas.Instance.cardDatas.Keys)
+        {
+            CardData cardData = TableDatas.Instance.cardDatas[key];
+            GameObject cardObj = Instantiate(cardTemplate, backdrops.transform);
+            
+            // set name & image
+            cardObj.name = $"{cardObj.name}{cardData.text}";
+            cardObj.GetComponent<Image>().sprite = CacheSpriteSource.Instance.GetSource(key);
+            
+            // set data & on click event listener
+            CardInScroll cardInScroll = cardObj.GetComponent<CardInScroll>();
+            cardInScroll.cardData = cardData;
+            cardObj.GetComponent<Button>().onClick.AddListener(delegate { controller.OnCardAddBtnClick(key); });
+            
+            _cards.Add(cardInScroll);
+        }
+
+        Sort();
+    }
+
+    void EnableMenu()
+    {
+        menuCanvas.gameObject.SetActive(true);
+
+        //for fading in - because fading in is fancy.
+        CanvasRenderer canRen = backdrops.GetComponent<CanvasRenderer>();
+        canRen.SetAlpha(0.0f);
+        backdrops.GetComponent<Image>().CrossFadeAlpha(1.0f, menuFadeInSpeed, false);
+    }
+
+    // Called by the CloseScroll() function above
+    void DisableMenu()
+    {
+        menuCanvas.gameObject.SetActive(false);
+    }
+
+
+    private void PlaySound()
     {
         if (playSound)
         {
-            Sound.Play();
+            _audioSource.Play();
         }
     }
+
+    private void ChangeActivate()
+    {
+        switch (_sectionOpen)
+        {
+            case (int) SectionType.All:
+                backdropLength = 6;
+                for (int i = 0; i < _cards.Count; i++)
+                {
+                    _cards[i].gameObject.SetActive(true);
+                }
+                break;
+            
+            case (int) SectionType.Move:
+                backdropLength = 2;
+                for (int i = 0; i < _cards.Count; i++)
+                {
+                    GameObject obj = _cards[i].gameObject;
+                    if (_cards[i].cardData.type == (int) Card.SkillType.Move)
+                        obj.SetActive(true);
+                    else
+                        obj.SetActive(false);
+                }
+                break;
+            
+            case (int) SectionType.Attack:
+                backdropLength = 3;
+                for (int i = 0; i < _cards.Count; i++)
+                {
+                    GameObject obj = _cards[i].gameObject;
+                    if (_cards[i].cardData.type == (int) Card.SkillType.Attack)
+                        obj.SetActive(true);
+                    else
+                        obj.SetActive(false);
+                }
+                break;
+            
+            case (int) SectionType.Special:
+                backdropLength = 2;
+                for (int i = 0; i < _cards.Count; i++)
+                {
+                    GameObject obj = _cards[i].gameObject;
+                    if (_cards[i].cardData.type == (int) Card.SkillType.Special)
+                        obj.SetActive(true);
+                    else
+                        obj.SetActive(false);
+                }
+                break;
+        }
+    }
+
+    private void Sort()
+    {
+        int mask = 0b1000;
+        for (int i = 0; i < 4; i++)
+        {
+            Vector3 tmpPos;
+            Color tmpColor;
+            if ((_sectionOpen & mask) > 0)
+            {
+                tmpPos = new Vector3(_buttonRectTrans[i].localPosition.x, -0.44f, 0.03f);
+                tmpColor = _selectedColor;
+            }
+            else
+            {
+                tmpPos = new Vector3(_buttonRectTrans[i].localPosition.x, -0.43f, 0.04f);
+                tmpColor = _baseColor;
+            }
+
+            _buttonRectTrans[i].localPosition = tmpPos;
+            _buttonImages[i].color = tmpColor;
+            mask >>= 1;
+        }
+
+        ChangeActivate();
+        menuPositionInt = 0;
+    }
+    
+    #endregion
+
+
+    #region Public methods
+
+    public void OpenOrCloseScroll()
+    {
+        if (!_isScrollOpen)
+            OpenScroll();
+        else
+            CloseScroll();
+    }
+
+    public void OpenScroll()
+    {
+        if (!_isScrollOpen)
+        {
+            _animator.SetTrigger("Opentrig");
+            _isScrollOpen = true;
+            PlaySound();
+        }
+    }
+
+    public void CloseScroll()
+    {
+        if (_isScrollOpen)
+        {
+            _animator.SetTrigger("Closetrig");
+            _isScrollOpen = false;
+            PlaySound();
+            DisableMenu();
+        }
+    }
+
+    #endregion
+
+
+    #region Coroutines
+
+    IEnumerator SortScroll()
+    {
+        CloseScroll();
+        yield return new WaitForSeconds(0.8f);
+        OpenScroll();
+        Sort();
+    }
+
+    #endregion
 }

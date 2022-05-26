@@ -64,7 +64,7 @@ public class CardListScrollTest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.D))
         {
             Debug.Log("Move Right");
-            scroll3D.MoveMenuleft();
+            scroll3D.MoveMenuLeft();
         }
     }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Core;
+using Data.Cache;
 using Manager;
 using Unity.Netcode;
 using UnityEngine;
@@ -41,7 +42,7 @@ namespace UI.Game
         [SerializeField] private Sprite confirmCardImg;
 
         [Header("3D card scroll UI")]
-        [SerializeField] private ScrollScript3D cardScroll3D;
+        [SerializeField] private ScrollScript3DTest cardScroll3D;
 
         [Header("NetworkSynchronizer")]
         [SerializeField] private NetworkSynchronizer _netSync;
@@ -118,7 +119,7 @@ namespace UI.Game
                 for (int i = 0; i < cards.Length; i++)
                 {
                     int id = cards[i];
-                    _hostCardImages[i].sprite = cardImgs[id];
+                    _hostCardImages[i].sprite = CacheSpriteSource.Instance.GetSource(id);
                 }
 
                 for (int i = cards.Length; i < MaxCardCnt; i++)
@@ -135,7 +136,7 @@ namespace UI.Game
                 for (int i = 0; i < cards.Length; i++)
                 {
                     int id = cards[i];
-                    _clientCardImages[i].sprite = cardImgs[id];
+                    _clientCardImages[i].sprite = CacheSpriteSource.Instance.GetSource(id);
                 }
 
                 for (int i = cards.Length; i < MaxCardCnt; i++)

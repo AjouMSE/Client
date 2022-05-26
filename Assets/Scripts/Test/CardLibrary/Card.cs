@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public enum SkillType { Move = 1, Attack = 100, Special = 200 }
 public class Card : MonoBehaviour
 {
+    public enum SkillType { Move = 1, Attack = 100, Special = 200 }
+    
     [SerializeField] private TMP_Text name;
     [SerializeField] private TMP_Text value;
     [SerializeField] private TMP_Text cost;

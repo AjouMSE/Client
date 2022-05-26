@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using Core;
 using Utils;
+using Data.Cache;
 
 namespace InGame
 {
@@ -61,15 +62,6 @@ namespace InGame
             }
         }
 
-        private void GenerateVfx(int idx, int vfxId)
-        {
-            // show effect here
-            Vector3 vfxPos = _panels[idx].transform.position + new Vector3(0, 0.1f, 0);
-            Vector3 vfxSize = new Vector3(3, 3, 3);
-            if (vfxId == 1) Instantiate(vfx, vfxPos, Quaternion.identity).transform.localScale = vfxSize;
-            else Instantiate(vfx2, vfxPos, Quaternion.identity).transform.localScale = vfxSize;
-        }
-
         public GameObject GetPanelByIdx(int idx)
         {
             if (idx > Consts.PanelCnt - 1 || idx < 0) return null;
@@ -87,11 +79,14 @@ namespace InGame
             {
                 if ((fieldRange.element & mask) > 0)
                 {
-                    StartCoroutine(ShowEffect(idx, 0, type));
+                    StartCoroutine(ChangeColor(idx, 0, type));
                 }
 
                 mask = mask >> 1;
             }
+
+            if (data.type != (int)Consts.SkillType.Move)
+                StartCoroutine(ShowEffect(code, x, y));
         }
 
         #endregion
@@ -99,7 +94,7 @@ namespace InGame
 
         #region Coroutines
 
-        IEnumerator ShowEffect(int idx, int vfxId, int type)
+        private IEnumerator ChangeColor(int idx, int vfxId, int type)
         {
             Color baseColor, changedColor;
             baseColor = new Color(0.8f, 0.8f, 0.8f);
@@ -116,11 +111,29 @@ namespace InGame
                 yield return new WaitForSeconds(0.02f);
             }
 
-            GenerateVfx(idx, vfxId);
             _panelRenderers[idx].material.color = changedColor;
             yield return new WaitForSeconds(2f);
 
             _panelRenderers[idx].material.color = baseColor;
+        }
+
+        private IEnumerator ShowEffect(int code, int x, int y)
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            ParticleSystem vfx = CacheVFXSource.Instance.GetSource(code);
+            vfx.gameObject.SetActive(true);
+
+            int idx = Consts.Width * y + x;
+            Vector3 panelPos = GetPanelByIdx(idx).transform.position;
+            vfx.transform.position = new Vector3(panelPos.x, panelPos.y + 0.3f, panelPos.z);
+            // vfx.transform.localScale = new Vector3(3, 3, 3);
+            vfx.Play();
+
+            yield return new WaitForSeconds(2f);
+
+            vfx.transform.position = new Vector3(0, 100, 0);
+            vfx.gameObject.SetActive(false);
         }
 
         #endregion

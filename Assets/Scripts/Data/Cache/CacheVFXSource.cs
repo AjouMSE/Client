@@ -15,14 +15,14 @@ namespace Data.Cache
 
         #endregion
 
-        
-        
+
+
         #region Public methods
 
         public override IEnumerator Init()
         {
             Cache = new Dictionary<int, ParticleSystem>();
-            
+
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
             {
                 CardData card = TableDatas.Instance.cardDatas[key];
@@ -32,6 +32,8 @@ namespace Data.Cache
                     obj.transform.localScale = new Vector3(1, 1, 1);
                     obj.SetActive(false);
                     Cache.Add(key, obj.GetComponent<ParticleSystem>());
+
+                    Object.DontDestroyOnLoad(obj);
                 }
             }
 

@@ -241,8 +241,8 @@ namespace Manager
             // int[] hostCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
             // int[] clientCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
 
-            int[] hostCards = new int[] { 101000004, 101100002, 101100002 };
-            int[] clientCards = new int[] { 101000005, 101100003, 101100000 };
+            int[] hostCards = new int[] { 101100002, 101100002, 101100002 };
+            int[] clientCards = new int[] { 101100000, 101100003, 101100000 };
 
             for (int i = 0; i < 3; i++)
             {
@@ -277,19 +277,18 @@ namespace Manager
 
                     yield return new WaitForSeconds(2f);
                 }
+
+                if (ValidGameOver())
+                {
+                    GameOver();
+                    yield break;
+                }
             }
 
             // if the game is not ended,
-            if (!ValidGameOver())
-            {
-                _hostWizardController.GainMana();
-                _clientWizardController.GainMana();
-                StartCoroutine(WaitForRunningTimer());
-            }
-            else
-            {
-                GameOver();
-            }
+            _hostWizardController.GainMana();
+            _clientWizardController.GainMana();
+            StartCoroutine(WaitForRunningTimer());
         }
 
         /*IEnumerator ProcessCard()

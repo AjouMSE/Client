@@ -14,7 +14,7 @@ namespace Utils
         public const int MaxHP = 100;
         public const int StartMana = 3, MaxMana = 10;
 
-        public enum SkillType { Move = 1, Attack = 100, Special = 200 }
+        public enum SkillType { Move = 1, Attack = 100, Special = 200, ManaCharge = 201 }
 
         public enum GameUIType { HP, Mana }
 

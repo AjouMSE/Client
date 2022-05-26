@@ -165,10 +165,11 @@ namespace InGame
             BitMask.BitField30 range = ParseRangeWthCurrPos(data.range);
             List<int> panelIdxes = GetPanelIdx(range);
 
+            UseMana(data.cost);
+
             switch (data.type)
             {
                 case (int)Consts.SkillType.Move:
-                    UseMana(data.cost);
                     Directions movingDir = CalculateDir(panelIdxes[0]);
                     SetPosition(panelIdxes[0]);
                     if (UserManager.Instance.IsHost)
@@ -176,9 +177,12 @@ namespace InGame
                     break;
 
                 case (int)Consts.SkillType.Attack:
-                    UseMana(data.cost);
                     if (UserManager.Instance.IsHost)
                         Attack(data, range, panelIdxes);
+                    break;
+
+                case (int)Consts.SkillType.ManaCharge:
+                    ManaCharge(data.value);
                     break;
             }
         }
@@ -235,6 +239,21 @@ namespace InGame
             {
                 _netSync.UpdateGameValue(hostileType, Consts.GameUIType.HP, -data.value);
                 StartCoroutine(hostileController.GetHitAction());
+            }
+        }
+
+        private void ManaCharge(int value)
+        {
+            if (IsOwner)
+            {
+                StartCoroutine(HitAction());
+
+                _currMana += value;
+
+                if (UserManager.Instance.IsHost)
+                    _userInfoUIController.UpdateHostUI(Consts.GameUIType.Mana, _currMana);
+                else
+                    _userInfoUIController.UpdateClientUI(Consts.GameUIType.Mana, _currMana);
             }
         }
 
@@ -470,7 +489,7 @@ namespace InGame
                             invalidCards.Add(cardData.Value.code);
                         break;
 
-                    case (int)Consts.SkillType.Attack:
+                    default:
                         if (_currMana - cardData.Value.cost < 0)
                             invalidCards.Add(cardData.Value.code);
                         break;

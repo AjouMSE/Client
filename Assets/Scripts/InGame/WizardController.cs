@@ -34,6 +34,7 @@ namespace InGame
         #region Private variables
 
         private int _x, _y, _idx;
+        private int _dir;
         private BitMask.BitField30 _bitIdx; // msb is idx 0, lsb is idx 29 (0 ~ 29)
         private string _currentAnimation;
 
@@ -44,6 +45,8 @@ namespace InGame
         private HUDGameUserInfoUIController _userInfoUIController;
 
         private NetworkSynchronizer _netSync;
+
+        private enum Directions { Forward, Back, Left, Right };
 
         #endregion
 
@@ -76,6 +79,7 @@ namespace InGame
                     GameManager.Instance.SetHostWizardController(this);
 
                     _currMana = Consts.StartMana;
+                    _dir = DirRight;
                 }
                 else
                 {
@@ -97,6 +101,7 @@ namespace InGame
                     GameManager.Instance.SetClientWizardController(this);
 
                     _currMana = Consts.StartMana;
+                    _dir = DirLeft;
                 }
                 else
                 {
@@ -164,9 +169,10 @@ namespace InGame
             {
                 case (int)Consts.SkillType.Move:
                     UseMana(data.cost);
+                    Directions movingDir = CalculateDir(panelIdxes[0]);
                     SetPosition(panelIdxes[0]);
                     if (UserManager.Instance.IsHost)
-                        Move(panelIdxes[0]);
+                        Move(panelIdxes[0], movingDir);
                     break;
 
                 case (int)Consts.SkillType.Attack:
@@ -177,6 +183,23 @@ namespace InGame
             }
         }
 
+        private Directions CalculateDir(int destIdx)
+        {
+            int destX = destIdx % Consts.Width;
+            int destY = destIdx / Consts.Width;
+
+            if (_x < destX)
+                return _dir == DirRight ? Directions.Forward : Directions.Back;
+            else if (_x > destX)
+                return _dir == DirRight ? Directions.Back : Directions.Forward;
+            else if (_y < destY)
+                return _dir == DirRight ? Directions.Right : Directions.Left;
+            else if (_y > destY)
+                return _dir == DirRight ? Directions.Left : Directions.Right;
+
+            return Directions.Forward;
+        }
+
         private void SetPosition(int destIdx)
         {
             _x = destIdx % Consts.Width;
@@ -185,10 +208,10 @@ namespace InGame
             _bitIdx = ConvertIdxToBitIdx(_idx);
         }
 
-        private void Move(int destIdx)
+        private void Move(int destIdx, Directions movingDir)
         {
             Vector3 destPosition = _panelController.GetPanelByIdx(_idx).transform.position;
-            StartCoroutine(MoveAction(destPosition));
+            StartCoroutine(MoveAction(destPosition, movingDir));
         }
 
         private void Attack(CardData data, BitMask.BitField30 range, List<int> panelIdxes)
@@ -215,10 +238,27 @@ namespace InGame
             }
         }
 
-        private IEnumerator MoveAction(Vector3 destination)
+        private IEnumerator MoveAction(Vector3 destination, Directions movingDir)
         {
             // Animation Move Front
-            SetAnimation(WizardAnimations.WalkForward);
+            switch (movingDir)
+            {
+                case Directions.Forward:
+                    SetAnimation(WizardAnimations.WalkForward);
+                    break;
+
+                case Directions.Back:
+                    SetAnimation(WizardAnimations.WalkBack);
+                    break;
+
+                case Directions.Left:
+                    SetAnimation(WizardAnimations.WalkLeft);
+                    break;
+
+                case Directions.Right:
+                    SetAnimation(WizardAnimations.WalkRight);
+                    break;
+            }
 
             Vector3 destinationPosition = new Vector3(destination.x, transform.position.y, destination.z);
             if (IsOwner)

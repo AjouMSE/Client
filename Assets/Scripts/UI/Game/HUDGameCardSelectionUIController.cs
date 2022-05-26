@@ -69,7 +69,7 @@ namespace UI.Game
             if (GameManager.Instance.canSelect)
             {
                 _netSync.AddCardToList(id);
-                UpdateValidCards();
+                UpdateInvalidCards();
             }
         }
 
@@ -78,7 +78,7 @@ namespace UI.Game
             if (GameManager.Instance.canSelect)
             {
                 _netSync.RemoveCardFromList(idx);
-                UpdateValidCards();
+                UpdateInvalidCards();
             }
         }
 
@@ -146,12 +146,12 @@ namespace UI.Game
             }
         }
 
-        public void UpdateValidCards()
+        public void UpdateInvalidCards()
         {
-            List<int> validCards = GameManager.Instance.GetValidCards();
+            List<int> validCards = GameManager.Instance.GetInvalidCards();
             for (int i = 0; i < validCards.Count; i++)
             {
-                Debug.Log(validCards[i]);
+                // Debug.Log(validCards[i]);
             }
         }
 

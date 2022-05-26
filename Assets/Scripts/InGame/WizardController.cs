@@ -16,8 +16,8 @@ namespace InGame
 
         private const float Speed = 4.0f;
 
-        private const int InitHostX = 2, InitHostY = 2;
-        private const int InitClientX = 3, InitClientY = 2;
+        private const int InitHostX = 0, InitHostY = 2;
+        private const int InitClientX = 5, InitClientY = 2;
 
         private const int DirLeft = -90, DirRight = 90;
 
@@ -386,9 +386,9 @@ namespace InGame
             }
         }
 
-        public List<int> ValidCards()
+        public List<int> InvalidCards()
         {
-            List<int> validCards = new List<int>();
+            List<int> invalidCards = new List<int>();
 
             int saveIdx = _idx;
             int saveMana = _currMana;
@@ -425,13 +425,13 @@ namespace InGame
                 switch (cardData.Value.type)
                 {
                     case (int)Consts.SkillType.Move:
-                        if (panelIdxes.Count == 1)
-                            validCards.Add(cardData.Value.code);
+                        if (panelIdxes.Count != 1)
+                            invalidCards.Add(cardData.Value.code);
                         break;
 
                     case (int)Consts.SkillType.Attack:
-                        if (_currMana - cardData.Value.cost >= 0)
-                            validCards.Add(cardData.Value.code);
+                        if (_currMana - cardData.Value.cost < 0)
+                            invalidCards.Add(cardData.Value.code);
                         break;
                 }
             }
@@ -439,7 +439,7 @@ namespace InGame
             SetPosition(saveIdx);
             _currMana = saveMana;
 
-            return validCards;
+            return invalidCards;
         }
 
         #endregion

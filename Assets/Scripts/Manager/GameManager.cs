@@ -144,7 +144,7 @@ namespace Manager
             }
         }
 
-        public List<int> GetValidCards()
+        public List<int> GetInvalidCards()
         {
             WizardController wizardController = null;
             if (UserManager.Instance.IsHost)
@@ -152,7 +152,7 @@ namespace Manager
             else
                 wizardController = _clientWizardController;
 
-            return wizardController.ValidCards();
+            return wizardController.InvalidCards();
         }
 
         #endregion
@@ -194,7 +194,7 @@ namespace Manager
 
             _userInfoUIController.UpdateTimerText();
             _userInfoUIController.UpdateTurnText();
-            _cardSelectionUIController.UpdateValidCards();
+            _cardSelectionUIController.UpdateInvalidCards();
             _cardSelectionUIController.OpenCardScroll();
 
             while (_timerValue > 0)
@@ -238,8 +238,6 @@ namespace Manager
         private IEnumerator ProcessCards()
         {
             int cardId = 0;
-            // int[] hostCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
-            // int[] clientCards = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
 
             int[] hostCards = _netSync.GetCopyList(Consts.UserType.Host);
             int[] clientCards = _netSync.GetCopyList(Consts.UserType.Client);

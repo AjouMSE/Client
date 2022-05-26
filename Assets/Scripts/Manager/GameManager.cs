@@ -249,7 +249,7 @@ namespace Manager
                 {
                     cardId = hostCards[i];
 
-                    _panelController.ProcessEffect(cardId, 0, _hostWizardController.GetX(), _hostWizardController.GetY());
+                    _panelController.ProcessEffect(cardId, Consts.UserType.Host, _hostWizardController, _clientWizardController);
                     _hostWizardController.ProcessSkill(cardId);
 
                     yield return new WaitForSeconds(3f);
@@ -263,7 +263,7 @@ namespace Manager
                 {
                     cardId = clientCards[i];
 
-                    _panelController.ProcessEffect(cardId, 1, _clientWizardController.GetX(), _clientWizardController.GetY());
+                    _panelController.ProcessEffect(cardId, Consts.UserType.Client, _clientWizardController, _hostWizardController);
                     _clientWizardController.ProcessSkill(cardId);
 
                     yield return new WaitForSeconds(3f);

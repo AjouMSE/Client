@@ -93,7 +93,7 @@ namespace Data.Cache
                 }
             };
 
-            yield return null;
+            yield break;
         }
 
         #endregion

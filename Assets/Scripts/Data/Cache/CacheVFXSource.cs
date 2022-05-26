@@ -13,7 +13,8 @@ namespace Data.Cache
 
         public override IEnumerator Init()
         {
-            yield return null;
+            
+            yield break;
         }
 
         #endregion

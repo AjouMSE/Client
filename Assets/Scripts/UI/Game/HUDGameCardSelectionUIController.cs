@@ -152,7 +152,7 @@ namespace UI.Game
             
             foreach(Image img in cardScroll3D.cardImageDict.Values)
             {
-                img.material.color = new Color(1, 1, 1);
+                img.color = new Color(1, 1, 1);
             }
 
             foreach (Button btn in cardScroll3D.buttonDict.Values)
@@ -163,7 +163,7 @@ namespace UI.Game
             for (int i = 0; i < invalidCards.Count; i++)
             {
                 int id = invalidCards[i];
-                cardScroll3D.cardImageDict[id].material.color = new Color(1, 0.5f, 0.5f);
+                cardScroll3D.cardImageDict[id].color = new Color(1, 0.3f, 0.3f);
                 cardScroll3D.buttonDict[id].interactable = false;
             }
         }

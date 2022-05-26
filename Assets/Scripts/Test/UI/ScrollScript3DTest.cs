@@ -151,9 +151,6 @@ public class ScrollScript3DTest : MonoBehaviour
 
     private void Init()
     {
-        TableLoader.Instance.LoadTableData();
-        StartCoroutine(CacheSpriteSource.Instance.Init());
-
         // Init backdrops, section buttons
         _baseColor = new Color(1, 0.87f, 0.75f);
         _selectedColor = new Color(1, 0.75f, 0.36f);

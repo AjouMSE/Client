@@ -20,10 +20,6 @@ namespace Data.Cache
 
         #endregion
 
-        #region Private variables
-
-        #endregion
-
 
         #region Public methods
 

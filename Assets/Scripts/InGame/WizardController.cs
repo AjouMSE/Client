@@ -23,6 +23,8 @@ namespace InGame
 
         private const int PaddingX = 1;
 
+        private string[] AttackAnimations = new string[] { WizardAnimations.Attack01, WizardAnimations.Attack02, WizardAnimations.Attack03, WizardAnimations.Attack04 };
+
         #endregion
 
 
@@ -161,16 +163,14 @@ namespace InGame
             switch (data.type)
             {
                 case (int)Consts.SkillType.Move:
-                    UseMana(data);
+                    UseMana(data.cost);
                     SetPosition(panelIdxes[0]);
                     if (UserManager.Instance.IsHost)
-                    {
                         Move(panelIdxes[0]);
-                    }
                     break;
 
                 case (int)Consts.SkillType.Attack:
-                    UseMana(data);
+                    UseMana(data.cost);
                     if (UserManager.Instance.IsHost)
                         Attack(data, range, panelIdxes);
                     break;
@@ -193,25 +193,25 @@ namespace InGame
 
         private void Attack(CardData data, BitMask.BitField30 range, List<int> panelIdxes)
         {
-            // Host만 실행
-            int hostileIdx = -1;
+            WizardController hostileController;
+            Consts.UserType hostileType;
             if (IsOwner)
             {
-                hostileIdx = GameManager.Instance.GetClientWizardController().GetIdx();
-                if (CheckPlayerHit(hostileIdx, range))
-                {
-                    Debug.Log("Hit!");
-                    _netSync.UpdateClientValue(Consts.GameUIType.HP, -data.value);
-                }
+                hostileController = GameManager.Instance.GetClientWizardController();
+                hostileType = Consts.UserType.Client;
             }
             else
             {
-                hostileIdx = GameManager.Instance.GetHostWizardController().GetIdx();
-                if (CheckPlayerHit(hostileIdx, range))
-                {
-                    Debug.Log("Hit!");
-                    _netSync.UpdateHostValue(Consts.GameUIType.HP, -data.value);
-                }
+                hostileController = GameManager.Instance.GetHostWizardController();
+                hostileType = Consts.UserType.Host;
+            }
+
+            StartCoroutine(HitAction());
+
+            if (CheckPlayerHit(hostileController.GetIdx(), range))
+            {
+                _netSync.UpdateGameValue(hostileType, Consts.GameUIType.HP, -data.value);
+                StartCoroutine(hostileController.GetHitAction());
             }
         }
 
@@ -289,11 +289,37 @@ namespace InGame
             return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0 ? true : false;
         }
 
-        private void UseMana(CardData data)
+        private IEnumerator HitAction()
+        {
+            int idx = UnityEngine.Random.Range(0, AttackAnimations.Length);
+
+            // Animation Battle GetHit
+            SetAnimation(AttackAnimations[idx]);
+
+            yield return new WaitForSeconds(1f);
+
+            // Animation Idle
+            SetAnimation(WizardAnimations.Idle);
+        }
+
+        private IEnumerator GetHitAction()
+        {
+            yield return new WaitForSeconds(1f);
+
+            // Animation Battle GetHit
+            SetAnimation(WizardAnimations.GetHit);
+
+            yield return new WaitForSeconds(1f);
+
+            // Animation Idle
+            SetAnimation(WizardAnimations.Idle);
+        }
+
+        private void UseMana(int cost)
         {
             if (IsOwner)
             {
-                _currMana -= data.cost;
+                _currMana -= cost;
 
                 if (UserManager.Instance.IsHost)
                     _userInfoUIController.UpdateHostUI(Consts.GameUIType.Mana, _currMana);
@@ -369,9 +395,9 @@ namespace InGame
 
             int[] cardList = null;
             if (UserManager.Instance.IsHost)
-                cardList = _netSync.GetCopyList(NetworkSynchronizer.UserType.Host);
+                cardList = _netSync.GetCopyList(Consts.UserType.Host);
             else
-                cardList = _netSync.GetCopyList(NetworkSynchronizer.UserType.Client);
+                cardList = _netSync.GetCopyList(Consts.UserType.Client);
 
             for (int i = 0; i < cardList.Length; i++)
             {

@@ -256,10 +256,10 @@ namespace Manager
 
                     if (UserManager.Instance.IsHost)
                     {
-                        _netSync.RemoveFrontOfList(NetworkSynchronizer.UserType.Host);
+                        _netSync.RemoveFrontOfList(Consts.UserType.Host);
                     }
 
-                    yield return new WaitForSeconds(2f);
+                    yield return new WaitForSeconds(3f);
                 }
 
                 // Process card id
@@ -272,10 +272,10 @@ namespace Manager
 
                     if (UserManager.Instance.IsHost)
                     {
-                        _netSync.RemoveFrontOfList(NetworkSynchronizer.UserType.Client);
+                        _netSync.RemoveFrontOfList(Consts.UserType.Client);
                     }
 
-                    yield return new WaitForSeconds(2f);
+                    yield return new WaitForSeconds(3f);
                 }
 
                 if (ValidGameOver())

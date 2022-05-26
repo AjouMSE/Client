@@ -19,5 +19,7 @@ namespace Utils
         public enum GameUIType { HP, Mana }
 
         public enum BattleResult { WIN, LOSE, DRAW }
+
+        public enum UserType { Host, Client }
     }
 }

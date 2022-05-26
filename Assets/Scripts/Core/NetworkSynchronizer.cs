@@ -39,12 +39,6 @@ namespace Core
 
         #region Public variables
 
-        public enum UserType
-        {
-            Host,
-            Client
-        }
-
         #endregion
 
 
@@ -267,16 +261,16 @@ namespace Core
         /// Remove front value from list
         /// </summary>
         /// <param name="type"></param>
-        public void RemoveFrontOfList(UserType type)
+        public void RemoveFrontOfList(Consts.UserType type)
         {
             switch (type)
             {
-                case UserType.Host:
+                case Consts.UserType.Host:
                     if (_hostCardList.Count > 0)
                         _hostCardList.RemoveAt(0);
                     break;
 
-                case UserType.Client:
+                case Consts.UserType.Client:
                     if (_clientCardList.Count > 0)
                         _clientCardList.RemoveAt(0);
                     break;
@@ -288,12 +282,12 @@ namespace Core
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public int[] GetCopyList(UserType type)
+        public int[] GetCopyList(Consts.UserType type)
         {
             int[] cards = null;
             switch (type)
             {
-                case UserType.Host:
+                case Consts.UserType.Host:
                     cards = new int[_hostCardList.Count];
                     for (int i = 0; i < cards.Length; i++)
                     {
@@ -302,7 +296,7 @@ namespace Core
 
                     break;
 
-                case UserType.Client:
+                case Consts.UserType.Client:
                     cards = new int[_clientCardList.Count];
                     for (int i = 0; i < cards.Length; i++)
                     {
@@ -313,6 +307,20 @@ namespace Core
             }
 
             return cards;
+        }
+
+        public void UpdateGameValue(Consts.UserType user, Consts.GameUIType type, int value)
+        {
+            switch (user)
+            {
+                case Consts.UserType.Host:
+                    UpdateHostValue(type, value);
+                    break;
+
+                case Consts.UserType.Client:
+                    UpdateClientValue(type, value);
+                    break;
+            }
         }
 
         public void UpdateHostValue(Consts.GameUIType type, int value)

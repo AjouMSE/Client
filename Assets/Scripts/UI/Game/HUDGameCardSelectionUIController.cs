@@ -69,7 +69,6 @@ namespace UI.Game
             if (GameManager.Instance.canSelect)
             {
                 _netSync.AddCardToList(id);
-                UpdateInvalidCards();
             }
         }
 
@@ -78,7 +77,6 @@ namespace UI.Game
             if (GameManager.Instance.canSelect)
             {
                 _netSync.RemoveCardFromList(idx);
-                UpdateInvalidCards();
             }
         }
 
@@ -149,8 +147,8 @@ namespace UI.Game
         public void UpdateInvalidCards()
         {
             List<int> invalidCards = GameManager.Instance.GetInvalidCards();
-            
-            foreach(Image img in cardScroll3D.cardImageDict.Values)
+
+            foreach (Image img in cardScroll3D.cardImageDict.Values)
             {
                 img.color = new Color(1, 1, 1);
             }

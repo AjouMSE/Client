@@ -252,12 +252,10 @@ namespace Manager
                     _panelController.ProcessEffect(cardId, 0, _hostWizardController.GetX(), _hostWizardController.GetY());
                     _hostWizardController.ProcessSkill(cardId);
 
-                    if (UserManager.Instance.IsHost)
-                    {
-                        _netSync.RemoveFrontOfList(Consts.UserType.Host);
-                    }
-
                     yield return new WaitForSeconds(3f);
+
+                    if (UserManager.Instance.IsHost)
+                        _netSync.RemoveFrontOfList(Consts.UserType.Host);
                 }
 
                 // Process card id
@@ -268,12 +266,10 @@ namespace Manager
                     _panelController.ProcessEffect(cardId, 1, _clientWizardController.GetX(), _clientWizardController.GetY());
                     _clientWizardController.ProcessSkill(cardId);
 
-                    if (UserManager.Instance.IsHost)
-                    {
-                        _netSync.RemoveFrontOfList(Consts.UserType.Client);
-                    }
-
                     yield return new WaitForSeconds(3f);
+
+                    if (UserManager.Instance.IsHost)
+                        _netSync.RemoveFrontOfList(Consts.UserType.Client);
                 }
 
                 if (ValidGameOver())

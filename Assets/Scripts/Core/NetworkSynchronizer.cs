@@ -59,6 +59,9 @@ namespace Core
             int[] cards = new int[_hostCardList.Count];
             for (int i = 0; i < cards.Length; i++) cards[i] = _hostCardList[i];
             cardSelectionUIController.UpdateHostCardSelectionUI(cards);
+
+            if (UserManager.Instance.IsHost)
+                cardSelectionUIController.UpdateInvalidCards();
         }
 
         private void ClientCardListOnChanged(NetworkListEvent<int> e)
@@ -66,6 +69,9 @@ namespace Core
             int[] cards = new int[_clientCardList.Count];
             for (int i = 0; i < cards.Length; i++) cards[i] = _clientCardList[i];
             cardSelectionUIController.UpdateClientCardSelectionUI(cards);
+
+            if (!UserManager.Instance.IsHost)
+                cardSelectionUIController.UpdateInvalidCards();
         }
 
         #endregion

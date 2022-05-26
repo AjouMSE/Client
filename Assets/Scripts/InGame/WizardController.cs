@@ -408,6 +408,7 @@ namespace InGame
                 switch (data.type)
                 {
                     case (int)Consts.SkillType.Move:
+                        _currMana -= data.cost;
                         SetPosition(panelIdxes[0]);
                         break;
 
@@ -425,7 +426,7 @@ namespace InGame
                 switch (cardData.Value.type)
                 {
                     case (int)Consts.SkillType.Move:
-                        if (panelIdxes.Count != 1)
+                        if (panelIdxes.Count != 1 || _currMana - cardData.Value.cost < 0)
                             invalidCards.Add(cardData.Value.code);
                         break;
 

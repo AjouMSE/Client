@@ -23,21 +23,13 @@ namespace UI.Game
 
         #region Private Variables
 
-        [Header("Host Card Selections")]
-        [SerializeField] private Button[] hostCards;
+        [Header("Host Card Selections")] 
+        [SerializeField] private GameObject cardListHost;
+        
+        [Header("Client Card Selections")] 
+        [SerializeField] private GameObject cardListClient;
 
-        [Header("Client Card Selections")]
-        [SerializeField] private Button[] clientCards;
-
-        [Header("Host Confirm Button")]
-        [SerializeField] private Button hostConfirmBtn;
-
-        [Header("Client Confirm Button")]
-        [SerializeField] private Button clientConfirmBtn;
-
-        [Header("Card Images")]
-        [SerializeField] private Sprite[] cardImgs;
-
+        [Header("Base, Confirm card Images")]
         [SerializeField] private Sprite baseCardImg;
         [SerializeField] private Sprite confirmCardImg;
 
@@ -47,6 +39,7 @@ namespace UI.Game
         [Header("NetworkSynchronizer")]
         [SerializeField] private NetworkSynchronizer _netSync;
 
+        
         private Image[] _hostCardImages;
         private Image[] _clientCardImages;
 
@@ -87,17 +80,20 @@ namespace UI.Game
 
         public void Init()
         {
+            Button[] hostCardListBtns = cardListHost.GetComponentsInChildren<Button>();
+            Button[] clientCardListBtns = cardListClient.GetComponentsInChildren<Button>();
+            
             _hostCardImages = new Image[MaxCardCnt];
             _clientCardImages = new Image[MaxCardCnt];
 
             for (int i = 0; i < 3; i++)
             {
-                _hostCardImages[i] = hostCards[i].gameObject.GetComponent<Image>();
-                _clientCardImages[i] = clientCards[i].gameObject.GetComponent<Image>();
+                _hostCardImages[i] = hostCardListBtns[i].GetComponent<Image>();
+                _clientCardImages[i] = clientCardListBtns[i].GetComponent<Image>();
             }
 
-            if (UserManager.Instance.IsHost) clientConfirmBtn.gameObject.SetActive(false);
-            else hostConfirmBtn.gameObject.SetActive(false);
+            if (UserManager.Instance.IsHost) cardListClient.SetActive(false);
+            else cardListHost.SetActive(false);
         }
 
         public void OpenCardScroll()

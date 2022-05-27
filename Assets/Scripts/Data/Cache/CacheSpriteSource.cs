@@ -34,6 +34,7 @@ namespace Data.Cache
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
             {
                 CardData card = TableDatas.Instance.cardDatas[key];
+                Debug.Log($"{card.icon} / {card.text}");
                 Cache.Add(key, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathSkillIcon}/{card.icon}"));
             }
 

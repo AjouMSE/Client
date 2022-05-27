@@ -14,10 +14,15 @@ namespace Scene
 {
     public class GameSceneControllerTest : MonoBehaviour
     {
+        [SerializeField] private GameObject obj;
+        
         #region Custom methods
 
         private void Init()
         {
+            Button btn = obj.GetComponentsInChildren<Button>()[0];
+            if(btn == null) Debug.Log("Btn is null");
+            Debug.Log(btn.name);
         }
 
         #endregion

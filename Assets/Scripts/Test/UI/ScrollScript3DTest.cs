@@ -274,12 +274,12 @@ public class ScrollScript3DTest : MonoBehaviour
             Color tmpColor;
             if ((_sectionOpen & mask) > 0)
             {
-                tmpPos = new Vector3(_buttonRectTrans[i].localPosition.x, -0.44f, 0.03f);
+                tmpPos = new Vector3(_buttonRectTrans[i].localPosition.x, -0.42f, 0.03f);
                 tmpColor = _selectedColor;
             }
             else
             {
-                tmpPos = new Vector3(_buttonRectTrans[i].localPosition.x, -0.43f, 0.04f);
+                tmpPos = new Vector3(_buttonRectTrans[i].localPosition.x, -0.4f, 0.04f);
                 tmpColor = _baseColor;
             }
 

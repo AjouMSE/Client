@@ -12,8 +12,10 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 
 #if UNITY_EDITOR
         Load_table_skill_card("101_table_skill_card");
+        Load_table_ranking_tier("201_table_ranking_tier");
 #else
 		yield return Load_table_skill_card("101_table_skill_card");
+		yield return Load_table_ranking_tier("201_table_ranking_tier");
 #endif
 
         yield return Resources.UnloadUnusedAssets();
@@ -72,6 +74,33 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 
                 CardData data = CardData.Create(elem);
                 TableDatas.Instance.cardDatas.Add(data.code, data);
+            }
+        }
+#if !UNITY_EDITOR
+		yield break;
+#endif
+    }
+
+#if UNITY_EDITOR
+    private void Load_table_ranking_tier(string fileName)
+#else
+	private IEnumerator Load_table_ranking_tier(string fileName)
+#endif
+    {
+        List<object> dataList = GetDataList(fileName);
+        if (dataList == null)
+        {
+            Debug.Log(GetType().Name + " Load_table_ranking_tier() : data list is null" + fileName);
+        }
+        else
+        {
+            for (int i = 0, count = dataList.Count; i < count; ++i)
+            {
+                List<object> elem = dataList[i] as List<object>;
+                if (elem == null || elem.Count == 0) break;
+
+                TierData data = TierData.Create(elem);
+                TableDatas.Instance.tierDatas.Add(data.code, data);
             }
         }
 #if !UNITY_EDITOR

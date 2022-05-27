@@ -4,8 +4,10 @@ using Utils;
 public partial class TableDatas : MonoSingleton<TableDatas>
 {
     public Dictionary<int, CardData> cardDatas = new Dictionary<int, CardData>();
+    public Dictionary<int, TierData> tierDatas = new Dictionary<int, TierData>();
 
     public CardData GetCardData(int code) { return GetData(cardDatas, code); }
+    public TierData GetTierData(int code) { return GetData(tierDatas, code); }
 
     public T GetData<T>(Dictionary<int, T> dic, int code)
     {
@@ -29,5 +31,6 @@ public partial class TableDatas : MonoSingleton<TableDatas>
     public void ClearAll()
     {
         cardDatas.Clear();
+        tierDatas.Clear();
     }
 }

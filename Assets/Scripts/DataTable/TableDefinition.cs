@@ -40,3 +40,28 @@ public partial class CardData : TableDataBase
     }
 }
 
+public partial class TierData : TableDataBase
+{
+    public const int Table = 201;
+
+    public string tier;
+    public int required;
+
+    public static TierData Create(List<object> elements)
+    {
+        TierData data = new TierData();
+
+        if (elements != null && elements.Count > 0)
+        {
+            int index = 0;
+
+            data.code = Convert.ToInt32(elements[index]); ++index;
+            data.tier = Convert.ToString(elements[index]); ++index;
+            data.required = Convert.ToInt32(elements[index]); ++index;
+        }
+
+        data.SetEnc();
+        return data;
+    }
+}
+

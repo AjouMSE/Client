@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Manager;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utils;
 
@@ -12,10 +13,10 @@ namespace UI.Game
     public class HUDGameVersusUIController : MonoBehaviour
     {
         #region Private constants
-
         private const string HudNameVersus = "HUD_Versus";
         private const string HudNameUserInfo = "HUD_UserInfo";
         private const string HudNameCardSelection = "HUD_CardSelection";
+        private const string DestSceneName = "LobbyScene";
 
         private const float MinMainCameraAngle = -150;
         private const float MaxMainCameraAngle = 30;
@@ -57,7 +58,7 @@ namespace UI.Game
 
         #region Custom methods
 
-        private void InitVersusIntoText()
+        private void InitVersusInfoText()
         {
             Packet.User host, client;
 
@@ -98,9 +99,14 @@ namespace UI.Game
             else 
                 NetworkManager.Singleton.StartClient();
 
-            InitVersusIntoText();
+            InitVersusInfoText();
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.BattleBGM1, true);
             StartCoroutine(ShowVersus());
+        }
+
+        public void ShowGameResult()
+        {
+            StartCoroutine(ShowGameResultCoroutine());
         }
 
         #endregion
@@ -111,7 +117,7 @@ namespace UI.Game
         /// Shows information of host & client
         /// </summary>
         /// <returns></returns>
-        IEnumerator ShowVersus()
+        private IEnumerator ShowVersus()
         {
             versusText.fontSize = 125;
             yield return new WaitForSeconds(2.5f);
@@ -128,7 +134,7 @@ namespace UI.Game
         /// Rotate main camera to show battle field
         /// </summary>
         /// <returns></returns>
-        IEnumerator RotateCamera()
+        private IEnumerator RotateCamera()
         {
             // Camera rotation effect
             while (_mainCameraXAngle < MaxMainCameraAngle)
@@ -148,6 +154,14 @@ namespace UI.Game
 
             // Checks that both host and client are ready to run timer
             GameManager.Instance.CheckTimerReady();
+        }
+
+
+        private IEnumerator ShowGameResultCoroutine()
+        {
+            //todo-show result of game
+            yield return new WaitForSeconds(3f);
+            SceneManager.LoadSceneAsync(DestSceneName);
         }
 
         #endregion

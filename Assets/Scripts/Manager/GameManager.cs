@@ -29,6 +29,7 @@ namespace Manager
         private NetworkSynchronizer _netSync;
         private PanelController _panelController;
         private WizardController _hostWizardController, _clientWizardController;
+        private HUDGameVersusUIController _gameVersusUIController;
         private HUDGameUserInfoUIController _userInfoUIController;
         private HUDGameCardSelectionUIController _cardSelectionUIController;
 
@@ -56,6 +57,7 @@ namespace Manager
             _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
 
             GameObject uiController = GameObject.Find("GameSceneUIController");
+            _gameVersusUIController = uiController.GetComponent<HUDGameVersusUIController>();
             _userInfoUIController = uiController.GetComponent<HUDGameUserInfoUIController>();
             _cardSelectionUIController = uiController.GetComponent<HUDGameCardSelectionUIController>();
 
@@ -275,6 +277,7 @@ namespace Manager
                 if (ValidGameOver())
                 {
                     GameOver();
+                    _gameVersusUIController.ShowGameResult();
                     yield break;
                 }
             }

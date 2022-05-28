@@ -40,6 +40,26 @@ namespace UI.Logo
         [SerializeField] private CanvasGroup logoCvsGroup;
 
         #endregion
+        
+        
+        #region Unity event functions
+
+        private void Awake()
+        {
+            // Set maximum frame rate : 60
+            Application.targetFrameRate = MaxFrameRate;
+
+            // Set Screen orientation : landscape
+            Screen.orientation = ScreenOrientation.Landscape;
+            UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
+
+            // Init Resources, Managers
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, loadingCvsGroup, LoadingFadeInDuration,
+                LoadingFadeInCallback);
+            InitResources();
+        }
+
+        #endregion
 
 
         #region Callbacks
@@ -80,7 +100,7 @@ namespace UI.Logo
         /// </summary>
         private void LogoFadeOutCallback()
         {
-            SceneManager.LoadScene(DestSceneName);
+            StartCoroutine(LoadScene());
         }
 
         #endregion
@@ -114,21 +134,19 @@ namespace UI.Logo
         #endregion
 
 
-        #region Unity event functions
+        #region Coroutines
 
-        private void Awake()
+        IEnumerator LoadScene()
         {
-            // Set maximum frame rate : 60
-            Application.targetFrameRate = MaxFrameRate;
+            var operation = SceneManager.LoadSceneAsync(DestSceneName);
+            operation.allowSceneActivation = true;
+            while (!operation.isDone)
+            {
+                Debug.Log(operation.progress.ToString());
+                yield return null;
+            }
 
-            // Set Screen orientation : landscape
-            Screen.orientation = ScreenOrientation.Landscape;
-            UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
-
-            // Init Resources, Managers
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, loadingCvsGroup, LoadingFadeInDuration,
-                LoadingFadeInCallback);
-            InitResources();
+            //operation.allowSceneActivation = true;
         }
 
         #endregion

@@ -5,9 +5,11 @@ public partial class TableDatas : MonoSingleton<TableDatas>
 {
     public Dictionary<int, CardData> cardDatas = new Dictionary<int, CardData>();
     public Dictionary<int, TierData> tierDatas = new Dictionary<int, TierData>();
+    public Dictionary<int, SpecialData> specialDatas = new Dictionary<int, SpecialData>();
 
     public CardData GetCardData(int code) { return GetData(cardDatas, code); }
     public TierData GetTierData(int code) { return GetData(tierDatas, code); }
+    public SpecialData GetSpecialData(int code) { return GetData(specialDatas, code); }
 
     public T GetData<T>(Dictionary<int, T> dic, int code)
     {
@@ -32,5 +34,6 @@ public partial class TableDatas : MonoSingleton<TableDatas>
     {
         cardDatas.Clear();
         tierDatas.Clear();
+        specialDatas.Clear();
     }
 }

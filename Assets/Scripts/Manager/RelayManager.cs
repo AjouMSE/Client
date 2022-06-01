@@ -187,6 +187,8 @@ namespace Manager
                     (ipv4, port, allocId, key, connData, hostConnData) = await JoinRelaySession(joinCode);
                     NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(
                         ipv4, port, allocId, key, connData, hostConnData, true);
+                    
+                    Debug.Log((ipv4, port, allocId, key, connData, hostConnData).ToString());
                     return null;
 
                 default:

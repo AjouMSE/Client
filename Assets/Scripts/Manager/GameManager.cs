@@ -278,6 +278,8 @@ namespace Manager
                 {
                     GameOver();
                     _gameVersusUIController.ShowGameResult();
+                    if(NetworkManager.Singleton.IsHost)
+                        NetworkManager.Singleton.Shutdown();
                     yield break;
                 }
             }

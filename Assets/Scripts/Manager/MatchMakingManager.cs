@@ -28,6 +28,7 @@ namespace Manager
         private const string DestSceneName = "GameScene";
 
         private SocketIOCommunicator _sio;
+        private bool _isInitialized;
 
         #endregion
         
@@ -108,22 +109,19 @@ namespace Manager
 
         public void Init()
         {
-            // Set Up Socket.io
-            _sio = gameObject.AddComponent<SocketIOCommunicator>();
-            _sio.socketIOAddress = "localhost:8081";
-            _sio.autoReconnect = true;
-            _sio.Instance.Connect();
-            StartCoroutine(MakeConnection());
+            if (!_isInitialized)
+            {
+                _isInitialized = true;
+                
+                // Set Up Socket.io
+                _sio = gameObject.AddComponent<SocketIOCommunicator>();
+                _sio.socketIOAddress = "localhost:8081";
+                _sio.autoReconnect = true;
+                _sio.Instance.Connect();
+                StartCoroutine(MakeConnection());
+            }
         }
 
-        /*public void Auth()
-        {
-            // Auth to socket.io server
-            Packet.Auth sendPacket = new Packet.Auth { id = UserManager.Instance.User.id };
-            string jsonPayload = JsonUtility.ToJson(sendPacket);
-            _sio.Instance.Emit(SioEventAuth, jsonPayload, false);
-        }*/
-        
         public void MatchMaking()
         {
             // Send match making request to socket.io server

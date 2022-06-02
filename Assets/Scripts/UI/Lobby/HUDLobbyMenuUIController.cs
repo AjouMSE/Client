@@ -18,43 +18,51 @@ namespace UI.Lobby
         private const string CvsNameSettings = "Cvs_Lobby_Settings";
         private const string CvsNameMatchMaking = "Obj_Lobby_MatchMaking";
 
-
         #endregion
-        
-        
+
+
         #region Private variables
 
         [Header("Camera")] 
         [SerializeField] private Camera hudCamera;
 
+        [Header("Match Making UI")] 
+        [SerializeField] private GameObject matchMakingUI;
+        
         [Header("Canvas Groups")] 
         [SerializeField] private CanvasGroup lobbyCvsGroup;
         [SerializeField] private CanvasGroup userInfoCvsGroup;
         [SerializeField] private CanvasGroup settingsCvsGroup;
-        [SerializeField] private CanvasGroup matchMakingCvsGroup;
         
-        [Header("Title text")]
-        [SerializeField] private Text titleText;
-        
-        [Header("3D Scroll menu UI")]
-        [SerializeField] private GameObject menuScroll3D;
+        [Header("Title text")] [SerializeField]
+        private Text titleText;
+
+        [Header("3D Scroll menu UI")] [SerializeField]
+        private GameObject menuScroll3D;
 
         #endregion
 
 
         #region Callbacks
-        
+
         private void FadeInCallback()
         {
             menuScroll3D.GetComponent<ScrollScript3D>().OpenScroll();
             MatchMakingManager.Instance.Init();
         }
-        
+
         public void OnPvpBtnClick()
         {
             menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            matchMakingUI.SetActive(true);
             MatchMakingManager.Instance.MatchMaking();
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, matchMakingCvsGroup, UIManager.LobbyMenuFadeInOutDuration);
+        }
+
+        public void OnPvpCancelBtnClick()
+        {
+            menuScroll3D.GetComponent<ScrollScript3D>().OpenScroll();
+            matchMakingUI.SetActive(false);
+            MatchMakingManager.Instance.StopMatchMaking();
         }
 
         public void OnLeaderBoardBtnClick()
@@ -88,10 +96,11 @@ namespace UI.Lobby
         {
             // Set title color
             titleText.text = CustomUtils.MakeTitleColor();
-            
+
             // Start fade in effect
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, lobbyCvsGroup, UIManager.LobbyUIFadeInDuration, FadeInCallback);
-            
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, lobbyCvsGroup, UIManager.LobbyUIFadeInDuration,
+                FadeInCallback);
+
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBGM3, true);
         }
 

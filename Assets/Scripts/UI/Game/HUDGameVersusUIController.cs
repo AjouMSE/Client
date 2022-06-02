@@ -13,6 +13,7 @@ namespace UI.Game
     public class HUDGameVersusUIController : MonoBehaviour
     {
         #region Private constants
+
         private const string HudNameVersus = "HUD_Versus";
         private const string HudNameUserInfo = "HUD_UserInfo";
         private const string HudNameCardSelection = "HUD_CardSelection";
@@ -26,18 +27,24 @@ namespace UI.Game
 
         #region Private variables
 
-        [Header("Camera")] 
-        [SerializeField] private Camera mainCamera;
+        [Header("Camera")] [SerializeField] private Camera mainCamera;
         [SerializeField] private Camera hudCamera;
 
-        [Header("Text Information")] 
-        [SerializeField] private Text versusText;
+        [Header("Text Information")] [SerializeField]
+        private Text versusText;
 
         [SerializeField] private Text[] hostInfoTextArr;
         [SerializeField] private Text[] clientInfoTextArr;
 
-        [Header("3D Scroll UI")] 
-        [SerializeField] private GameObject scroll3D;
+        [Header("Game Info object")] [SerializeField]
+        private GameObject hostPanelInfo;
+
+        [SerializeField] private GameObject clientPanelInfo;
+        [SerializeField] private GameObject hostBattleResult;
+        [SerializeField] private GameObject clientBattleResult;
+
+        [Header("3D Scroll UI")] [SerializeField]
+        private GameObject scroll3D;
 
         private GameObject _hudVersus, _hudUserInfo, _hudCardSelection;
         private float _mainCameraXAngle;
@@ -72,13 +79,13 @@ namespace UI.Game
                 host = UserManager.Instance.Hostile;
                 client = UserManager.Instance.User;
             }
-            
+
             hostInfoTextArr[0].text = host.nickname;
             hostInfoTextArr[1].text = host.win.ToString();
             hostInfoTextArr[2].text = host.lose.ToString();
             hostInfoTextArr[3].text = host.draw.ToString();
             hostInfoTextArr[4].text = host.ranking.ToString();
-            
+
             clientInfoTextArr[0].text = client.nickname;
             clientInfoTextArr[1].text = client.win.ToString();
             clientInfoTextArr[2].text = client.lose.ToString();
@@ -94,9 +101,9 @@ namespace UI.Game
             _hudUserInfo = hudCamera.transform.Find(HudNameUserInfo).gameObject;
             _hudCardSelection = hudCamera.transform.Find(HudNameCardSelection).gameObject;
 
-            if (UserManager.Instance.IsHost) 
+            if (UserManager.Instance.IsHost)
                 NetworkManager.Singleton.StartHost();
-            else 
+            else
                 NetworkManager.Singleton.StartClient();
 
             InitVersusInfoText();
@@ -104,9 +111,9 @@ namespace UI.Game
             StartCoroutine(ShowVersus());
         }
 
-        public void ShowGameResult()
+        public void ShowGameResult(Consts.BattleResult hostResult, Consts.BattleResult clientResult)
         {
-            StartCoroutine(ShowGameResultCoroutine());
+            StartCoroutine(ShowGameResultCoroutine(hostResult, clientResult));
         }
 
         #endregion
@@ -119,12 +126,19 @@ namespace UI.Game
         /// <returns></returns>
         private IEnumerator ShowVersus()
         {
+            hostPanelInfo.SetActive(true);
+            hostBattleResult.SetActive(false);
+
+            clientPanelInfo.SetActive(true);
+            clientBattleResult.SetActive(false);
+
             versusText.fontSize = 125;
-            yield return new WaitForSeconds(2.5f);
+            versusText.text = "VS";
+            yield return new WaitForSeconds(3f);
 
             versusText.fontSize = 100;
             versusText.text = "Are you\nReady?";
-            yield return new WaitForSeconds(2.5f);
+            yield return new WaitForSeconds(3f);
 
             _hudVersus.SetActive(false);
             StartCoroutine(RotateCamera());
@@ -154,13 +168,42 @@ namespace UI.Game
 
             // Checks that both host and client are ready to run timer
             GameManager.Instance.CheckTimerReady();
+
+            GameManager.Instance.GetHostWizardController().PlayRecoveryAnimation();
+            GameManager.Instance.GetClientWizardController().PlayRecoveryAnimation();
         }
 
 
-        private IEnumerator ShowGameResultCoroutine()
+        private IEnumerator ShowGameResultCoroutine(Consts.BattleResult hostResult, Consts.BattleResult clientResult)
         {
-            //todo-show result of game
             yield return new WaitForSeconds(3f);
+
+            _hudVersus.SetActive(true);
+            _hudUserInfo.SetActive(false);
+            _hudCardSelection.SetActive(false);
+
+            hostPanelInfo.SetActive(false);
+            hostBattleResult.SetActive(true);
+
+            clientPanelInfo.SetActive(false);
+            clientBattleResult.SetActive(true);
+
+            versusText.fontSize = 60;
+            versusText.text = "The match will\nend soon.";
+            
+            var hostResultTexts = hostBattleResult.GetComponentsInChildren<Text>();
+            var clientResultTexts = clientBattleResult.GetComponentsInChildren<Text>();
+
+            hostResultTexts[0].text = (hostResult == Consts.BattleResult.WIN) ? "WIN" : (clientResult == Consts.BattleResult.WIN ? "LOSE" : "DRAW");
+            hostResultTexts[1].text = (hostResult == Consts.BattleResult.WIN) ? "+10" : (clientResult == Consts.BattleResult.WIN ? "-8" : "+0");
+                
+            clientResultTexts[0].text = (clientResult == Consts.BattleResult.WIN) ? "WIN" : (hostResult == Consts.BattleResult.WIN ? "LOSE" : "DRAW");
+            clientResultTexts[1].text = (clientResult == Consts.BattleResult.WIN) ? "+10" : (hostResult == Consts.BattleResult.WIN ? "-8" : "+0");
+
+            yield return new WaitForSeconds(5f);
+            
+            if(UserManager.Instance.IsHost)
+                NetworkManager.Singleton.Shutdown();
             SceneManager.LoadSceneAsync(DestSceneName);
         }
 

@@ -6,11 +6,14 @@ using Core;
 using InGame;
 using Scene;
 using UI.Game;
+using UI.Login;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
 using Unity.Netcode;
+using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 namespace Manager
 {
@@ -115,35 +118,45 @@ namespace Manager
 
         private void GameOver()
         {
-            int hostHp = _netSync.GetHostHP();
-            int clientHp = _netSync.GetClientHP();
-
-            if (hostHp <= 0 && clientHp <= 0)
-                Debug.Log(Consts.BattleResult.DRAW);
-            else if (clientHp <= 0)
+            var hostHp = _netSync.GetHostHP();
+            var clientHp = _netSync.GetClientHP();
+            var hostResult = hostHp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+            var clientResult = clientHp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+            var resultPacket = new Packet.BattleResult();
+            
+            if (UserManager.Instance.IsHost)
             {
-                if (UserManager.Instance.IsHost)
-                {
-                    _hostWizardController.BattleResultAction(Consts.BattleResult.WIN);
-                    _clientWizardController.BattleResultAction(Consts.BattleResult.LOSE);
+                resultPacket.result = hostHp > 0 ? "WIN" : (clientHp > 0 ? "LOSE" : "DRAW");
+                _hostWizardController.BattleResultAction(hostResult);
+                _clientWizardController.BattleResultAction(clientResult);
+            }
+            else
+            {
+                resultPacket.result = clientHp > 0 ? "WIN" : (hostHp > 0 ? "LOSE" : "DRAW");
+            }
 
-                    Debug.Log(Consts.BattleResult.WIN);
+
+            HttpRequestManager.Instance.Post("/battle/result", JsonUtility.ToJson(resultPacket), req =>
+            {
+                if (req.result == UnityWebRequest.Result.Success)
+                {
+                    // Save user information to UserManager
+                    string json = req.downloadHandler.text;
+                    UserManager.Instance.UpdateUserInfo(json);
+                }
+                else if (req.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    // Occured Error (Account does not exist, Wrong password etc..)
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
                 }
                 else
-                    Debug.Log(Consts.BattleResult.LOSE);
-            }
-            else if (hostHp <= 0)
-            {
-                if (UserManager.Instance.IsHost)
                 {
-                    _hostWizardController.BattleResultAction(Consts.BattleResult.LOSE);
-                    _clientWizardController.BattleResultAction(Consts.BattleResult.WIN);
-
-                    Debug.Log(Consts.BattleResult.LOSE);
+                    // Occured Error (Server connection error)
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
                 }
-                else
-                    Debug.Log(Consts.BattleResult.WIN);
-            }
+            });
+            
+            _gameVersusUIController.ShowGameResult(hostResult, clientResult);
         }
 
         public List<int> GetInvalidCards()
@@ -251,7 +264,8 @@ namespace Manager
                 {
                     cardId = hostCards[i];
 
-                    _panelController.ProcessEffect(cardId, Consts.UserType.Host, _hostWizardController, _clientWizardController);
+                    _panelController.ProcessEffect(cardId, Consts.UserType.Host, _hostWizardController,
+                        _clientWizardController);
                     _hostWizardController.ProcessSkill(cardId);
 
                     yield return new WaitForSeconds(3f);
@@ -265,7 +279,8 @@ namespace Manager
                 {
                     cardId = clientCards[i];
 
-                    _panelController.ProcessEffect(cardId, Consts.UserType.Client, _clientWizardController, _hostWizardController);
+                    _panelController.ProcessEffect(cardId, Consts.UserType.Client, _clientWizardController,
+                        _hostWizardController);
                     _clientWizardController.ProcessSkill(cardId);
 
                     yield return new WaitForSeconds(3f);
@@ -277,9 +292,6 @@ namespace Manager
                 if (ValidGameOver())
                 {
                     GameOver();
-                    _gameVersusUIController.ShowGameResult();
-                    if(NetworkManager.Singleton.IsHost)
-                        NetworkManager.Singleton.Shutdown();
                     yield break;
                 }
             }

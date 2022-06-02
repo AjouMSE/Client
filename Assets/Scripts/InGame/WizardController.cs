@@ -347,11 +347,11 @@ namespace InGame
         {
             if (idx < 0 || idx > Consts.PanelCnt - 1) return default;
             return new BitMask.BitField30(BitMask.BitField30Msb >> idx);
-        }
+        } 
 
         private bool CheckPlayerHit(int idx, BitMask.BitField30 range)
         {
-            return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0 ? true : false;
+            return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0;
         }
 
         private IEnumerator HitAction()
@@ -377,6 +377,20 @@ namespace InGame
             yield return new WaitForSeconds(1f);
 
             // Animation Idle
+            SetAnimation(WizardAnimations.Idle);
+        }
+
+        public void PlayRecoveryAnimation()
+        {
+            StartCoroutine(RecoveryAnimation());
+        }
+
+        private IEnumerator RecoveryAnimation()
+        {
+            SetAnimation(WizardAnimations.Recovery);
+
+            yield return new WaitForSeconds(1f);
+            
             SetAnimation(WizardAnimations.Idle);
         }
 

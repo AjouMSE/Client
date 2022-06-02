@@ -9,15 +9,23 @@ namespace Utils
 {
     public class CustomUtils
     {
+        #region public constants
+
         public const int SHA256 = 0, SHA512 = 1;
 
-        public static bool IsValidEmail(string email)
-        {
-            Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
-            return regex.IsMatch(email);
-        }
+        #endregion
 
-        #region UI methods
+
+        #region UI utility methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static string GenColorText(string text, int r, int g, int b)
         {
             string strR = r.ToString("x");
@@ -27,6 +35,10 @@ namespace Utils
             return $"<color='#{strR}{strG}{strB}'>{text}</color>";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string MakeTitleColor()
         {
             StringBuilder sb = new StringBuilder();
@@ -46,8 +58,14 @@ namespace Utils
 
         #endregion
 
-        #region hash methods
 
+        #region hash utility methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static string MD5(string str)
         {
             MD5 md5 = new MD5CryptoServiceProvider();
@@ -65,6 +83,12 @@ namespace Utils
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static string SHA(string str, int type)
         {
             byte[] hash = null;
@@ -93,6 +117,11 @@ namespace Utils
 
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stringRange"></param>
+        /// <returns></returns>
         public static List<(int i, int j)> ParseRange(string stringRange)
         {
             string[] range = stringRange.Split(' ');
@@ -115,5 +144,31 @@ namespace Utils
 
             return list;
         }
+
+
+        #region Utility methods
+
+        public static bool IsValidEmail(string email)
+        {
+            Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
+            return regex.IsMatch(email);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rawData"></param>
+        public static void PrintRawData(byte[] rawData)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < rawData.Length; i++)
+            {
+                sb.Append(Convert.ToString(rawData[i], 16));
+            }
+
+            Debug.Log(sb.ToString());
+        }
+
+        #endregion
     }
 }

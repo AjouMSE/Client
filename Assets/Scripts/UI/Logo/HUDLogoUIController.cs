@@ -145,8 +145,6 @@ namespace UI.Logo
                 Debug.Log(operation.progress.ToString());
                 yield return null;
             }
-
-            //operation.allowSceneActivation = true;
         }
 
         #endregion

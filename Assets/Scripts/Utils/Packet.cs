@@ -81,7 +81,7 @@ namespace Utils
             public int type;
             public string room;
             public User hostile;
-            
+
             public override string ToString()
             {
                 return $"MatchMadeResult: [ type: {type.ToString()}, room: {room}, hostile: {hostile.ToString()} ]";
@@ -93,10 +93,21 @@ namespace Utils
         {
             public string room;
             public string code;
-            
+
             public override string ToString()
             {
                 return $"MatchCode: [ room: {room}, code: {code} ]";
+            }
+        }
+
+        [Serializable]
+        public struct BattleResult
+        {
+            public string result;
+
+            public override string ToString()
+            {
+                return $"BattleResult: [ result: {result}]";
             }
         }
     }

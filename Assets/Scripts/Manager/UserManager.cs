@@ -93,6 +93,30 @@ namespace Manager
             }
         }
 
+        public void UpdateUserInfo(string json)
+        {
+            try
+            {
+                _user = JsonUtility.FromJson<Packet.User>(json);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+
+        public void UpdateHostileInfo(string json)
+        {
+            try
+            {
+                _hostile = JsonUtility.FromJson<Packet.User>(json);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+
         public void SetHost()
         {
             _isHost = true;

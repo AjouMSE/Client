@@ -20,6 +20,7 @@ namespace Manager
         }
 
         private const string SioEventAuth = "Auth";
+        private const string SioEventCancelMatching = "CancelMatching";
         private const string SioEventStartMatching = "StartMatching";
         private const string SioEventMatchMade = "MatchMade";
         private const string SioEventSendMatchCode = "SendMatchCode";
@@ -126,6 +127,11 @@ namespace Manager
         {
             // Send match making request to socket.io server
             _sio.Instance.Emit(SioEventStartMatching);
+        }
+
+        public void StopMatchMaking()
+        {
+            _sio.Instance.Emit(SioEventCancelMatching);
         }
 
         #endregion

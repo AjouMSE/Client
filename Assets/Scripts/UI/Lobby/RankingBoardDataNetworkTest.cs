@@ -1,8 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Manager;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Utils;
+using User = Utils.Packet.User;
+using UserList = Utils.Packet.UserList;
 
 public class RankingBoardDataNetworkTest : MonoBehaviour
 {
@@ -30,41 +35,70 @@ public class RankingBoardDataNetworkTest : MonoBehaviour
     //public int[] usernum;//나중에 일로 각 티어별 유저 수 받아옴
     // Start is called before the first frame update
 
-    UserInformation[] usernum = new UserInformation[100];
+     UserInformation[] usernum;
 
     //GameObject textparent;
-    public GameObject userinfoparent;
-    public GameObject userinfo;
+    //public GameObject userinfoparent;
+    public GameObject[] userinfo = new GameObject[10];
 
 
     void Start()
     {
-        StartCoroutine(RankingBoardServer());
+        // Variable about page number
+        var pageNum = 1;
+
+        // Http Get Request
+        HttpRequestManager.Instance.Get($"/ranking/leader-board?page={pageNum}", Callback);
         //RankExpress(100);
 
     }
+    private void Callback(UnityWebRequest req)
+    {
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            // Get json string from server
+            string json = req.downloadHandler.text;
+            Debug.Log(json);
 
+            // print all items in user list
+            UserList userList = JsonUtility.FromJson<UserList>(json);
+            Debug.Log(userList.ToString());
+
+            for (int i = 0; i < userList.users.Count; i++)
+            {
+                // Do something
+                User user = userList.users[i];
+              
+                usernum[i].nickname = user.nickname;
+                usernum[i].score = user.score;
+                usernum[i].win = user.win;
+                usernum[i].lose = user.lose;
+                usernum[i].draw = user.draw;
+                /* user.id, user.ranking, user.score ... etc
+                 * textInfo.text = user.id;
+                 * textInfo.text = user.score.ToString();
+                 * ...
+                 */
+                Debug.Log(user.ToString());
+            }
+        }
+        else if (req.result == UnityWebRequest.Result.ProtocolError)
+        {
+            // Error code (ex 400)
+            Debug.Log($"Protocol error: {req.error}");
+        }
+        else
+        {
+            // Error code (ex 500)
+            Debug.Log($"Another error: {req.error}");
+        }
+    }
     // Update is called once per frame
     void Update()
     {
         
     }
-    IEnumerator RankingBoardServer()
-    {
-        string url = "~/ranking/leader-board";
-
-        UnityWebRequest www = UnityWebRequest.Get(url);
-        yield return www.SendWebRequest();
-        if (www.error == null)
-        {
-            Debug.Log(www.downloadHandler.text);
-        }
-        else
-        {
-            Debug.Log("error");
-        }
-
-    }
+  
     /*
     private void RankExpress(int rankusernum)
     {

@@ -108,7 +108,7 @@ namespace Manager
 
         #region Custom methods
 
-        public void Init()
+        public override void Init()
         {
             if (!_isInitialized)
             {

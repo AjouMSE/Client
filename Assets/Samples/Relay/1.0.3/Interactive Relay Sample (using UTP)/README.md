@@ -4,13 +4,13 @@ This is a Unity package sample to demonstrate how to initialize and persist a Re
 Note that Relay allocations can alternatively be utilized over other 3rd party transport layer services instead of UTP, but such integrations are not shown in this sample.
 
 ## Prerequisites
+
 Your current Unity project needs to be initialized on the Unity Dashboard with Relay enabled. Follow the below steps to do so:
 * Login to [Unity Dashboard](https://dashboard.unity3d.com/).
 * Create a project or open a pre-existing project.
 * Navigate to `Relay` (under `Multiplayer` in the left navigation panel). Follow the `Getting Started` steps and make sure `Relay` is enabled (`Relay On` toggle).
 * Open project in Unity 2020.3.12f1+.
 * Link the Unity project to your project and organization (in `Project Settings > Services`).
-* Enable `Allow 'unsafe' Code` in `Edit -> Project Settings -> Player`.
 
 ## Using this sample
 

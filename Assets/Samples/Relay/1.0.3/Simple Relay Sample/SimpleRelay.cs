@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
 using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 
 /// <summary>
 /// A simple sample showing how to use the Relay Allocation package. As the host, you can authenticate, request a relay allocation, get a join code and join the allocation.
@@ -46,8 +48,11 @@ public class SimpleRelay : MonoBehaviour
     private string allocationRegion = "";
     private string joinCode = "n/a";
     private string playerId = "Not signed in";
+    private string autoSelectRegionName = "auto-select (QoS)";
+    private int RegionAutoSelectIndex = 0;
     private List<Region> regions = new List<Region>();
     private List<string> regionOptions = new List<string>();
+
 
     async void Start()
     {
@@ -61,6 +66,7 @@ public class SimpleRelay : MonoBehaviour
         PlayerIdText.text = playerId;
         RegionsDropdown.interactable = regions.Count > 0;
         RegionsDropdown.options?.Clear();
+        RegionsDropdown.AddOptions(new List<string>{autoSelectRegionName});  // index 0 is always auto-select (use QoS)
         RegionsDropdown.AddOptions(regionOptions);
         if (!String.IsNullOrEmpty(allocationRegion))
         {
@@ -68,16 +74,13 @@ public class SimpleRelay : MonoBehaviour
             {
                 RegionsDropdown.AddOptions(new List<String>(new[] { allocationRegion }));
             }
-            else
-            {
-                RegionsDropdown.value = regionOptions.IndexOf(allocationRegion);
-            }
+            RegionsDropdown.value = RegionsDropdown.options.FindIndex(option => option.text == allocationRegion);
         }
         HostAllocationIdText.text = hostAllocationId.ToString();
         JoinCodeText.text = joinCode;
         PlayerAllocationIdText.text = playerAllocationId.ToString();
     }
-
+    
     /// <summary>
     /// Event handler for when the Sign In button is clicked.
     /// </summary>
@@ -99,6 +102,7 @@ public class SimpleRelay : MonoBehaviour
         Debug.Log("Host - Getting regions.");
         var allRegions = await RelayService.Instance.ListRegionsAsync();
         regions.Clear();
+        regionOptions.Clear();
         foreach (var region in allRegions)
         {
             Debug.Log(region.Id + ": " + region.Description);
@@ -115,14 +119,30 @@ public class SimpleRelay : MonoBehaviour
     {
         Debug.Log("Host - Creating an allocation.");
 
+        // Determine region to use (user-selected or auto-select/QoS)
+        string region = GetRegionOrQosDefault();
+        Debug.Log($"Chosen region is: {region ?? autoSelectRegionName}");
+
         // Important: Once the allocation is created, you have ten seconds to BIND
-        Allocation allocation = await RelayService.Instance.CreateAllocationAsync(4, regions.Count > 0 ? regions[RegionsDropdown.value].Id : null);
+        Allocation allocation = await RelayService.Instance.CreateAllocationAsync(4, region);
         hostAllocationId = allocation.AllocationId;
         allocationRegion = allocation.Region;
 
-        Debug.Log("Host Allocation ID: " + hostAllocationId.ToString() + ", region: " + allocationRegion);
+        Debug.Log($"Host Allocation ID: {hostAllocationId}, region: {allocationRegion}");
 
         UpdateUI();
+    }
+
+    [CanBeNull]
+    private string GetRegionOrQosDefault()
+    {
+        // Return null (indicating to auto-select the region/QoS) if regions list is empty OR auto-select/QoS is chosen
+        if (!regions.Any() || RegionsDropdown.value == RegionAutoSelectIndex)
+        {
+            return null;
+        }
+        // else use chosen region (offset -1 in dropdown due to first option being auto-select/QoS)
+        return regions[RegionsDropdown.value - 1].Id;
     }
 
     /// <summary>

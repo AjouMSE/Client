@@ -62,7 +62,7 @@ namespace Manager
         /// <summary>
         /// Initialize instance variables, Cache audio clips.
         /// </summary>
-        public void Init()
+        public override void Init()
         {
             // Init Audio source & audio mixer
             _audioSource = gameObject.AddComponent<AudioSource>();
@@ -78,7 +78,7 @@ namespace Manager
         /// <param name="loop">Whether to play Bgm repeatedly</param>
         public void PlayBgm(BgmTypes type, bool loop)
         {
-            _audioSource.clip = CacheAudioSource.Instance.BGMCache[type];
+            _audioSource.clip = CacheAudioSource.Instance.GetSource(type);
             _audioSource.loop = loop;
 
             if (_audioSource.isPlaying)

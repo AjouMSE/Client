@@ -128,5 +128,9 @@ namespace Manager
         }
         
         #endregion
+
+        public override void Init()
+        {
+        }
     }   
 }

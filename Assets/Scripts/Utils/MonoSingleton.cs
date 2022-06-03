@@ -1,70 +1,67 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 
 namespace Utils
 {
-    /// <summary>
-    /// MonoSingleton.cs
-    /// Author: Lee Hong Jun (Arcane22, hong3883@naver.com)
-    /// Version: 1.0
-    /// Last Modified: 2022. 04. 04
-    /// Description: Singleton class for Manager class
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
+    public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
-        // Private static variables
-        private static T _instance;
-        private static object _lockObject = new object();
-        private static bool onDestroyed = false;
-        protected static bool isCreated = false;
+        #region Private static variables
 
-        // Public static instance variables
+        private static T _instance;
+        private static readonly object _lockObject = new object();
+
+        #endregion
+
+        #region Public Properties
+
+        public static bool IsDestroyed { get; private set; }
+        public static bool IsCreated { get; private set; }
+
         public static T Instance
         {
             get
             {
-                // Singleton object is destroyed.
-                if (onDestroyed)
+                if (IsDestroyed)
                 {
-                    Debug.Log("Instance of " + typeof(T) + " already destroyed.");
-                    Debug.Log("Instance of " + typeof(T) + " is null");
+                    if (IsCreated) IsCreated = false;
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Instance of ");
+                    sb.Append(typeof(T));
+                    sb.Append("already has been destroyed");
                     return null;
                 }
 
-                // critical section
+                // Critical section (thread-safe)
                 lock (_lockObject)
                 {
-                    // If instance is null,
                     if (_instance == null)
                     {
-                        // Find a singleton instance in current scene
-                        _instance = (T)FindObjectOfType(typeof(T));
+                        // Find a singleton object in current scene
+                        T[] instances = FindObjectsOfType<T>();
 
-                        if (FindObjectsOfType(typeof(T)).Length > 1)
+                        if (instances.Length == 0)
                         {
-                            Debug.LogError(
-                                "To many singleton instance exist in the scene. Reload the scene to fix it.");
-                            return _instance;
-                        }
-
-                        // If instance is null,
-                        if (_instance == null)
-                        {
-                            // Make new instance 
-                            GameObject singletonObject = new GameObject();
-                            _instance = singletonObject.AddComponent<T>();
-                            singletonObject.name = "(s)" + typeof(T);
-                            isCreated = true;
-                            Debug.Log("Singleton GameObject " + _instance.gameObject.name + " is created in "
-                                      + SceneManager.GetActiveScene().name);
-
+                            IsCreated = true;
+                            _instance = new GameObject().AddComponent<T>();
+                            _instance.gameObject.name = $"(s) {typeof(T)}";
                             DontDestroyOnLoad(_instance);
                         }
                         else
                         {
-                            Debug.Log("GameObject" + _instance.gameObject.name + " is already created.");
+                            _instance = instances[0];
+                            if (instances.Length > 1)
+                            {
+                                for (int i = 1; i < instances.Length; i++)
+                                {
+                                    Destroy(instances[i]);
+                                }
+
+                                Debug.LogWarning(
+                                    "There is more than one instance in the scene. Other instances are destroyed.");
+                            }
                         }
                     }
 
@@ -73,9 +70,11 @@ namespace Utils
             }
         }
 
-        private void OnDestroy()
-        {
-            onDestroyed = true;
-        }
+        #endregion
+
+        /// <summary>
+        /// Abstract Init methods to initialize singleton
+        /// </summary>
+        public abstract void Init();
     }
 }

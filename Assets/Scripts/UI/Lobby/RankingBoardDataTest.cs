@@ -5,8 +5,13 @@ using UnityEngine.UI;
 
 public class RankingBoardDataTest : MonoBehaviour
 {
-
-    
+    private int rankusernum = 100;
+    private int rankpagenum = 0;
+    private int lastpagenum;
+    public GameObject rightbutton;
+    public GameObject leftbutton;
+    public GameObject parenttext;
+    public GameObject parent;
     struct UserInformation//나중에 일로 정보 받아옴
     {
         public int ranking;
@@ -17,29 +22,36 @@ public class RankingBoardDataTest : MonoBehaviour
         public int lose;
         public int draw;
     }
-    /*
-    public Text rankingtext;
-    public Text scoretext;
-    public Text nicknametext;
-    public Text tiertext;
-    public Text wintext;
-    public Text drawtext;
-    public Text losetext;
-    */
-    //public int[] usernum;//나중에 일로 각 티어별 유저 수 받아옴
-    // Start is called before the first frame update
+   
 
     UserInformation[] usernum = new UserInformation[100];
 
     //GameObject textparent;
-    public GameObject userinfoparent;
-    public GameObject userinfo;
 
+
+    GameObject[] userinfo = new GameObject[100];
 
     void Start()
     {
-        RankExpress(100);
-      
+        if(rankusernum%10==0)
+        {
+            lastpagenum = rankusernum / 10;
+        }
+        else
+        {
+            lastpagenum = rankusernum / 10 + 1;
+        }
+        if (rankusernum > 10)
+        {
+            rightbutton.SetActive(true);
+        }
+        else
+        {
+            rightbutton.SetActive(false);
+        }
+        leftbutton.SetActive(false);
+        RankExpress(rankusernum);
+        
     }
 
     // Update is called once per frame
@@ -47,43 +59,100 @@ public class RankingBoardDataTest : MonoBehaviour
     {
         
     }
-    
+
     private void RankExpress(int rankusernum)
     {
-        usernum[0].ranking = 1;
-        usernum[0].score = Random.Range(0, 1000);
-        usernum[0].win = Random.Range(0, 1000);
-        usernum[0].lose = Random.Range(0, 1000);
-        usernum[0].draw = Random.Range(0, 1000);
-        userinfo.GetComponentsInChildren<Text>()[0].text = usernum[0].ranking.ToString();
-        userinfo.GetComponentsInChildren<Text>()[1].text = "null";
-        userinfo.GetComponentsInChildren<Text>()[2].text = "null";//.ToString();
-        userinfo.GetComponentsInChildren<Text>()[3].text = usernum[0].score.ToString();
-        userinfo.GetComponentsInChildren<Text>()[4].text = usernum[0].win.ToString();
-        userinfo.GetComponentsInChildren<Text>()[5].text = usernum[0].draw.ToString();
-        userinfo.GetComponentsInChildren<Text>()[6].text = usernum[0].lose.ToString();
-        for (int i = 1; i < rankusernum; i++)
-        {
-            GameObject copytext = Instantiate(userinfo, userinfoparent.transform);
-           
-            
+       
 
-            //usernum[i].nickname = "null";
-            usernum[i].ranking = i+1;
-            usernum[i].score = Random.Range(0, 1000);
-            usernum[i].win = Random.Range(0, 1000);
-            usernum[i].lose = Random.Range(0, 1000);
-            usernum[i].draw = Random.Range(0, 1000);
-            //usernum[i].tier = "null";
-            // Text copyranking = Instantiate(scoretext, copytext.transform);
-            copytext.GetComponentsInChildren<Text>()[0].text = usernum[i].ranking.ToString();
-            copytext.GetComponentsInChildren<Text>()[1].text = "null";
-            copytext.GetComponentsInChildren<Text>()[2].text = "null";//.ToString();
-            copytext.GetComponentsInChildren<Text>()[3].text = usernum[i].score.ToString();
-            copytext.GetComponentsInChildren<Text>()[4].text = usernum[i].win.ToString();
-            copytext.GetComponentsInChildren<Text>()[5].text = usernum[i].draw.ToString();
-            copytext.GetComponentsInChildren<Text>()[6].text = usernum[i].lose.ToString();
-        }        
+        for (int i = 0; i < rankusernum; i++)
+        {
+
+
+            if (i == 0)
+            {
+
+                parenttext.GetComponentsInChildren<Text>()[0].text = i+1.ToString();
+                parenttext.GetComponentsInChildren<Text>()[1].text = usernum[i].nickname;
+                parenttext.GetComponentsInChildren<Text>()[2].text = "null";//.ToString();
+                parenttext.GetComponentsInChildren<Text>()[3].text = Random.Range(0, 1000).ToString();
+                parenttext.GetComponentsInChildren<Text>()[4].text = Random.Range(0, 1000).ToString();
+                parenttext.GetComponentsInChildren<Text>()[5].text = Random.Range(0, 1000).ToString();
+                parenttext.GetComponentsInChildren<Text>()[6].text = Random.Range(0, 1000).ToString();
+                parenttext.SetActive(true);
+                userinfo[i] = parenttext;
+
+            }
+            if(i<10&&i>0)
+            {
+                GameObject copytext = Instantiate(parenttext, parent.transform);
+
+                copytext.GetComponentsInChildren<Text>()[0].text = i+1.ToString();
+                copytext.GetComponentsInChildren<Text>()[1].text = usernum[i].nickname;
+                copytext.GetComponentsInChildren<Text>()[2].text = "null";//.ToString();
+                copytext.GetComponentsInChildren<Text>()[3].text = Random.Range(0, 1000).ToString();
+                copytext.GetComponentsInChildren<Text>()[4].text = Random.Range(0, 1000).ToString();
+                copytext.GetComponentsInChildren<Text>()[5].text = Random.Range(0, 1000).ToString();
+                copytext.GetComponentsInChildren<Text>()[6].text = Random.Range(0, 1000).ToString();
+
+                //copytext.SetActive(true);
+                userinfo[i] = copytext;
+            }
+            if(i>9)
+            {
+                GameObject copytext = Instantiate(userinfo[0 % 10], parent.transform);
+
+                copytext.SetActive(false);
+                copytext.GetComponentsInChildren<Text>()[0].text = i+1.ToString();
+                copytext.GetComponentsInChildren<Text>()[1].text = usernum[i].nickname;
+                copytext.GetComponentsInChildren<Text>()[2].text = "null";//.ToString();
+                copytext.GetComponentsInChildren<Text>()[3].text = Random.Range(0, 1000).ToString();
+                copytext.GetComponentsInChildren<Text>()[4].text = Random.Range(0, 1000).ToString();
+                copytext.GetComponentsInChildren<Text>()[5].text = Random.Range(0, 1000).ToString();
+                copytext.GetComponentsInChildren<Text>()[6].text = Random.Range(0, 1000).ToString();
+                userinfo[i] = copytext;
+            }
+        }
     }
-  
+    public void RightButton()
+    {
+        rankpagenum++;
+        if(rankpagenum!=lastpagenum)
+        {
+            leftbutton.SetActive(true);
+        }
+        
+        for(int i = rankpagenum-1; i<10*(rankpagenum-1);i++)
+        {
+            userinfo[i].SetActive(false);
+        }
+        for(int i=(rankpagenum-1)*10;i<10*rankpagenum;i++)
+        {
+            userinfo[i].SetActive(true);
+        }
+
+
+        if(rankpagenum==lastpagenum)
+        {
+            rightbutton.SetActive(false);
+        }
+    }
+    public void leftButton()
+    {
+        rankpagenum--;
+
+        for (int i = 10*(rankpagenum+1); i < 10 * (rankpagenum + 2); i++)
+        {
+            userinfo[i].SetActive(false);
+        }
+        for (int i = rankpagenum * 10; i < 10 * (rankpagenum+1); i++)
+        {
+            userinfo[i].SetActive(true);
+        }
+
+
+        if (rankpagenum==1)
+        {
+            leftbutton.SetActive(false);
+        }
+    }
 }

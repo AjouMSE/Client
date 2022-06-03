@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 using Utils;
 
 public partial class TableDatas : MonoSingleton<TableDatas>
@@ -7,9 +8,20 @@ public partial class TableDatas : MonoSingleton<TableDatas>
     public Dictionary<int, TierData> tierDatas = new Dictionary<int, TierData>();
     public Dictionary<int, SpecialData> specialDatas = new Dictionary<int, SpecialData>();
 
-    public CardData GetCardData(int code) { return GetData(cardDatas, code); }
-    public TierData GetTierData(int code) { return GetData(tierDatas, code); }
-    public SpecialData GetSpecialData(int code) { return GetData(specialDatas, code); }
+    public CardData GetCardData(int code)
+    {
+        return GetData(cardDatas, code);
+    }
+
+    public TierData GetTierData(int code)
+    {
+        return GetData(tierDatas, code);
+    }
+
+    public SpecialData GetSpecialData(int code)
+    {
+        return GetData(specialDatas, code);
+    }
 
     public T GetData<T>(Dictionary<int, T> dic, int code)
     {
@@ -25,15 +37,21 @@ public partial class TableDatas : MonoSingleton<TableDatas>
                 UnityEngine.Debug.LogError(table + "테이블에 " + code + "코드가 없습니다");
             return default(T);
         }
+
         return dic[code];
 #else
 		return code > 0 && dic.ContainsKey(code) ? dic[code] : default(T);
 #endif
     }
+
     public void ClearAll()
     {
         cardDatas.Clear();
         tierDatas.Clear();
         specialDatas.Clear();
+    }
+
+    public override void Init()
+    {
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace Utils
         {
             public long id;
             public string nickname, socketId;
-            public int win, lose, draw, ranking;
+            public int win, lose, draw, score, ranking;
 
             public override string ToString()
             {
@@ -34,8 +35,29 @@ namespace Utils
                 sb.Append($"win: {win.ToString()}, ");
                 sb.Append($"lose: {lose.ToString()}, ");
                 sb.Append($"draw: {draw.ToString()}, ");
+                sb.Append($"draw: {score.ToString()}, ");
                 sb.Append($"ranking: {ranking.ToString()}, ");
                 sb.Append($"socketId: {socketId} ]");
+
+                return sb.ToString();
+            }
+        }
+
+        [Serializable]
+        public struct UserList
+        {
+            public List<User> userList;
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("UserList: [");
+                for (int i = 0; i < userList.Count; i++)
+                {
+                    sb.Append(userList[i].ToString());
+                    sb.Append('\n');
+                }
+                sb.Append(" ]");
 
                 return sb.ToString();
             }

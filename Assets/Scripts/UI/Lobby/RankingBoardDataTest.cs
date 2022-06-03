@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +7,7 @@ public class RankingBoardDataTest : MonoBehaviour
 {
 
     
-    struct UserInformation//³ªÁß¿¡ ÀÏ·Î Á¤º¸ ¹Ş¾Æ¿È
+    struct UserInformation//ë‚˜ì¤‘ì— ì¼ë¡œ ì •ë³´ ë°›ì•„ì˜´
     {
         public int ranking;
         public string nickname;
@@ -26,7 +26,7 @@ public class RankingBoardDataTest : MonoBehaviour
     public Text drawtext;
     public Text losetext;
     */
-    //public int[] usernum;//³ªÁß¿¡ ÀÏ·Î °¢ Æ¼¾îº° À¯Àú ¼ö ¹Ş¾Æ¿È
+    //public int[] usernum;//ë‚˜ì¤‘ì— ì¼ë¡œ ê° í‹°ì–´ë³„ ìœ ì € ìˆ˜ ë°›ì•„ì˜´
     // Start is called before the first frame update
 
     UserInformation[] usernum = new UserInformation[100];

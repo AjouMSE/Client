@@ -9,7 +9,7 @@ using Utils;
 
 namespace Data.Cache
 {
-    public class CacheAudioSource : CacheSource<CacheAudioSource, AudioClip>
+    public class CacheAudioSource : CacheSource<CacheAudioSource, AudioManager.BgmTypes, AudioClip>
     {
         #region Private constants
 
@@ -35,20 +35,18 @@ namespace Data.Cache
 
         public AudioMixer AudioMixer { get; private set; }
 
-        public Dictionary<AudioManager.BgmTypes, AudioClip> BGMCache { get; private set; }
-
         #endregion
 
 
         #region Public methods
 
-        public override IEnumerator Init()
+        public override IEnumerator InitCoroutine()
         {
             // Init AudioMixer
             AudioMixer = Resources.Load<AudioMixer>($"{SrcPathRoot}/{SrcPathMixer}");
 
             // Cache bgm to dictionary
-            BGMCache = new Dictionary<AudioManager.BgmTypes, AudioClip>
+            Cache = new Dictionary<AudioManager.BgmTypes, AudioClip>
             {
                 // Logo Bgm
                 {
@@ -93,6 +91,7 @@ namespace Data.Cache
                 }
             };
 
+            IsInitialized = true;
             yield break;
         }
 

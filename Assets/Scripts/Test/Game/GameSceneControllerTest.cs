@@ -34,7 +34,7 @@ namespace Scene
         {
             Init();
             TableLoader.Instance.LoadTableData();
-            StartCoroutine(CacheVFXSource.Instance.Init());
+            StartCoroutine(CacheVFXSource.Instance.InitCoroutine());
         }
 
         private void Update()

@@ -214,5 +214,10 @@ namespace Manager
         }
         
         #endregion
+
+        public override void Init()
+        {
+            throw new NotImplementedException();
+        }
     }   
 }

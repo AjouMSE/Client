@@ -7,7 +7,7 @@ using Utils;
 
 namespace Data.Cache
 {
-    public class CacheSpriteSource : CacheSource<CacheSpriteSource, Sprite>
+    public class CacheSpriteSource : CacheSource<CacheSpriteSource, int, Sprite>
     {
         #region Private constants
 
@@ -23,7 +23,7 @@ namespace Data.Cache
 
         #region Public methods
 
-        public override IEnumerator Init()
+        public override IEnumerator InitCoroutine()
         {
             Cache = new Dictionary<int, Sprite>
             {
@@ -34,10 +34,10 @@ namespace Data.Cache
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
             {
                 CardData card = TableDatas.Instance.cardDatas[key];
-                Debug.Log($"{card.icon} / {card.text}");
                 Cache.Add(key, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathSkillIcon}/{card.icon}"));
             }
 
+            IsInitialized = true;
             yield break;
         }
 

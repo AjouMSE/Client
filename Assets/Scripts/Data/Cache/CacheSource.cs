@@ -1,33 +1,79 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using Utils;
 
 namespace Data.Cache
 {
-    public abstract class CacheSource<TChild, TSource> where TChild : new()
+    public abstract class CacheSource<TChild, TId, TSource>
+        where TChild : new()
+        where TId : unmanaged
     {
+        #region Private static variables
+
         private static TChild _instance;
+        private static readonly object _lockObject = new object();
+
+        #endregion
+
+
+        #region Protected variables
+
+        // cache dictionary
+        protected Dictionary<TId, TSource> Cache;
+
+        #endregion
+
+
+        #region Public variables
+
+        public static bool IsDestroyed { get; protected set; }
+        public static bool IsInitialized { get; protected set; }
+
         public static TChild Instance
         {
             get
             {
-                if (_instance == null)
+                if (IsDestroyed)
                 {
-                    _instance = new TChild();
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Instance of ");
+                    sb.Append(typeof(TChild));
+                    sb.Append("already has been destroyed");
+                    return default;
+                }
+
+                lock (_lockObject)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new TChild();
+                    }
                 }
 
                 return _instance;
             }
         }
 
-        // cache dictionary
-        protected Dictionary<int, TSource> Cache;
+        #endregion
 
-        // abstract method
-        public abstract IEnumerator Init();
 
-        public TSource GetSource(int id)
+        #region Public methods
+
+        /// <summary>
+        /// abstract Init coroutine
+        /// </summary>
+        /// <returns></returns>
+        public abstract IEnumerator InitCoroutine();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public TSource GetSource(TId id)
         {
             TSource source = default;
 
@@ -42,5 +88,16 @@ namespace Data.Cache
 
             return source;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Destroy()
+        {
+            Cache = null;
+            IsDestroyed = true;
+        }
+
+        #endregion
     }
 }

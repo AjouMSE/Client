@@ -54,7 +54,7 @@ namespace Manager
 
         #region Custom methods
 
-        public void Init()
+        public override void Init()
         {
             _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
             _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();

@@ -94,4 +94,8 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 
         return obj;
     }
+
+    public override void Init()
+    {
+    }
 }

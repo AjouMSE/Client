@@ -217,5 +217,10 @@ namespace Test.Networking
         }
         
         #endregion
+
+        public override void Init()
+        {
+            Debug.Log("");
+        }
     }   
 }

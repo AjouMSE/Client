@@ -131,7 +131,6 @@ namespace Manager
 
         public override void Init()
         {
-            throw new NotImplementedException();
         }
     }   
 }

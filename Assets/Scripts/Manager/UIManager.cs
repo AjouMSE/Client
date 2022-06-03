@@ -75,7 +75,7 @@ namespace Manager
         /// <param name="callback"></param>
         /// <param name="disableAfterFadeOut"></param>
         public void Fade(FadeType fadeType, CanvasGroup group, float duration, Action callback = null,
-            bool disableAfterFadeOut = false)
+            bool disableAfterFadeOut = true)
         {
             StartCoroutine(FadeEffectCoroutine(fadeType, group, duration, callback, disableAfterFadeOut));
         }
@@ -140,7 +140,7 @@ namespace Manager
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         private IEnumerator FadeEffectCoroutine(FadeType fadeType, CanvasGroup group, float duration,
-            Action callback = null, bool disableAfterFadeOut = false)
+            Action callback = null, bool disableAfterFadeOut = true)
         {
             float gap;
 

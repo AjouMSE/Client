@@ -45,6 +45,12 @@ public class RelayAllocUtp : MonoBehaviour
         StartCoroutine(UpdateUI());
     }
 
+    private void OnApplicationQuit()
+    {
+        serverConnections.Dispose();
+        serverConnections = default;
+    }
+
     //Substitute for proper UI handling.
     private IEnumerator UpdateUI()
     {
@@ -181,30 +187,9 @@ public class RelayAllocUtp : MonoBehaviour
     // Launch this method as a coroutine
     private IEnumerator StartRelayServer()
     {
-        // Request list of valid regions
-        var regionsTask = RelayService.Instance.ListRegionsAsync();
-        Debug.Log("Getting regions...");
-        while (!regionsTask.IsCompleted)
-        {
-            yield return null;
-        }
-
-        if (regionsTask.IsFaulted)
-        {
-            Debug.LogError("List regions request failed");
-            yield break;
-        }
-
-        var regionList = regionsTask.Result;
-
-        // pick a region from the list
-        var targetRegion = regionList[0].Id;
-        regionId = targetRegion;
-        Debug.Log($"Selected region: '{targetRegion}'");
-
         // Request an allocation to the Relay service
         var relayMaxPlayers = 5;
-        var allocationTask = RelayService.Instance.CreateAllocationAsync(relayMaxPlayers, targetRegion);
+        var allocationTask = RelayService.Instance.CreateAllocationAsync(relayMaxPlayers);
         Debug.Log("Attempting to get Relay service host allocation...");
 
         while (!allocationTask.IsCompleted)
@@ -260,8 +245,12 @@ public class RelayAllocUtp : MonoBehaviour
     // Launch this method as a coroutine
     private IEnumerator ServerBindAndListen(RelayNetworkParameter relayNetworkParameter)
     {
-        // Create the NetworkDriver using the Relay parameters
-        HostDriver = NetworkDriver.Create(new INetworkParameter[] { relayNetworkParameter });
+        // Create the NetworkSettings with Relay parameters
+        var networkSettings = new NetworkSettings();
+        networkSettings.AddRawParameterStruct(ref relayNetworkParameter);
+
+        // Create the NetworkDriver using NetworkSettings
+        HostDriver = NetworkDriver.Create(networkSettings);
 
         // Bind the NetworkDriver to the local endpoint
         if (HostDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
@@ -316,8 +305,12 @@ public class RelayAllocUtp : MonoBehaviour
         var relayServerData = PlayerRelayData(allocation, "udp");
         var relayNetworkParameter = new RelayNetworkParameter { ServerData = relayServerData };
 
+        // Create the NetworkSettings with Relay parameters
+        var networkSettings = new NetworkSettings();
+        networkSettings.AddRawParameterStruct(ref relayNetworkParameter);
+
         // Create the NetworkDriver using the Relay parameters
-        PlayerDriver = NetworkDriver.Create(new INetworkParameter[] { relayNetworkParameter });
+        PlayerDriver = NetworkDriver.Create(networkSettings);
 
         // Bind the NetworkDriver to the available local endpoint.
         // This will send the bind request to the Relay server

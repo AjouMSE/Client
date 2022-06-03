@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Data.Cache;
 using Manager;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UI.Logo
 {
@@ -21,6 +22,9 @@ namespace UI.Logo
         #region Private variables
 
         private CanvasGroup _loadingCanvasGroup;
+        private GameObject _hudCamera;
+        private UnityEngine.SceneManagement.Scene _currentScene;
+
         private HUDLogoUIController _hudLogoUIController;
 
         #endregion
@@ -31,16 +35,33 @@ namespace UI.Logo
         private void Awake()
         {
             _loadingCanvasGroup = GetComponent<CanvasGroup>();
-            _hudLogoUIController = GameObject.FindWithTag(HudCamera).GetComponentInChildren<HUDLogoUIController>();
+            _hudCamera = GameObject.FindWithTag(HudCamera);
+            _currentScene = SceneManager.GetActiveScene();
 
-            // Set maximum frame rate : 60
-            Application.targetFrameRate = MaxFrameRate;
+            switch (_currentScene.name)
+            {
+                case UIManager.SceneNameLogo:
+                    _hudLogoUIController = _hudCamera.GetComponentInChildren<HUDLogoUIController>();
 
-            // Set Screen orientation : landscape
-            Screen.orientation = ScreenOrientation.Landscape;
+                    // Set maximum frame rate : 60
+                    Application.targetFrameRate = MaxFrameRate;
 
-            // Init Resources
-            InitResources();
+                    // Set Screen orientation : landscape
+                    Screen.orientation = ScreenOrientation.Landscape;
+
+                    // Init Resources
+                    InitResources();
+                    break;
+
+                case UIManager.SceneNameLogin:
+                    break;
+
+                case UIManager.SceneNameLobby:
+                    break;
+
+                case UIManager.SceneNameGame:
+                    break;
+            }
         }
 
         #endregion
@@ -54,7 +75,7 @@ namespace UI.Logo
         private void LoadingFadeInCallback()
         {
             UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _loadingCanvasGroup, LoadingFadeOutDuration,
-                LoadingFadeOutCallback);
+                LoadingFadeOutCallback, false);
         }
 
         /// <summary>
@@ -63,7 +84,24 @@ namespace UI.Logo
         /// </summary>
         private void LoadingFadeOutCallback()
         {
-            _hudLogoUIController.ProcessFadeEffect();
+            switch (_currentScene.name)
+            {
+                case UIManager.SceneNameLogo:
+                    _hudLogoUIController.ProcessFadeEffect();
+                    break;
+
+                case UIManager.SceneNameLogin:
+                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);
+                    break;
+
+                case UIManager.SceneNameLobby:
+                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGame);
+                    break;
+
+                case UIManager.SceneNameGame:
+                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);
+                    break;
+            }
         }
 
         #endregion
@@ -99,8 +137,9 @@ namespace UI.Logo
             UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _loadingCanvasGroup, LoadingFadeInDuration,
                 LoadingFadeInCallback);
-            
+
             HttpRequestManager.Instance.Init();
+            UserManager.Instance.Init();
         }
 
         #endregion

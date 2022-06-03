@@ -10,7 +10,7 @@ namespace UI.Logo
     public class HUDLogoUIController : MonoBehaviour
     {
         #region Private constants
-        
+
         private const float LogoFadeInDuration = 1f;
         private const float LogoFadeOutDuration = 1f;
 
@@ -32,17 +32,17 @@ namespace UI.Logo
         }
 
         #endregion
-        
-        
+
+
         #region Callbacks
-        
 
         /// <summary>
         /// Logo ui fade in result callback
         /// </summary>
         private void LogoFadeInCallback()
         {
-            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _logoCanvasGroup, LogoFadeOutDuration, LogoFadeOutCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _logoCanvasGroup, LogoFadeOutDuration,
+                LogoFadeOutCallback, false);
         }
 
         /// <summary>
@@ -65,7 +65,8 @@ namespace UI.Logo
         public void ProcessFadeEffect()
         {
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.LogoBGM, false);
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _logoCanvasGroup, LogoFadeInDuration, LogoFadeInCallback);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _logoCanvasGroup, LogoFadeInDuration,
+                LogoFadeInCallback);
         }
 
         #endregion

@@ -83,7 +83,7 @@ namespace Data.Cache
             }
             catch (KeyNotFoundException e)
             {
-                Debug.LogError($"Cannot find key value of {id.ToString()}");
+                Debug.LogError($"Cannot find key value of {id.ToString()} {e.Message}");
             }
 
             return source;

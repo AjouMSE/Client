@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Data.Cache;
 using Manager;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utils;
 
 namespace UI.Logo
 {
@@ -12,9 +14,24 @@ namespace UI.Logo
         #region Private constants
 
         private const int MaxFrameRate = 60;
-        private const float LoadingFadeInDuration = 4f;
+        private const float LoadingFadeInDuration = 5f;
         private const float LoadingFadeOutDuration = 1f;
         private const string HudCamera = "HUDCamera";
+        private const string TxtGameTip = "Txt_GameTip";
+
+        private static string[] Tips { get; } =
+        {
+            "Tip. Try combining movement cards and attack cards appropriately.",
+            "Tip. Use your movement cards appropriately to gain an advantage.",
+            "Tip. Proper mana management is also a skill.",
+            "Tip. Achieve the top ranking by winning matches against opponents",
+            "Tip. Sometimes a powerful skill can turn things around.",
+            "Tip. Fireball magic is very hot, so use it with care.",
+            "Tip. In the hot summer, you can use ice magic to make ice cream.",
+            "Tip. Do you want something tingly? There is lightning magic!",
+            "Tip. The moment you are certain of victory, a crisis can come.",
+            "Tip. Cards in an invalid range cannot be selected."
+        };
 
         #endregion
 
@@ -22,6 +39,7 @@ namespace UI.Logo
         #region Private variables
 
         private CanvasGroup _loadingCanvasGroup;
+        private TextMeshProUGUI _tmProGameTip;
         private GameObject _hudCamera;
         private UnityEngine.SceneManagement.Scene _currentScene;
 
@@ -35,6 +53,7 @@ namespace UI.Logo
         private void Awake()
         {
             _loadingCanvasGroup = GetComponent<CanvasGroup>();
+            _tmProGameTip = CustomUtils.FindComponentByName<TextMeshProUGUI>(gameObject, TxtGameTip);
             _hudCamera = GameObject.FindWithTag(HudCamera);
             _currentScene = SceneManager.GetActiveScene();
 
@@ -62,6 +81,9 @@ namespace UI.Logo
                 case UIManager.SceneNameGame:
                     break;
             }
+
+            int tipNum = Random.Range(0, Tips.Length);
+            _tmProGameTip.text = Tips[tipNum];
         }
 
         #endregion

@@ -56,6 +56,19 @@ namespace Utils
             return sb.ToString();
         }
 
+        public static T FindComponentByName<T>(GameObject root, string name) where T : Component
+        {
+            var components = root.GetComponentsInChildren<T>();
+            for (int i = 0; i < components.Length; i++)
+            {
+                if (components[i].name.Equals(name))
+                    return components[i];
+            }
+
+            Debug.LogWarning($"Cannot Find Component {typeof(T)}");
+            return null;
+        }
+
         #endregion
 
 

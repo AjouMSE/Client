@@ -6,18 +6,17 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using Utils;
+using User = Utils.Packet.User;
+using UserList = Utils.Packet.UserList;
 
 public class LeaderBoardTest : MonoBehaviour
 {
-    [Serializable]
-    public struct Users
-    {
-        public List<Packet.User> users;
-    }
-
     void Start()
     {
+        // Variable about page number
         var pageNum = 1;
+        
+        // Http Get Request
         HttpRequestManager.Instance.Get($"/ranking/leader-board?page={pageNum}", Callback);
     }
 
@@ -25,23 +24,36 @@ public class LeaderBoardTest : MonoBehaviour
     {
         if (req.result == UnityWebRequest.Result.Success)
         {
+            // Get json string from server
             string json = req.downloadHandler.text;
-            Users userStruct = JsonUtility.FromJson<Users>(json);
+            Debug.Log(json);
+            
+            // print all items in user list
+            UserList userList = JsonUtility.FromJson<UserList>(json);
+            Debug.Log(userList.ToString());
 
-            for (int i = 0; i < userStruct.users.Count; i++)
+            for (int i = 0; i < userList.users.Count; i++)
             {
-                Packet.User user = userStruct.users[i];
+                // Do something
+                User user = userList.users[i];
                 
+                /* user.id, user.ranking, user.score ... etc
+                 * textInfo.text = user.id;
+                 * textInfo.text = user.score.ToString();
+                 * ...
+                 */
                 Debug.Log(user.ToString());
             }
         } 
         else if (req.result == UnityWebRequest.Result.ProtocolError)
         {
+            // Error code (ex 400)
             Debug.Log($"Protocol error: {req.error}");
         }
         else
         {
-            Debug.Log($"Another eror: {req.error}");
+            // Error code (ex 500)
+            Debug.Log($"Another error: {req.error}");
         }
     }
 }

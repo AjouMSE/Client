@@ -35,7 +35,7 @@ namespace Utils
                 sb.Append($"win: {win.ToString()}, ");
                 sb.Append($"lose: {lose.ToString()}, ");
                 sb.Append($"draw: {draw.ToString()}, ");
-                sb.Append($"draw: {score.ToString()}, ");
+                sb.Append($"score: {score.ToString()}, ");
                 sb.Append($"ranking: {ranking.ToString()}, ");
                 sb.Append($"socketId: {socketId} ]");
 
@@ -46,15 +46,15 @@ namespace Utils
         [Serializable]
         public struct UserList
         {
-            public List<User> userList;
+            public List<User> users;
 
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("UserList: [");
-                for (int i = 0; i < userList.Count; i++)
+                sb.Append("UserList: [\n");
+                for (int i = 0; i < users.Count; i++)
                 {
-                    sb.Append(userList[i].ToString());
+                    sb.Append(users[i].ToString());
                     sb.Append('\n');
                 }
                 sb.Append(" ]");

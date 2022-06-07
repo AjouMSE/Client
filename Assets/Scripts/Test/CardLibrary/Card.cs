@@ -15,11 +15,17 @@ public class Card : MonoBehaviour
     [SerializeField] private GameObject rangeBoxParent;
     [SerializeField] private Image[] rangeBoxes = new Image[25];
 
-    public CardData skillData;
 
 
+    private void Update()
+    {
 
-    private void Start()
+
+        
+
+    }
+
+    public void SetData(CardData skillData)
     {
 
         rangeBoxes = rangeBoxParent.GetComponentsInChildren<Image>();
@@ -33,20 +39,18 @@ public class Card : MonoBehaviour
 
         int tmp = 0;
 
-        for(int i = 0; i< skillData.range.Length; i++)
+        for (int i = 0; i < skillData.range.Length; i++)
         {
-            if(skillData.range[i] == '1')
+            if (skillData.range[i] == '1')
             {
                 rangeBoxes[tmp].color = Color.red;
                 tmp++;
             }
-            else if(skillData.range[i] == '0')
+            else if (skillData.range[i] == '0')
             {
                 rangeBoxes[tmp].color = new Color(255, 189, 0);
                 tmp++;
             }
         }
-        
-
     }
 }

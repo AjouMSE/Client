@@ -7,10 +7,11 @@ using TMPro;
 
 public class CardLibrary : MonoBehaviour
 {
-    [SerializeField] private GameObject cardGrid;
-    [SerializeField] private GameObject cardPrefab;
+    [SerializeField] private GameObject iconGrid;
     [SerializeField] private TMP_Dropdown cardCategory;
     [SerializeField] private GameObject scrollPrefab;
+
+    [SerializeField] private GameObject skill_IconPrefab;
 
     List<GameObject> cardlist = new List<GameObject>();
 
@@ -26,11 +27,12 @@ public class CardLibrary : MonoBehaviour
 
         foreach(KeyValuePair<int, CardData> cardData in TableDatas.Instance.cardDatas)
         {
-            GameObject tmp = Instantiate<GameObject>(cardPrefab, cardGrid.transform);
+            GameObject tmp = Instantiate<GameObject>(skill_IconPrefab, iconGrid.transform);
 
-            Card card = tmp.GetComponent<Card>();
+            Skill_Icon icon = tmp.GetComponent<Skill_Icon>();
+            skill_IconPrefab.GetComponent<Image>().sprite = Resources.Load<Sprite>("Image/Skill_Icon/" + cardData.Value.icon);
 
-            card.skillData = cardData.Value;
+            icon.cardData = cardData.Value;
             cardlist.Add(tmp);
         }
 
@@ -60,7 +62,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if(cardlist[i].GetComponent<Card>().skillData.type == (int)Card.SkillType.Move)
+                    if(cardlist[i].GetComponent<Skill_Icon>().cardData.type == (int)Card.SkillType.Move)
                     {
                         cardlist[i].SetActive(true);
                     }
@@ -75,7 +77,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if (cardlist[i].GetComponent<Card>().skillData.type == (int) Card.SkillType.Attack)
+                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.type == (int) Card.SkillType.Attack)
                     {
                         cardlist[i].SetActive(true);
                     }
@@ -90,7 +92,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if (cardlist[i].GetComponent<Card>().skillData.type == (int)Card.SkillType.Special)
+                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.type == (int)Card.SkillType.Special)
                     {
                         cardlist[i].SetActive(true);
                     }

@@ -12,11 +12,18 @@ namespace Data.Cache
         #region Private constants
 
         private const string SrcPathRoot = "Image";
-        private const string SrcPathButton = "Button";
+        private const string SrcPathButtonIcon = "Button_Icon";
+        private const string SrcPathLoadingIcon = "Loading_Icon";
         private const string SrcPathSkillIcon = "Skill_Icon";
 
         private const string SrcPathSoundOn = "SoundOn";
         private const string SrcPathSoundOff = "SoundOff";
+        
+        private const string SrcPathLoadingIconFire = "LoadingFire";
+        private const string SrcPathLoadingIconIce = "LoadingIce";
+        private const string SrcPathLoadingIconEarth = "LoadingEarth";
+        private const string SrcPathLoadingIconLightning = "LoadingLightning";
+        private const string SrcPathLoadingIconNature = "LoadingNature";
 
         #endregion
 
@@ -27,10 +34,19 @@ namespace Data.Cache
         {
             Cache = new Dictionary<int, Sprite>
             {
-                { 0, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButton}/{SrcPathSoundOn}") },
-                { 1, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButton}/{SrcPathSoundOff}") }
+                // Button Icons (0 ~ 99)
+                { 0, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathSoundOn}") },
+                { 1, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathSoundOff}") },
+                
+                // Loading Icons (100 ~ 200)
+                { 100, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconFire}") },
+                { 101, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconIce}") },
+                { 102, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconEarth}") },
+                { 103, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconLightning}") },
+                { 104, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconNature}") }
             };
 
+            // Skill Icons
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
             {
                 CardData card = TableDatas.Instance.cardDatas[key];

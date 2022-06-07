@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Data.Cache;
 using Manager;
 using TMPro;
+using UI.Login;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Utils;
+using Random = UnityEngine.Random;
 
 namespace UI.Logo
 {
@@ -14,10 +18,12 @@ namespace UI.Logo
         #region Private constants
 
         private const int MaxFrameRate = 60;
-        private const float LoadingFadeInDuration = 5f;
+        private const float LoadingFadeInDuration = 4f;
         private const float LoadingFadeOutDuration = 1f;
+
         private const string HudCamera = "HUDCamera";
-        private const string TxtGameTip = "Txt_GameTip";
+        private const string UINameTxtGameTip = "Txt_GameTip";
+        private const string UINameLoadingImage = "Img_Loading";
 
         private static string[] Tips { get; } =
         {
@@ -40,10 +46,11 @@ namespace UI.Logo
 
         private CanvasGroup _loadingCanvasGroup;
         private TextMeshProUGUI _tmProGameTip;
+        private Image _loadingIconImage;
         private GameObject _hudCamera;
-        private UnityEngine.SceneManagement.Scene _currentScene;
 
         private HUDLogoUIController _hudLogoUIController;
+        private HUDLoginSigninUIController _hudLoginSigninUIController;
 
         #endregion
 
@@ -53,11 +60,23 @@ namespace UI.Logo
         private void Awake()
         {
             _loadingCanvasGroup = GetComponent<CanvasGroup>();
-            _tmProGameTip = CustomUtils.FindComponentByName<TextMeshProUGUI>(gameObject, TxtGameTip);
+            _tmProGameTip = CustomUtils.FindComponentByName<TextMeshProUGUI>(gameObject, UINameTxtGameTip);
+            _loadingIconImage = CustomUtils.FindComponentByName<Image>(gameObject, UINameLoadingImage);
             _hudCamera = GameObject.FindWithTag(HudCamera);
-            _currentScene = SceneManager.GetActiveScene();
+            Init();
+            gameObject.SetActive(false);
+        }
 
-            switch (_currentScene.name)
+        #endregion
+
+
+        #region Private methods
+
+        private void Init()
+        {
+            var currentScene = SceneManager.GetActiveScene();
+
+            switch (currentScene.name)
             {
                 case UIManager.SceneNameLogo:
                     _hudLogoUIController = _hudCamera.GetComponentInChildren<HUDLogoUIController>();
@@ -67,12 +86,10 @@ namespace UI.Logo
 
                     // Set Screen orientation : landscape
                     Screen.orientation = ScreenOrientation.Landscape;
-
-                    // Init Resources
-                    InitResources();
                     break;
 
                 case UIManager.SceneNameLogin:
+                    _hudLoginSigninUIController = _hudCamera.GetComponentInChildren<HUDLoginSigninUIController>();
                     break;
 
                 case UIManager.SceneNameLobby:
@@ -81,106 +98,29 @@ namespace UI.Logo
                 case UIManager.SceneNameGame:
                     break;
             }
-
-            int tipNum = Random.Range(0, Tips.Length);
-            _tmProGameTip.text = Tips[tipNum];
         }
 
         #endregion
 
 
-        #region Callbacks
+        #region Public methods
 
-        /// <summary>
-        /// Loading ui fade in result callback
-        /// </summary>
-        private void LoadingFadeInCallback()
+        public void ShowLoadingUI(Action fadeInCallback = null)
+        {
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _loadingCanvasGroup, LoadingFadeInDuration,
+                fadeInCallback);
+            
+            var tipNum = Random.Range(0, Tips.Length);
+            var uiNum = Random.Range(100, 105);
+            
+            _tmProGameTip.text = Tips[tipNum];
+            _loadingIconImage.sprite = CacheSpriteSource.Instance.GetSource(uiNum);
+        }
+
+        public void HideLoadingUI(Action fadeOutCallback = null, bool disableAfterFadeOut = true)
         {
             UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _loadingCanvasGroup, LoadingFadeOutDuration,
-                LoadingFadeOutCallback, false);
-        }
-
-        /// <summary>
-        /// Loading ui fade out result callback
-        /// Play fade effect of logo ui
-        /// </summary>
-        private void LoadingFadeOutCallback()
-        {
-            switch (_currentScene.name)
-            {
-                case UIManager.SceneNameLogo:
-                    _hudLogoUIController.ProcessFadeEffect();
-                    break;
-
-                case UIManager.SceneNameLogin:
-                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);
-                    break;
-
-                case UIManager.SceneNameLobby:
-                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGame);
-                    break;
-
-                case UIManager.SceneNameGame:
-                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);
-                    break;
-            }
-        }
-
-        #endregion
-
-
-        #region Private methods
-
-        /// <summary>
-        /// Initialize resources
-        /// </summary>
-        private void InitResources()
-        {
-            // Init Resources
-            TableLoader.Instance.LoadTableData();
-            StartCoroutine(CacheAudioSource.Instance.InitCoroutine());
-            StartCoroutine(CacheSpriteSource.Instance.InitCoroutine());
-            StartCoroutine(CacheVFXSource.Instance.InitCoroutine());
-            StartCoroutine(CacheCoroutineSource.Instance.InitCoroutine());
-            StartCoroutine(WaitForInitResources());
-        }
-
-        /// <summary>
-        ///  Initialize managers
-        /// </summary>
-        private void InitManagers()
-        {
-            // Init Managers
-            AudioManager.Instance.Init();
-            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.BGM, 0.05f);
-            AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.SFX, 1.0f);
-
-            UIManager.Instance.Init();
-            UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _loadingCanvasGroup, LoadingFadeInDuration,
-                LoadingFadeInCallback);
-
-            HttpRequestManager.Instance.Init();
-            UserManager.Instance.Init();
-        }
-
-        #endregion
-
-
-        #region Coroutines
-
-        private IEnumerator WaitForInitResources()
-        {
-            bool result = false;
-            while (!result)
-            {
-                result = CacheAudioSource.IsInitialized && CacheSpriteSource.IsInitialized &&
-                         CacheVFXSource.IsInitialized && CacheCoroutineSource.IsInitialized;
-
-                yield return null;
-            }
-
-            InitManagers();
+                fadeOutCallback, disableAfterFadeOut);
         }
 
         #endregion

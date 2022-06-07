@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Manager;
 using TMPro;
+using UI.Logo;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -15,23 +16,28 @@ namespace UI.Login
         #region Private constants
 
         private const string SignInReqPath = "/user/sign-in";
-        private const string DestSceneName = "LobbyScene";
 
         #endregion
 
 
         #region Private variables
 
-        [Header("Id, Pw InputFields")] [SerializeField]
-        private TMP_InputField inputFieldId;
+        [Header("Main Camera Controller")] 
+        [SerializeField] private LoginMainCameraController mainCameraController;
 
+        [Header("HUD Loading, Signup UI Controller")] 
+        [SerializeField] private HUDLoadingUIController loadingUIController;
+        [SerializeField] private HUDLoginSignupUIController signupUIController;
+
+        [Header("Id, Pw InputFields")] 
+        [SerializeField] private TMP_InputField inputFieldId;
         [SerializeField] private TMP_InputField inputFieldPw;
 
-        [Header("Information Text")] [SerializeField]
-        private Text textInformation;
+        [Header("Information Text")] 
+        [SerializeField] private Text textInfo;
 
-        [Header("3D Scroll Sign in UI")] [SerializeField]
-        private ScrollScript3D scroll3DSignin;
+        [Header("3D Scroll Sign in UI")] 
+        [SerializeField] private ScrollScript3D scroll3DSignin;
 
         #endregion
 
@@ -39,46 +45,18 @@ namespace UI.Login
         #region Callbacks
 
         /// <summary>
-        /// Callback of sign in result
-        /// </summary>
-        /// <param name="req"></param>
-        private void SignInResultCallback(UnityWebRequest req)
-        {
-            if (req.result == UnityWebRequest.Result.Success)
-            {
-                // Save user information to UserManager
-                string json = req.downloadHandler.text;
-                UserManager.Instance.SignInUserInfo(json);
-                SceneManager.LoadSceneAsync(DestSceneName);
-            }
-            else if (req.result == UnityWebRequest.Result.ProtocolError)
-            {
-                // Occured Error (Account does not exist, Wrong password etc..)
-                ShowInformation(HUDLoginNotify.NotifyInvalidAccount);
-                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
-            }
-            else
-            {
-                // Occured Error (Server connection error)
-                ShowInformation(HUDLoginNotify.NotifyServerError);
-                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
-            }
-        }
-
-        /// <summary>
         /// Callbacks of Sign In button
         /// </summary>
         public void OnSignInBtnClick()
         {
-            StopCoroutine(ClearInformationText());
-            StartCoroutine(ClearInformationText());
-
             if (inputFieldId.text.Length == 0)
-                ShowInformation(HUDLoginNotify.NotifyEmptyIdField);
-            else if (inputFieldPw.text.Length == 0)
-                ShowInformation(HUDLoginNotify.NotifyEmptyPwField);
+                UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyEmptyIdField);
             else if (!CustomUtils.IsValidEmail(inputFieldId.text))
-                ShowInformation(HUDLoginNotify.NotifyInvalidIdForm);
+                UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyInvalidIdForm);
+            else if (inputFieldPw.text.Length == 0)
+                UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyEmptyPwField);
+            else if (!CustomUtils.IsValidEmail(inputFieldId.text))
+                UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyInvalidIdForm);
             else
             {
                 Packet.Account account = new Packet.Account
@@ -98,30 +76,47 @@ namespace UI.Login
         {
             // Close sign in scroll and open sign up scroll
             scroll3DSignin.CloseScroll();
-            GetComponent<HUDLoginSignupUIController>().ScrollMoveDown();
+            signupUIController.ScrollMoveDown();
         }
 
-        #endregion
-
-
-        #region Custom methods
-
-        private void ShowInformation(string text)
+        /// <summary>
+        /// Callback of sign in result
+        /// </summary>
+        /// <param name="req"></param>
+        private void SignInResultCallback(UnityWebRequest req)
         {
-            StopCoroutine(ClearInformationText());
-            StartCoroutine(ClearInformationText());
-            textInformation.text = text;
-        }
+            if (req.result == UnityWebRequest.Result.Success)
+            {
+                // Save user information to UserManager
+                string json = req.downloadHandler.text;
+                UserManager.Instance.SignInUserInfo(json);
 
-        #endregion
-
-
-        #region Coroutines
-
-        IEnumerator ClearInformationText()
-        {
-            yield return new WaitForSeconds(2f);
-            textInformation.text = "";
+                // Process scroll, camera movement effect
+                scroll3DSignin.CloseScroll();
+                mainCameraController.CameraMovementEffect(() =>
+                {
+                    loadingUIController.gameObject.SetActive(true);
+                    loadingUIController.ShowLoadingUI(() =>
+                    {
+                        loadingUIController.HideLoadingUI(() =>
+                        {
+                            UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);
+                        }, false);
+                    });
+                }, 10, 0.1f);
+            }
+            else if (req.result == UnityWebRequest.Result.ProtocolError)
+            {
+                // Occured Error (Account does not exist, Wrong password etc..)
+                UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyInvalidAccount);
+                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+            }
+            else
+            {
+                // Occured Error (Server connection error)
+                UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyServerError);
+                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+            }
         }
 
         #endregion

@@ -34,28 +34,6 @@ namespace UI.Logo
         #endregion
 
 
-        #region Callbacks
-
-        /// <summary>
-        /// Logo ui fade in result callback
-        /// </summary>
-        private void LogoFadeInCallback()
-        {
-            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _logoCanvasGroup, LogoFadeOutDuration,
-                LogoFadeOutCallback, false);
-        }
-
-        /// <summary>
-        /// Logo ui fade out result callback
-        /// </summary>
-        private void LogoFadeOutCallback()
-        {
-            UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLogin);
-        }
-
-        #endregion
-
-
         #region Public methods
 
         /// <summary>
@@ -66,7 +44,14 @@ namespace UI.Logo
         {
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.LogoBGM, false);
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _logoCanvasGroup, LogoFadeInDuration,
-                LogoFadeInCallback);
+                () =>
+                {
+                    UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _logoCanvasGroup, LogoFadeOutDuration,
+                        () =>
+                        {
+                            UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLogin);
+                        }, false);
+                });
         }
 
         #endregion

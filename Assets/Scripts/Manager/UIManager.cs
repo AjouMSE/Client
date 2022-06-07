@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Data.Cache;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Utils;
 
 namespace Manager
@@ -128,6 +131,30 @@ namespace Manager
             StartCoroutine(ChangeSceneAsyncCoroutine(destSceneName));
         }
 
+        /// <summary>
+        /// Show info Text for a while
+        /// </summary>
+        /// <param name="textInfo"></param>
+        /// <param name="info"></param>
+        public void ShowInfoText(Text textInfo, string info)
+        {
+            StopCoroutine(ClearInfoTextCoroutine(textInfo));
+            StartCoroutine(ClearInfoTextCoroutine(textInfo));
+            textInfo.text = info;
+        }
+
+        /// <summary>
+        /// Show info TextMeshProUGUI for a while
+        /// </summary>
+        /// <param name="textInfo"></param>
+        /// <param name="info"></param>
+        public void ShowInfoTmPro(TextMeshProUGUI textInfo, string info)
+        {
+            StopCoroutine(ClearInfoTmProCoroutine(textInfo));
+            StartCoroutine(ClearInfoTmProCoroutine(textInfo));
+            textInfo.text = info;
+        }
+
         #endregion
 
 
@@ -211,6 +238,28 @@ namespace Manager
 
                 yield return null;
             }
+        }
+
+        /// <summary>
+        /// Clear all text in Text
+        /// </summary>
+        /// <param name="textInfo"></param>
+        /// <returns></returns>
+        private IEnumerator ClearInfoTextCoroutine(Text textInfo)
+        {
+            yield return CacheCoroutineSource.Instance.GetSource(2f);
+            textInfo.text = "";
+        }
+
+        /// <summary>
+        /// Clear all text in TextMeshProUGUI
+        /// </summary>
+        /// <param name="textInfoTmPro"></param>
+        /// <returns></returns>
+        private IEnumerator ClearInfoTmProCoroutine(TextMeshProUGUI textInfoTmPro)
+        {
+            yield return CacheCoroutineSource.Instance.GetSource(2f);
+            textInfoTmPro.text = "";
         }
 
         #endregion

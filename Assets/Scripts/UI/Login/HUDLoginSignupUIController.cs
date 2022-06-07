@@ -13,13 +13,13 @@ namespace UI.Login
     public class HUDLoginSignupUIController : MonoBehaviour
     {
         #region Private constants
-        
+
         private const int MinScrollYPos = 0, MaxScrollYPos = 240;
         private const string SignUpReqPath = "/user/sign-up";
-        
+
         #endregion
-        
-        
+
+
         #region Private variables
 
         [Header("Account Information InputFields")] 
@@ -27,17 +27,16 @@ namespace UI.Login
         [SerializeField] private TMP_InputField inputFieldPw;
         [SerializeField] private TMP_InputField inputFieldPwConfirm;
         [SerializeField] private TMP_InputField inputFieldNickname;
-        
-        [Header("Information Text")]
-        [SerializeField] private TextMeshProUGUI textInformation;
+
+        [Header("Information Text")] 
+        [SerializeField] private TextMeshProUGUI tmProInfo;
 
         [Header("2D Scroll Sign up UI")] 
         [SerializeField] private ScrollScript2D scroll2DSignup;
 
         [Header("3D Scroll Sign in UI")] 
         [SerializeField] private ScrollScript3D scroll3DSignin;
-        
-        
+
 
         private enum ScrollMoveType
         {
@@ -46,10 +45,10 @@ namespace UI.Login
         }
 
         #endregion
-        
-        
+
+
         #region Callbacks
-        
+
         /// <summary>
         /// Callback for sign up request
         /// </summary>
@@ -67,32 +66,17 @@ namespace UI.Login
             {
                 // Fail to sign up (duplicate nickname, account etc..)
                 Packet.WebServerException exception = JsonUtility.FromJson<Packet.WebServerException>(jsonPayload);
-                ShowInformation(exception.message);
+                UIManager.Instance.ShowInfoTmPro(tmProInfo, exception.message);
                 Debug.Log(exception.ToString());
             }
             else
             {
                 // Occured Error (Server connection error)
-                ShowInformation(HUDLoginNotify.NotifyServerError);
+                UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyServerError);
                 Debug.Log($"{req.responseCode.ToString()} / {req.error}");
             }
         }
-        
-        /// <summary>
-        /// Callback for scroll2D move down behavior
-        /// </summary>
-        private void ScrollMoveDownCallback()
-        {
-            scroll2DSignup.ScrollOpen();
-        }
 
-        /// <summary>
-        /// Callback for scroll2D move up behavior
-        /// </summary>
-        private void ScrollMoveUpCallback()
-        {
-            scroll3DSignin.OpenScroll();
-        }
 
         /// <summary>
         /// Callback for submit button
@@ -100,17 +84,17 @@ namespace UI.Login
         public void OnSubmitBtnClick()
         {
             if (inputFieldId.text.Length == 0)
-                ShowInformation(HUDLoginNotify.NotifyEmptyIdField);
+                UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyEmptyIdField);
             else if (!CustomUtils.IsValidEmail(inputFieldId.text))
-                ShowInformation(HUDLoginNotify.NotifyInvalidIdForm);
+                UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyInvalidIdForm);
             else if (inputFieldPw.text.Length == 0)
-                ShowInformation(HUDLoginNotify.NotifyEmptyPwField);
+                UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyEmptyPwField);
             else if (inputFieldPwConfirm.text.Length == 0)
-                ShowInformation(HUDLoginNotify.NotifyEmptyPwConfirmField);
+                UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyEmptyPwConfirmField);
             else if (!inputFieldPw.text.Equals(inputFieldPwConfirm.text))
-                ShowInformation(HUDLoginNotify.NotifyPwMismatch);
+                UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyPwMismatch);
             else if (inputFieldNickname.text.Length == 0)
-                ShowInformation(HUDLoginNotify.NotifyEmptyNicknameField);
+                UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyEmptyNicknameField);
             else
             {
                 Packet.Account account = new Packet.Account
@@ -133,17 +117,27 @@ namespace UI.Login
             ScrollMoveUp();
         }
 
+        /// <summary>
+        /// Callback for scroll2D move down behavior
+        /// </summary>
+        private void ScrollMoveDownCallback()
+        {
+            scroll2DSignup.ScrollOpen();
+        }
+
+        /// <summary>
+        /// Callback for scroll2D move up behavior
+        /// </summary>
+        private void ScrollMoveUpCallback()
+        {
+            scroll3DSignin.OpenScroll();
+        }
+
         #endregion
 
 
-        #region Custom methods
-        private void ShowInformation(string text)
-        {
-            StopCoroutine(ClearInformationText());
-            StartCoroutine(ClearInformationText());
-            textInformation.text = text;
-        }
-        
+        #region Private / Public methods
+
         private void ScrollMoveUp()
         {
             StartCoroutine(ScrollMovement(ScrollMoveType.Up, ScrollMoveUpCallback));
@@ -153,15 +147,16 @@ namespace UI.Login
         {
             StartCoroutine(ScrollMovement(ScrollMoveType.Down, ScrollMoveDownCallback));
         }
-        
+
         #endregion
 
 
         #region Coroutines
 
-        IEnumerator ScrollMovement(ScrollMoveType type, Action callback = null)
+        private IEnumerator ScrollMovement(ScrollMoveType type, Action callback = null)
         {
-            RectTransform rectTransform = scroll2DSignup.gameObject.GetComponent<RectTransform>();
+            var rectTransform = scroll2DSignup.gameObject.GetComponent<RectTransform>();
+            
             switch (type)
             {
                 case ScrollMoveType.Down:
@@ -172,9 +167,10 @@ namespace UI.Login
                         rectTransform.anchoredPosition = tmpPos;
                         yield return null;
                     }
-                    if(callback != null) callback();
+
+                    if (callback != null) callback();
                     break;
-                
+
                 case ScrollMoveType.Up:
                     while (rectTransform.anchoredPosition.y < MaxScrollYPos)
                     {
@@ -183,19 +179,14 @@ namespace UI.Login
                         rectTransform.anchoredPosition = tmpPos;
                         yield return null;
                     }
-                    if(callback != null) callback();
+
+                    if (callback != null) callback();
                     break;
-                
+
                 default:
                     Debug.LogError("UndefinedScrollMoveTypeException");
                     yield break;
             }
-        }
-        
-        IEnumerator ClearInformationText()
-        {
-            yield return new WaitForSeconds(2f);
-            textInformation.text = "";
         }
 
         #endregion

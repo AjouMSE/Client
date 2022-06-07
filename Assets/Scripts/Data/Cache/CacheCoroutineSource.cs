@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Data.Cache
@@ -10,6 +11,7 @@ namespace Data.Cache
         public override IEnumerator InitCoroutine()
         {
             IsInitialized = true;
+            Cache = new Dictionary<float, WaitForSeconds>();
             yield break;
         }
 

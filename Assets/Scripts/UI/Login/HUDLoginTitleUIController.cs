@@ -11,91 +11,62 @@ namespace UI.Login
     public class HUDLoginTitleUIController : MonoBehaviour
     {
         #region Private constants
-
-        private const string HudNameTitle = "HUD_Title";
-            
-        private const int RotCamDirLeft = -1, RotCamDirRight = 1;
-        private const int RotAngleMaxLeft = -60, RotAngleMaxRight = 60;
+        
         private const float FadeInDuration = 1.5f, FadeOutDuration = 0.5f;
-        
+
         #endregion
-        
-        
+
+
         #region Private variables
-        
-        [Header("Camera")]
-        [SerializeField] private Camera mainCamera;
-        [SerializeField] private Camera hudCamera;
-        
-        [Header("Title Text")]
+
+        [Header("Main Camera Controller")] 
+        [SerializeField] private LoginMainCameraController mainCameraController;
+
+        [Header("Title Text")] 
         [SerializeField] private Text titleText;
 
-        [Header("3D Scroll UI")]
+        [Header("3D Scroll UI")] 
         [SerializeField] private ScrollScript3D signinScroll;
 
-        private CanvasGroup _titleCvsGroup;
-        private float _mainCamRotSpd = 6.0f, _mainCamRotAngle = 0;
-        private int _rotCamCurrDir = RotCamDirRight;
-        
+        private CanvasGroup _titleCanvasGroup;
+
         #endregion
 
-        
-        #region Custom methods
-        
+
         #region Event methods
 
         private void Start()
         {
             InitUI();
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _titleCvsGroup, FadeInDuration);
-        }
-        
-        private void Update()
-        {
-            RotateMainCamera();
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _titleCanvasGroup, FadeInDuration);
         }
 
         #endregion
-        
+
+
+        #region Private methdos
 
         private void InitUI()
         {
-            _titleCvsGroup = hudCamera.transform.Find(HudNameTitle).GetComponent<CanvasGroup>();
+            _titleCanvasGroup = GetComponent<CanvasGroup>();
             titleText.text = CustomUtils.MakeTitleColor();
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBGM1, true);
         }
-        
-        private void RotateMainCamera()
-        {
-            if (_mainCamRotAngle > RotAngleMaxRight) 
-                _rotCamCurrDir = RotCamDirLeft;
-            if (_mainCamRotAngle < RotAngleMaxLeft)
-                _rotCamCurrDir = RotCamDirRight;
-
-            float rotValue = _mainCamRotSpd * _rotCamCurrDir * Time.deltaTime;
-            _mainCamRotAngle += rotValue;
-            mainCamera.transform.Rotate(Vector3.up * rotValue);
-        }
 
         #endregion
 
-        
+
         #region Callbacks
-        
-        private void TitleFadeOutCallback()
-        {
-            _titleCvsGroup.gameObject.SetActive(false);
-            signinScroll.OpenScroll();
-        }
-        
+
         public void OnToStartBtnClick()
         {
-            //todo-Have to fix a bug where SpriteRenderer is not affected by CanvasGroup's alpha value
-            //UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _titleCvsGroup, FadeOutDuration, TitleFadeOutCallback);
-            _titleCvsGroup.gameObject.SetActive(false);
-            signinScroll.OpenScroll();
+            mainCameraController.CameraMovementEffect(() =>
+            {
+                _titleCanvasGroup.gameObject.SetActive(false);
+                signinScroll.OpenScroll();
+            }, -2, 0.2f);
         }
 
         #endregion
-    }   
+    }
 }

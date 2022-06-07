@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class RankingBoardDataTest : MonoBehaviour
 {
-    private int rankusernum = 100;
+    private int rankusernum = 23;
     private int rankpagenum = 0;
     private int lastpagenum;
     public GameObject rightbutton;
@@ -26,20 +26,24 @@ public class RankingBoardDataTest : MonoBehaviour
 
     UserInformation[] usernum = new UserInformation[100];
 
-    //GameObject textparent;
+    
 
 
     GameObject[] userinfo = new GameObject[100];
 
     void Start()
     {
-        if(rankusernum%10==0)
+        if (rankusernum > 10)
         {
-            lastpagenum = rankusernum / 10;
-        }
-        else
-        {
-            lastpagenum = rankusernum / 10 + 1;
+            if (rankusernum % 10 == 0)
+            {
+                lastpagenum = rankusernum / 10 - 1;
+            }
+            else
+            {
+                lastpagenum = rankusernum / 10;
+                Debug.Log(lastpagenum);
+            }
         }
         if (rankusernum > 10)
         {
@@ -54,7 +58,7 @@ public class RankingBoardDataTest : MonoBehaviour
         
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         
@@ -66,13 +70,14 @@ public class RankingBoardDataTest : MonoBehaviour
 
         for (int i = 0; i < rankusernum; i++)
         {
-
+            int ranknumber = i + 1;
 
             if (i == 0)
             {
-
-                parenttext.GetComponentsInChildren<Text>()[0].text = i+1.ToString();
-                parenttext.GetComponentsInChildren<Text>()[1].text = usernum[i].nickname;
+                
+                parenttext.GetComponentsInChildren<Text>()[0].text = ranknumber.ToString();
+                
+                parenttext.GetComponentsInChildren<Text>()[1].text = "null";
                 parenttext.GetComponentsInChildren<Text>()[2].text = "null";//.ToString();
                 parenttext.GetComponentsInChildren<Text>()[3].text = Random.Range(0, 1000).ToString();
                 parenttext.GetComponentsInChildren<Text>()[4].text = Random.Range(0, 1000).ToString();
@@ -80,30 +85,32 @@ public class RankingBoardDataTest : MonoBehaviour
                 parenttext.GetComponentsInChildren<Text>()[6].text = Random.Range(0, 1000).ToString();
                 parenttext.SetActive(true);
                 userinfo[i] = parenttext;
+                
 
             }
             if(i<10&&i>0)
             {
+               
                 GameObject copytext = Instantiate(parenttext, parent.transform);
-
-                copytext.GetComponentsInChildren<Text>()[0].text = i+1.ToString();
-                copytext.GetComponentsInChildren<Text>()[1].text = usernum[i].nickname;
+                copytext.GetComponentsInChildren<Text>()[0].text = ranknumber.ToString();
+               
+                copytext.GetComponentsInChildren<Text>()[1].text = "null";
                 copytext.GetComponentsInChildren<Text>()[2].text = "null";//.ToString();
                 copytext.GetComponentsInChildren<Text>()[3].text = Random.Range(0, 1000).ToString();
                 copytext.GetComponentsInChildren<Text>()[4].text = Random.Range(0, 1000).ToString();
                 copytext.GetComponentsInChildren<Text>()[5].text = Random.Range(0, 1000).ToString();
                 copytext.GetComponentsInChildren<Text>()[6].text = Random.Range(0, 1000).ToString();
-
-                //copytext.SetActive(true);
+                copytext.SetActive(true);
                 userinfo[i] = copytext;
             }
             if(i>9)
             {
+               
                 GameObject copytext = Instantiate(userinfo[0 % 10], parent.transform);
-
                 copytext.SetActive(false);
-                copytext.GetComponentsInChildren<Text>()[0].text = i+1.ToString();
-                copytext.GetComponentsInChildren<Text>()[1].text = usernum[i].nickname;
+                copytext.GetComponentsInChildren<Text>()[0].text = ranknumber.ToString();
+                
+                copytext.GetComponentsInChildren<Text>()[1].text = "null";
                 copytext.GetComponentsInChildren<Text>()[2].text = "null";//.ToString();
                 copytext.GetComponentsInChildren<Text>()[3].text = Random.Range(0, 1000).ToString();
                 copytext.GetComponentsInChildren<Text>()[4].text = Random.Range(0, 1000).ToString();
@@ -116,43 +123,85 @@ public class RankingBoardDataTest : MonoBehaviour
     public void RightButton()
     {
         rankpagenum++;
-        if(rankpagenum!=lastpagenum)
+        if(rankpagenum!=0)
         {
             leftbutton.SetActive(true);
         }
-        
-        for(int i = rankpagenum-1; i<10*(rankpagenum-1);i++)
-        {
-            userinfo[i].SetActive(false);
-        }
-        for(int i=(rankpagenum-1)*10;i<10*rankpagenum;i++)
-        {
-            userinfo[i].SetActive(true);
-        }
-
-
-        if(rankpagenum==lastpagenum)
+        if (rankpagenum == lastpagenum)
         {
             rightbutton.SetActive(false);
         }
+        if (rankpagenum == 1)
+        {
+            parenttext.SetActive(false);
+            for (int i = 0; i < 10; i++)
+            {
+                userinfo[i].SetActive(false);
+            }
+            for (int i = 10; i < 20; i++)
+            {
+                userinfo[i].SetActive(true);
+            }
+        }
+        else if(rankpagenum==lastpagenum)
+        {
+            for (int i = (rankpagenum - 1) * 10; i < rankusernum; i++)
+            {
+                userinfo[i].SetActive(false);
+            }
+            for (int i = (rankpagenum) * 10; i < 10 * (rankpagenum + 1); i++)
+            {
+                userinfo[i].SetActive(true);
+            }
+        }
+        else
+        {
+            for (int i = (rankpagenum - 1)*10; i < 10 * (rankpagenum); i++)
+            {
+                userinfo[i].SetActive(false);
+            }
+            for (int i = (rankpagenum) * 10; i < 10 * (rankpagenum+1); i++)
+            {
+                userinfo[i].SetActive(true);
+            }
+        }
+       
+        
+        
     }
     public void leftButton()
     {
         rankpagenum--;
-
-        for (int i = 10*(rankpagenum+1); i < 10 * (rankpagenum + 2); i++)
+        if (rankpagenum == lastpagenum-1)
         {
-            userinfo[i].SetActive(false);
+            for (int i = 10 * (rankpagenum + 1); i < rankusernum; i++)
+            {
+                userinfo[i].SetActive(false);
+            }
+            for (int i = rankpagenum * 10; i < 10 * (rankpagenum + 1); i++)
+            {
+                userinfo[i].SetActive(true);
+            }
         }
-        for (int i = rankpagenum * 10; i < 10 * (rankpagenum+1); i++)
+        else
         {
-            userinfo[i].SetActive(true);
+            for (int i = 10 * (rankpagenum + 1); i < 10 * (rankpagenum + 2); i++)
+            {
+                userinfo[i].SetActive(false);
+            }
+            for (int i = rankpagenum * 10; i < 10 * (rankpagenum + 1); i++)
+            {
+                userinfo[i].SetActive(true);
+            }
         }
 
-
-        if (rankpagenum==1)
+        if (rankpagenum==0)
         {
             leftbutton.SetActive(false);
+        }
+        if(rightbutton.activeSelf==false&&rankpagenum!=lastpagenum)
+        {
+            rightbutton.SetActive(true);
         }
     }
 }

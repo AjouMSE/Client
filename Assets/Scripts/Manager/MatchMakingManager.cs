@@ -29,7 +29,6 @@ namespace Manager
         private const string DestSceneName = "GameScene";
 
         private SocketIOCommunicator _sio;
-        private bool _isInitialized;
 
         #endregion
         
@@ -110,9 +109,9 @@ namespace Manager
 
         public override void Init()
         {
-            if (!_isInitialized)
+            if (!IsInitialized)
             {
-                _isInitialized = true;
+                IsInitialized = true;
                 
                 // Set Up Socket.io
                 _sio = gameObject.AddComponent<SocketIOCommunicator>();

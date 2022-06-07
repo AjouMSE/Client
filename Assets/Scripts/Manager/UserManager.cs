@@ -131,6 +131,10 @@ namespace Manager
 
         public override void Init()
         {
+            if (!IsInitialized)
+            {
+                IsInitialized = true;
+            }
         }
     }   
 }

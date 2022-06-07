@@ -64,11 +64,16 @@ namespace Manager
         /// </summary>
         public override void Init()
         {
-            // Init Audio source & audio mixer
-            _audioSource = gameObject.AddComponent<AudioSource>();
+            if (!IsInitialized)
+            {
+                IsInitialized = true;
+            
+                // Init Audio source & audio mixer
+                _audioSource = gameObject.AddComponent<AudioSource>();
 
-            // _audioMixer.FindMatchingGroups("Master") -> Idx 0: Master, Idx 1: BGM, Idx 2: SFX
-            _audioSource.outputAudioMixerGroup = CacheAudioSource.Instance.AudioMixer.FindMatchingGroups("BGM")[0];
+                // _audioMixer.FindMatchingGroups("Master") -> Idx 0: Master, Idx 1: BGM, Idx 2: SFX
+                _audioSource.outputAudioMixerGroup = CacheAudioSource.Instance.AudioMixer.FindMatchingGroups("BGM")[0];   
+            }
         }
 
         /// <summary>

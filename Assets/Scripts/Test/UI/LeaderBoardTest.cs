@@ -13,11 +13,9 @@ public class LeaderBoardTest : MonoBehaviour
 {
     void Start()
     {
-        // Variable about page number
         var pageNum = 1;
-        
-        // Http Get Request
-        HttpRequestManager.Instance.Get($"/ranking/leader-board?page={pageNum}", Callback);
+        HttpRequestManager.Instance.Init();
+        HttpRequestManager.Instance.Get($"/ranking/leader-board?page={pageNum.ToString()}", Callback);
     }
 
     private void Callback(UnityWebRequest req)
@@ -31,8 +29,9 @@ public class LeaderBoardTest : MonoBehaviour
             // print all items in user list
             UserList userList = JsonUtility.FromJson<UserList>(json);
             Debug.Log(userList.ToString());
+            
 
-            for (int i = 0; i < userList.users.Count; i++)
+            for (int i = 0; i < userList.totalCount; i++)
             {
                 // Do something
                 User user = userList.users[i];
@@ -48,12 +47,12 @@ public class LeaderBoardTest : MonoBehaviour
         else if (req.result == UnityWebRequest.Result.ProtocolError)
         {
             // Error code (ex 400)
-            Debug.Log($"Protocol error: {req.error}");
+            Debug.Log($"Protocol error: {req.error} {req.responseCode.ToString()}");
         }
         else
         {
             // Error code (ex 500)
-            Debug.Log($"Another error: {req.error}");
+            Debug.Log($"Another error: {req.error} {req.responseCode.ToString()}");
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Manager
 
         private const string Host = "localhost";
         private const ushort Port = 8080;
-        private const bool secure = false;
+        private const bool Secure = false;
 
         private enum RequestType
         {
@@ -37,13 +37,17 @@ namespace Manager
 
         public override void Init()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(secure ? "https" : "http");
-            sb.Append("://");
-            sb.Append(Host);
-            sb.Append(":");
-            sb.Append(Port);
-            _uri = sb.ToString();
+            if (!IsInitialized)
+            {
+                IsInitialized = true;
+                StringBuilder sb = new StringBuilder();
+                sb.Append(Secure ? "https" : "http");
+                sb.Append("://");
+                sb.Append(Host);
+                sb.Append(":");
+                sb.Append(Port);
+                _uri = sb.ToString();   
+            }
         }
 
         /// <summary>

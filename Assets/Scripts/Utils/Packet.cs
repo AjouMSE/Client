@@ -47,11 +47,13 @@ namespace Utils
         public struct UserList
         {
             public List<User> users;
+            public long totalCount;
 
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("UserList: [\n");
+                sb.Append($"total user count: {totalCount.ToString()}\n");
                 for (int i = 0; i < users.Count; i++)
                 {
                     sb.Append(users[i].ToString());

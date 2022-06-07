@@ -56,17 +56,22 @@ namespace Manager
 
         public override void Init()
         {
-            _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
-            _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
+            if (!IsInitialized)
+            {
+                IsInitialized = true;
+            
+                _netSync = GameObject.Find("NetworkSynchronizer").GetComponent<NetworkSynchronizer>();
+                _panelController = GameObject.Find("GameSceneObjectController").GetComponent<PanelController>();
 
-            GameObject uiController = GameObject.Find("GameSceneUIController");
-            _gameVersusUIController = uiController.GetComponent<HUDGameVersusUIController>();
-            _userInfoUIController = uiController.GetComponent<HUDGameUserInfoUIController>();
-            _cardSelectionUIController = uiController.GetComponent<HUDGameCardSelectionUIController>();
+                GameObject uiController = GameObject.Find("GameSceneUIController");
+                _gameVersusUIController = uiController.GetComponent<HUDGameVersusUIController>();
+                _userInfoUIController = uiController.GetComponent<HUDGameUserInfoUIController>();
+                _cardSelectionUIController = uiController.GetComponent<HUDGameCardSelectionUIController>();
 
-            _turnValue = DefaultTurnValue;
-            _timerValue = DefaultTimerValue;
-            _canSelect = false;
+                _turnValue = DefaultTurnValue;
+                _timerValue = DefaultTimerValue;
+                _canSelect = false;
+            }
         }
 
         public void CheckTimerReady()
@@ -292,6 +297,7 @@ namespace Manager
                 if (ValidGameOver())
                 {
                     GameOver();
+                    IsInitialized = false;
                     yield break;
                 }
             }

@@ -18,7 +18,7 @@ namespace Utils
         #region Public Properties
 
         public static bool IsDestroyed { get; private set; }
-        public static bool IsCreated { get; private set; }
+        public static bool IsInitialized { get; protected set; }
 
         public static T Instance
         {
@@ -26,7 +26,7 @@ namespace Utils
             {
                 if (IsDestroyed)
                 {
-                    if (IsCreated) IsCreated = false;
+                    IsInitialized = false;
                     StringBuilder sb = new StringBuilder();
                     sb.Append("Instance of ");
                     sb.Append(typeof(T));
@@ -44,7 +44,6 @@ namespace Utils
 
                         if (instances.Length == 0)
                         {
-                            IsCreated = true;
                             _instance = new GameObject().AddComponent<T>();
                             _instance.gameObject.name = $"(s) {typeof(T)}";
                             DontDestroyOnLoad(_instance);

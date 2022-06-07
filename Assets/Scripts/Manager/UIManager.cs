@@ -63,6 +63,10 @@ namespace Manager
         /// <exception cref="NotImplementedException"></exception>
         public override void Init()
         {
+            if (!IsInitialized)
+            {
+                IsInitialized = true;
+            }
         }
 
 

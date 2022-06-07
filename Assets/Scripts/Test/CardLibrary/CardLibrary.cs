@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 
 public class CardLibrary : MonoBehaviour
 {
     [SerializeField] private GameObject iconGrid;
-    [SerializeField] private TMP_Dropdown cardCategory;
+    [SerializeField] private List<Button> cardCategory;
     [SerializeField] private GameObject scrollPrefab;
 
     [SerializeField] private GameObject skill_IconPrefab;
@@ -30,9 +31,9 @@ public class CardLibrary : MonoBehaviour
             GameObject tmp = Instantiate<GameObject>(skill_IconPrefab, iconGrid.transform);
 
             Skill_Icon icon = tmp.GetComponent<Skill_Icon>();
-            skill_IconPrefab.GetComponent<Image>().sprite = Resources.Load<Sprite>("Image/Skill_Icon/" + cardData.Value.icon);
 
             icon.cardData = cardData.Value;
+
             cardlist.Add(tmp);
         }
 
@@ -48,7 +49,11 @@ public class CardLibrary : MonoBehaviour
 
     public void CategoryChange()
     {
-        switch (cardCategory.value)
+        string btnName = EventSystem.current.currentSelectedGameObject.name;
+
+        int btnNum = int.Parse(btnName);
+
+        switch (btnNum)
         {
             case (int)SkillCategory.All:
                 scroll2d.animate();

@@ -13,20 +13,21 @@ public class Card : MonoBehaviour
     [SerializeField] private TMP_Text cost;
     [SerializeField] private Image skillicon;
     [SerializeField] private GameObject rangeBoxParent;
+    [SerializeField] private Image rangeBoxBackground;
     [SerializeField] private Image[] rangeBoxes = new Image[25];
+    [SerializeField] private Image special_Icon;
 
 
 
-    private void Update()
+    private void Start()
     {
-
-
-        
-
+        isCardDataNull(false);
     }
 
     public void SetData(CardData skillData)
     {
+        isCardDataNull(true);
+
 
         rangeBoxes = rangeBoxParent.GetComponentsInChildren<Image>();
 
@@ -52,5 +53,35 @@ public class Card : MonoBehaviour
                 tmp++;
             }
         }
+        if(skillData.special == 0)
+        {
+            special_Icon.color = new Color(255, 255, 255, 0);
+        }
+        else if(skillData.special != 0)
+        {
+            special_Icon.sprite = Resources.Load<Sprite>("Image/Skill_Icon/" + TableDatas.Instance.GetSpecialData(skillData.special).icon);
+            special_Icon.color = new Color(255, 255, 255, 255);
+        }
+
+
     }
+
+    private void isCardDataNull(bool boolean)
+    {
+        if (boolean)
+        {
+            skillicon.color = new Color(255, 255, 255, 255);
+            rangeBoxBackground.color = new Color(0, 0, 0, 255);
+            special_Icon.color = new Color(255, 255, 255, 255);
+        }
+        else if (!boolean)
+        {
+            skillicon.color = new Color(255, 255, 255, 0);
+            rangeBoxBackground.color = new Color(0, 0, 0, 0);
+            special_Icon.color = new Color(255, 255, 255, 0);
+        }
+    }
+
+
+
 }

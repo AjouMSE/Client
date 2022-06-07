@@ -1,12 +1,12 @@
 {"data":[
-[301001001,"Heal",1,"player",15,0,"Heal"],
-[301001002,"Burn",1,"enemy",-3,3,"Burn"],
-[301002001,"Shield",2,"enemy",-20,5,"Shield"],
-[301002002,"Mana Overload",2,"player",1.5,1,"Mana Overload"],
-[301003001,"Concentration",3,"player",-5,3,"Concentration"],
-[301003002,"Mana Disorder",3,"enemy",1.5,3,"Mana Disorder"],
-[301004001,"Mana Charge",4,"player",2,0,"Mana Charge"],
-[301005001,"Cleanse",5,"player",0,0,"Cleanse"],
-[301006001,"Bind",6,"enemy",0,2,"Bind"],
-[301007001,"Stun",7,"enemy",0,1,"Stun"]
+[301001001,"Heal",1,"player",20,0,"S_Heal"],
+[301001002,"Burn",1,"enemy",-3,3,"S_Burn"],
+[301002001,"Shield",2,"enemy",-50,0,"S_Shield"],
+[301002002,"Mana Overload",2,"player",1.5,1,"S_ManaOverload"],
+[301003001,"Concentration",3,"player",-5,3,"S_Concentration"],
+[301003002,"Mana Disorder",3,"enemy",1.5,3,"S_ManaDisorder"],
+[301004001,"Mana Charge",4,"player",2,0,"S_ManaCharge"],
+[301005001,"Cleanse",5,"player",0,0,"S_Cleanse"],
+[301006001,"Bind",6,"enemy",0,2,"S_Bind"],
+[301007001,"Stun",7,"enemy",0,1,"S_Stun"]
 ]}

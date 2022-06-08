@@ -16,8 +16,10 @@ namespace Data.Cache
         private const string SrcPathLoadingIcon = "Loading_Icon";
         private const string SrcPathSkillIcon = "Skill_Icon";
 
-        private const string SrcPathSoundOn = "SoundOn";
-        private const string SrcPathSoundOff = "SoundOff";
+        private const string SrcPathSoundOn = "Button_SoundOn";
+        private const string SrcPathSoundOff = "Button_SoundOff";
+        private const string SrcPathButtonBig = "Button_Big";
+        private const string SrcPathButtonBigPressed = "Button_Big_Pressed";
         
         private const string SrcPathLoadingIconFire = "LoadingFire";
         private const string SrcPathLoadingIconIce = "LoadingIce";
@@ -37,6 +39,8 @@ namespace Data.Cache
                 // Button Icons (0 ~ 99)
                 { 0, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathSoundOn}") },
                 { 1, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathSoundOff}") },
+                { 2, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathButtonBig}") },
+                { 3, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathButtonBigPressed}") },
                 
                 // Loading Icons (100 ~ 200)
                 { 100, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconFire}") },

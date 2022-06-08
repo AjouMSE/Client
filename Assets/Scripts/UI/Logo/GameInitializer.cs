@@ -55,7 +55,6 @@ namespace UI.Logo
             AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.SFX, 1.0f);
 
             UIManager.Instance.Init();
-            UIManager.Instance.SetResolution(UIManager.Resolution169.Resolution720);
 
             HttpRequestManager.Instance.Init();
             UserManager.Instance.Init();

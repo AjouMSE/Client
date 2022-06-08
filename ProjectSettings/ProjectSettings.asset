@@ -688,11 +688,11 @@ PlayerSettings:
     m_VersionName: 
   apiCompatibilityLevel: 6
   activeInputHandler: 0
-  cloudProjectId: 234ca6bf-5dc4-4c28-8be7-cada4024443a
+  cloudProjectId: ba43fedb-53f3-4360-b199-193c60bb5f13
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: MagicaDuel
-  organizationId: kiro5502
+  projectName: MagicaDuel (1)
+  organizationId: lhj3883
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   virtualTexturingSupportEnabled: 0

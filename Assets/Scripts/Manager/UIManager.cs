@@ -53,7 +53,11 @@ namespace Manager
 
         #region Public variables
 
-        public bool isFullScreen { get; private set; }
+        public List<Resolution> SupportedResolutions { get; private set; }
+        public int MaxWidth { get; private set; }
+        public int MaxHeight { get; private set; }
+        public int MaxFrameRate { get; private set; }
+        public bool IsFullScreen { get; private set; }
 
         #endregion
 
@@ -68,6 +72,25 @@ namespace Manager
         {
             if (!IsInitialized)
             {
+                Resolution[] resolutions = Screen.resolutions;
+                SupportedResolutions = new List<Resolution>();
+                SupportedResolutions.Add(resolutions[resolutions.Length - 1]);
+                
+                var ratio = SupportedResolutions[0].width / (float) SupportedResolutions[0].height;
+                Debug.Log(ratio.ToString());
+                for (int i = resolutions.Length - 2; i >= 0; i--)
+                {
+                    var ratioGap = Math.Abs((resolutions[i].width / (float)resolutions[i].height) - ratio);
+                    if (ratioGap < 0.0001f)
+                        SupportedResolutions.Add(resolutions[i]);
+
+                    if (SupportedResolutions.Count == 4)
+                        break;
+                }
+                
+                MaxWidth = SupportedResolutions[0].width;
+                MaxHeight = SupportedResolutions[0].height;
+                MaxFrameRate = SupportedResolutions[0].refreshRate;
                 IsInitialized = true;
             }
         }
@@ -90,27 +113,10 @@ namespace Manager
         /// <summary>
         ///  Set display resolution
         /// </summary>
-        /// <param name="type"></param>
-        public void SetResolution(Resolution169 type)
+        /// <param name="resolution"></param>
+        public void SetResolution(Resolution resolution)
         {
-            switch (type)
-            {
-                case Resolution169.Resolution1080:
-                    Screen.SetResolution(Width1080, Height1080, isFullScreen);
-                    break;
-
-                case Resolution169.Resolution900:
-                    Screen.SetResolution(Width900, Height900, isFullScreen);
-                    break;
-
-                case Resolution169.Resolution720:
-                    Screen.SetResolution(Width720, Height720, isFullScreen);
-                    break;
-
-                default:
-                    Debug.LogError("UndefinedResolutionTypeException");
-                    break;
-            }
+            Screen.SetResolution(resolution.width, resolution.height, IsFullScreen);
         }
 
         /// <summary>
@@ -118,8 +124,8 @@ namespace Manager
         /// </summary>
         public void ChangeScreenMode()
         {
-            isFullScreen = !isFullScreen;
-            Screen.fullScreenMode = isFullScreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+            IsFullScreen = !IsFullScreen;
+            Screen.fullScreenMode = IsFullScreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
         }
 
         /// <summary>

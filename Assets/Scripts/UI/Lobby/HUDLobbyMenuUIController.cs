@@ -10,40 +10,74 @@ namespace UI.Lobby
 {
     public class HUDLobbyMenuUIController : MonoBehaviour
     {
-        #region Private constants
-
-        private const string CvsNameLobby = "HUD_Lobby";
-        private const string CvsNameLobbyUI = "Cvs_Lobby_UI";
-        private const string CvsNameUserInfo = "Cvs_Lobby_UserInfo";
-        private const string CvsNameSettings = "Cvs_Lobby_Settings";
-        private const string CvsNameMatchMaking = "Obj_Lobby_MatchMaking";
-
-        #endregion
-
-
         #region Private variables
 
-        [Header("Camera")] 
-        [SerializeField] private Camera hudCamera;
+        [Header("Camera")] [SerializeField] private Camera hudCamera;
 
-        [Header("Match Making UI")] 
-        [SerializeField] private GameObject matchMakingUI;
-        
-        [Header("Canvas Groups")] 
-        [SerializeField] private CanvasGroup lobbyCvsGroup;
+        [Header("Match Making UI")] [SerializeField]
+        private GameObject matchMakingUI;
+
+        [Header("Canvas Groups")] [SerializeField]
+        private CanvasGroup lobbyCvsGroup;
+
         [SerializeField] private CanvasGroup userInfoCvsGroup;
         [SerializeField] private CanvasGroup settingsCvsGroup;
-        
+
         [Header("Title text")] [SerializeField]
         private Text titleText;
 
         [Header("3D Scroll menu UI")] [SerializeField]
         private GameObject menuScroll3D;
 
+        private CanvasGroup _lobbyCanvasGroup;
+        private CanvasGroup _leaderBoardCanvasGroup;
+        private CanvasGroup _cardLibCanvasGroup;
+        private CanvasGroup _userInfoCanvasGroup;
+        private CanvasGroup _settingsCvsGroup;
+
         #endregion
 
 
-        #region Callbacks
+        #region Unity event methods
+
+        private void Start()
+        {
+            Init();
+        }
+
+        private void Update()
+        {
+            // Test code
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                menuScroll3D.GetComponent<ScrollScript3D>().OpenScroll();
+            }
+        }
+
+        #endregion
+
+
+        #region Private methods
+
+        private void Init()
+        {
+            _lobbyCanvasGroup = GetComponent<CanvasGroup>();
+            //_leaderBoardCanvasGroup = GetComponentsInChildren<CanvasGroup>()[0];
+            
+            // Set title color
+            titleText.text = CustomUtils.MakeTitleColor();
+
+            // Start fade in effect
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, lobbyCvsGroup, UIManager.LobbyUIFadeInDuration,
+                FadeInCallback);
+
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBGM3, true);
+        }
+
+        #endregion
+
+
+        #region Button Callbacks
 
         private void FadeInCallback()
         {
@@ -85,42 +119,6 @@ namespace UI.Lobby
         {
             menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, settingsCvsGroup, UIManager.LobbyMenuFadeInOutDuration);
-        }
-
-        #endregion
-
-
-        #region Custom methods
-
-        private void Init()
-        {
-            // Set title color
-            titleText.text = CustomUtils.MakeTitleColor();
-
-            // Start fade in effect
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, lobbyCvsGroup, UIManager.LobbyUIFadeInDuration,
-                FadeInCallback);
-
-            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBGM3, true);
-        }
-
-        #endregion
-
-
-        #region Unity event methods
-
-        private void Start()
-        {
-            Init();
-        }
-
-        private void Update()
-        {
-            // Test code
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                menuScroll3D.GetComponent<ScrollScript3D>().OpenScroll();
-            }
         }
 
         #endregion

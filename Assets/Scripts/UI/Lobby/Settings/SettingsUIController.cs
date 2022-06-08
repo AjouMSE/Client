@@ -12,17 +12,16 @@ namespace UI.Lobby.Settings
     {
         #region Private variables
 
-        [Header("Settings category panels")]
+        [Header("Settings category panels")] 
         [SerializeField] private GameObject[] categoryPanels;
 
-        [Header("Settings Canvas Group")] 
-        [SerializeField] private CanvasGroup settingsCvsGroup;
+        [Header("Performance Display")] 
+        [SerializeField] private GameObject performanceDisplay;
 
         [Header("3D Scroll Menu UI")] 
         [SerializeField] private GameObject scroll3D;
 
-        [Header("Screen Mode Button Text")] 
-        [SerializeField] private Text screenModeBtnText;
+        private CanvasGroup _settingsCanvasGroup;
 
         #endregion
 
@@ -41,6 +40,8 @@ namespace UI.Lobby.Settings
 
         private void Init()
         {
+            _settingsCanvasGroup = GetComponent<CanvasGroup>();
+            UIManager.Instance.SetPerformanceDisplay(performanceDisplay);
         }
 
         #endregion
@@ -67,7 +68,8 @@ namespace UI.Lobby.Settings
         public void OnSettingBackBtnClick()
         {
             scroll3D.GetComponent<ScrollScript3D>().OpenScroll();
-            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, settingsCvsGroup, UIManager.LobbyMenuFadeInOutDuration);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _settingsCanvasGroup,
+                UIManager.LobbyMenuFadeInOutDuration);
         }
 
         #endregion

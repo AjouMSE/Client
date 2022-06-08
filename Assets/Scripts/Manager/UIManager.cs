@@ -16,23 +16,14 @@ namespace Manager
     {
         #region Private constants
 
-        private const int Width1080 = 1920, Height1080 = 1080;
-        private const int Width900 = 1600, Height900 = 900;
-        private const int Width720 = 1280, Height720 = 720;
         private const float MinFadeValue = 0f, MaxFadeValue = 1f;
         private const float MaxSceneLoadProgress = 0.9f;
+        private const int MaxResolutionCount = 4;
 
         #endregion
 
 
         #region Public constants
-
-        public enum Resolution169
-        {
-            Resolution1080 = 0,
-            Resolution900 = 1,
-            Resolution720 = 2
-        }
 
         public enum FadeType
         {
@@ -41,7 +32,7 @@ namespace Manager
         }
 
         public const float LobbyUIFadeInDuration = 1f;
-        public const float LobbyMenuFadeInOutDuration = 0.25f;
+        public const float LobbyMenuFadeInOutDuration = 0.2f;
 
         public const string SceneNameLogo = "LogoScene";
         public const string SceneNameLobby = "LobbyScene";
@@ -51,13 +42,24 @@ namespace Manager
         #endregion
 
 
+        #region Private variables
+
+        private GameObject _performanceDisplay;
+
+        #endregion
+
+
         #region Public variables
 
-        public List<Resolution> SupportedResolutions { get; private set; }
+        public List<int> SupportedFrameRates { get; private set; }
+        public List<Vector2> SupportedResolutions { get; private set; }
         public int MaxWidth { get; private set; }
         public int MaxHeight { get; private set; }
         public int MaxFrameRate { get; private set; }
-        public bool IsFullScreen { get; private set; }
+        public float ResolutionRatio { get; private set; }
+        public bool IsFullScreen { get; private set; } = true;
+        
+        public bool ActivePerformanceDisplay { get; private set; }
 
         #endregion
 
@@ -73,28 +75,79 @@ namespace Manager
             if (!IsInitialized)
             {
                 Resolution[] resolutions = Screen.resolutions;
-                SupportedResolutions = new List<Resolution>();
-                SupportedResolutions.Add(resolutions[resolutions.Length - 1]);
-                
-                var ratio = SupportedResolutions[0].width / (float) SupportedResolutions[0].height;
-                Debug.Log(ratio.ToString());
+                SupportedResolutions = new List<Vector2>();
+                SupportedFrameRates = new List<int>();
+
+                // Init supported frame rates
+                var defaultWidth = resolutions[0].width;
+                var defaultHeight = resolutions[0].height;
+                SupportedFrameRates.Add(resolutions[0].refreshRate);
+                for (int i = 1; i < resolutions.Length; i++)
+                {
+                    if (resolutions[i].width == defaultWidth && resolutions[i].height == defaultHeight)
+                        SupportedFrameRates.Add(resolutions[i].refreshRate);
+                    else
+                    {
+                        MaxFrameRate = resolutions[i - 1].refreshRate;
+                        break;
+                    }
+                }
+
+                // Init supported resolutions
+                MaxWidth = resolutions[resolutions.Length - 1].width;
+                MaxHeight = resolutions[resolutions.Length - 1].height;
+                ResolutionRatio = MaxWidth / (float)MaxHeight;
+                SupportedResolutions.Add(new Vector2(MaxWidth, MaxHeight));
+
+                var newWidth = MaxWidth;
+                var newHeight = MaxHeight;
                 for (int i = resolutions.Length - 2; i >= 0; i--)
                 {
-                    var ratioGap = Math.Abs((resolutions[i].width / (float)resolutions[i].height) - ratio);
-                    if (ratioGap < 0.0001f)
-                        SupportedResolutions.Add(resolutions[i]);
+                    if (resolutions[i].width == newWidth && resolutions[i].height == newHeight)
+                        continue;
 
-                    if (SupportedResolutions.Count == 4)
+                    var ratioGap = Math.Abs((resolutions[i].width / (float)resolutions[i].height) - ResolutionRatio);
+                    if (ratioGap < 0.0001f)
+                    {
+                        SupportedResolutions.Add(new Vector2(resolutions[i].width, resolutions[i].height));
+                        newWidth = resolutions[i].width;
+                        newHeight = resolutions[i].height;
+                    }
+
+                    if (SupportedResolutions.Count == MaxResolutionCount)
                         break;
                 }
-                
-                MaxWidth = SupportedResolutions[0].width;
-                MaxHeight = SupportedResolutions[0].height;
-                MaxFrameRate = SupportedResolutions[0].refreshRate;
+
                 IsInitialized = true;
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="display"></param>
+        public void SetPerformanceDisplay(GameObject display)
+        {
+            _performanceDisplay = display;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ShowPerformanceDisplay()
+        {
+            ActivePerformanceDisplay = true;
+            _performanceDisplay.SetActive(true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void HidePerformanceDisplay()
+        {
+            ActivePerformanceDisplay = false;
+            _performanceDisplay.SetActive(false);
+        }
 
         /// <summary>
         /// Fade effect for canvas group
@@ -110,13 +163,15 @@ namespace Manager
             StartCoroutine(FadeEffectCoroutine(fadeType, group, duration, callback, disableAfterFadeOut));
         }
 
+
         /// <summary>
-        ///  Set display resolution
+        /// Set display resolution
         /// </summary>
-        /// <param name="resolution"></param>
-        public void SetResolution(Resolution resolution)
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public void SetResolution(int width, int height)
         {
-            Screen.SetResolution(resolution.width, resolution.height, IsFullScreen);
+            Screen.SetResolution(width, height, IsFullScreen);
         }
 
         /// <summary>

@@ -13,6 +13,7 @@ namespace UI.Login
         #region Private constants
         
         private const float FadeInDuration = 1.5f, FadeOutDuration = 0.5f;
+        private const float CameraMovementEffectSpd = 15f;
 
         #endregion
 
@@ -64,7 +65,7 @@ namespace UI.Login
             {
                 _titleCanvasGroup.gameObject.SetActive(false);
                 signinScroll.OpenScroll();
-            }, -2, 0.2f);
+            }, -2, CameraMovementEffectSpd);
         }
 
         #endregion

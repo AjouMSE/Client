@@ -16,6 +16,7 @@ namespace UI.Login
         #region Private constants
 
         private const string SignInReqPath = "/user/sign-in";
+        private const float CameraMovementEffectSpd = 15f;
 
         #endregion
 
@@ -103,7 +104,7 @@ namespace UI.Login
                             UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);
                         }, false);
                     });
-                }, 10, 0.1f);
+                }, 10, CameraMovementEffectSpd);
             }
             else if (req.result == UnityWebRequest.Result.ProtocolError)
             {

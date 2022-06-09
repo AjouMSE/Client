@@ -79,7 +79,7 @@ namespace UI.Login
 
             while (transform.position != dest)
             {
-                transform.position = Vector3.MoveTowards(transform.position, dest, moveSpd);
+                transform.position = Vector3.MoveTowards(transform.position, dest, moveSpd * Time.deltaTime);
                 yield return null;
             }
 

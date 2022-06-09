@@ -659,7 +659,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 24554203}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1400464555}
+        m_TargetAssemblyTypeName: UI.Lobby.MenuUI.LobbyMenuSignOutController, Assembly-CSharp
+        m_MethodName: OnSignOutBtnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &24554203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45268,7 +45280,7 @@ RectTransform:
   - {fileID: 1511944065}
   - {fileID: 24554201}
   m_Father: {fileID: 2144861010}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -45325,6 +45337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bf81a479b4cdb49976f263ed2d4033, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scroll3D: {fileID: 953387233}
 --- !u!1 &1403769056
 GameObject:
   m_ObjectHideFlags: 0
@@ -48573,7 +48586,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1511944067}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1400464555}
+        m_TargetAssemblyTypeName: UI.Lobby.MenuUI.LobbyMenuSignOutController, Assembly-CSharp
+        m_MethodName: OnCancelBtnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1511944067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61807,8 +61832,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2144861014}
-        m_TargetAssemblyTypeName: UI.Lobby.HUDLobbyMenuUIController, Assembly-CSharp
-        m_MethodName: OnSettingsBtnClick
+        m_TargetAssemblyTypeName: UI.Lobby.MenuUI.HUDLobbyMenuUIController, Assembly-CSharp
+        m_MethodName: OnSignOutBtnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -67793,8 +67818,8 @@ RectTransform:
   - {fileID: 1027070917}
   - {fileID: 70657401}
   - {fileID: 1811661333}
-  - {fileID: 1888053132}
   - {fileID: 1400464552}
+  - {fileID: 1888053132}
   m_Father: {fileID: 1369180332}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -68246,7 +68271,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5649413317850627233, guid: f91a388b0a484b34eb39bc7348d4ef8d, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5649413317850627233, guid: f91a388b0a484b34eb39bc7348d4ef8d, type: 3}
       propertyPath: m_AnchorMax.x

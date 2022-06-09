@@ -149,8 +149,10 @@ namespace Manager
                 req = UnityWebRequest.Put(dest, json);
             else
                 throw new Exception("UndefinedRequestTypeException");
-
-            req.uploadHandler = new UploadHandlerRaw(jsonToRaw);
+            
+            if(jsonToRaw.Length > 0)
+                req.uploadHandler = new UploadHandlerRaw(jsonToRaw);
+            
             req.downloadHandler = new DownloadHandlerBuffer();
             req.SetRequestHeader("Content-Type", "application/json");
             yield return req.SendWebRequest();

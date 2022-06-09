@@ -13,7 +13,7 @@ namespace UI.Login
         #region Private constants
         
         private const float FadeInDuration = 1.5f, FadeOutDuration = 0.5f;
-        private const float CameraMovementEffectSpd = 15f;
+        private const float CameraMovementEffectSpd = 12f;
 
         #endregion
 
@@ -38,8 +38,7 @@ namespace UI.Login
 
         private void Start()
         {
-            InitUI();
-            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _titleCanvasGroup, FadeInDuration);
+            Init();
         }
 
         #endregion
@@ -47,11 +46,12 @@ namespace UI.Login
 
         #region Private methdos
 
-        private void InitUI()
+        private void Init()
         {
             _titleCanvasGroup = GetComponent<CanvasGroup>();
             titleText.text = CustomUtils.MakeTitleColor();
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBGM1, true);
+            UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _titleCanvasGroup, FadeInDuration);
         }
 
         #endregion
@@ -59,13 +59,16 @@ namespace UI.Login
 
         #region Callbacks
 
-        public void OnToStartBtnClick()
+        /// <summary>
+        /// 
+        /// </summary>
+        public void OnStartBtnClick()
         {
             mainCameraController.CameraMovementEffect(() =>
             {
-                _titleCanvasGroup.gameObject.SetActive(false);
                 signinScroll.OpenScroll();
             }, -2, CameraMovementEffectSpd);
+            gameObject.SetActive(false);
         }
 
         #endregion

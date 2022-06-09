@@ -40706,7 +40706,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 873251266}
         m_TargetAssemblyTypeName: UI.Login.HUDLoginTitleUIController, Assembly-CSharp
-        m_MethodName: OnToStartBtnClick
+        m_MethodName: OnStartBtnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

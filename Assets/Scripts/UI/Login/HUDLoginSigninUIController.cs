@@ -16,7 +16,7 @@ namespace UI.Login
         #region Private constants
 
         private const string SignInReqPath = "/user/sign-in";
-        private const float CameraMovementEffectSpd = 15f;
+        private const float CameraMovementEffectSpd = 12f;
 
         #endregion
 

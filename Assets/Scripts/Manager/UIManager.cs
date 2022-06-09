@@ -45,6 +45,8 @@ namespace Manager
         #region Private variables
 
         private GameObject _performanceDisplay;
+        private GameObject _signOutDisplay;
+        private GameObject _exitGameDisplay;
 
         #endregion
 
@@ -58,7 +60,7 @@ namespace Manager
         public int MaxFrameRate { get; private set; }
         public float ResolutionRatio { get; private set; }
         public bool IsFullScreen { get; private set; } = true;
-        
+
         public bool ActivePerformanceDisplay { get; private set; }
 
         #endregion
@@ -131,6 +133,11 @@ namespace Manager
             _performanceDisplay = display;
         }
 
+        public void SetSignOutDisplay(GameObject display)
+        {
+            _signOutDisplay = display;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -143,10 +150,26 @@ namespace Manager
         /// <summary>
         /// 
         /// </summary>
+        public void ShowSignOutDisplay()
+        {
+            _signOutDisplay.SetActive(true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void HidePerformanceDisplay()
         {
             ActivePerformanceDisplay = false;
             _performanceDisplay.SetActive(false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void HideSignOutDisplay()
+        {
+            _signOutDisplay.SetActive(false);
         }
 
         /// <summary>

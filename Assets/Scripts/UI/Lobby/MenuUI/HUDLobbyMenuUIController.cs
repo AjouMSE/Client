@@ -20,6 +20,10 @@ namespace UI.Lobby.MenuUI
 
         [Header("Title text")] 
         [SerializeField] private Text titleText;
+        
+        [Header("UI Display")] 
+        [SerializeField] private GameObject performanceDisplay;
+        [SerializeField] private GameObject signOutDisplay;
 
         [Header("3D Scroll menu UI")] 
         [SerializeField] private GameObject menuScroll3D;
@@ -50,6 +54,10 @@ namespace UI.Lobby.MenuUI
                 menuScroll3D.GetComponent<ScrollScript3D>().OpenScroll();
                 MatchMakingManager.Instance.Init();
             });
+            
+            // Set UI display
+            UIManager.Instance.SetPerformanceDisplay(performanceDisplay);
+            UIManager.Instance.SetSignOutDisplay(signOutDisplay);
 
             // Set MainBgm
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBGM3, true);
@@ -114,6 +122,15 @@ namespace UI.Lobby.MenuUI
         {
             menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroups[4], UIManager.LobbyMenuFadeInOutDuration);
+        }        
+        
+        /// <summary>
+        /// Sign-out button click callback
+        /// </summary>
+        public void OnSignOutBtnClick()
+        {
+            menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            UIManager.Instance.ShowSignOutDisplay();
         }
 
         #endregion

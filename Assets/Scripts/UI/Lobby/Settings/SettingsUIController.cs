@@ -15,9 +15,6 @@ namespace UI.Lobby.Settings
         [Header("Settings category panels")] 
         [SerializeField] private GameObject[] categoryPanels;
 
-        [Header("Performance Display")] 
-        [SerializeField] private GameObject performanceDisplay;
-
         [Header("3D Scroll Menu UI")] 
         [SerializeField] private GameObject scroll3D;
 
@@ -41,7 +38,6 @@ namespace UI.Lobby.Settings
         private void Init()
         {
             _settingsCanvasGroup = GetComponent<CanvasGroup>();
-            UIManager.Instance.SetPerformanceDisplay(performanceDisplay);
         }
 
         #endregion

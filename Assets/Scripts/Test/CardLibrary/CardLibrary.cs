@@ -11,8 +11,8 @@ public class CardLibrary : MonoBehaviour
     [SerializeField] private GameObject iconGrid;
     [SerializeField] private List<Button> cardCategory;
     [SerializeField] private GameObject scrollPrefab;
-
     [SerializeField] private GameObject skill_IconPrefab;
+
 
     List<GameObject> cardlist = new List<GameObject>();
 

@@ -4,9 +4,9 @@ using Manager;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Lobby.Settings
+namespace UI.Display
 {
-    public class SettingsPerformanceDisplayController : MonoBehaviour
+    public class PerformanceDisplayController : MonoBehaviour
     {
         #region Private variables
 

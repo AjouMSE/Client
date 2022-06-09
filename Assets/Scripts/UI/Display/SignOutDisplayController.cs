@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Manager;
 using UnityEngine;
 
-namespace UI.Lobby.MenuUI
+namespace UI.Display
 {
-    public class LobbyMenuSignOutController : MonoBehaviour
+    public class SignOutDisplayController : MonoBehaviour
     {
         #region Private constants
 

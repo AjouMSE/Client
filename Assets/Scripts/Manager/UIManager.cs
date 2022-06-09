@@ -66,6 +66,22 @@ namespace Manager
         #endregion
 
 
+        #region Unity event methods
+
+        public void Update()
+        {
+            if (_exitGameDisplay != null && Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (_exitGameDisplay.activeInHierarchy)
+                    HideExitGameDisplay();
+                else
+                    ShowExitGameDisplay();
+            }
+        }
+
+        #endregion
+
+
         #region Public methods
 
         /// <summary>
@@ -133,9 +149,22 @@ namespace Manager
             _performanceDisplay = display;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="display"></param>
         public void SetSignOutDisplay(GameObject display)
         {
             _signOutDisplay = display;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="display"></param>
+        public void SetExitGameDisplay(GameObject display)
+        {
+            _exitGameDisplay = display;
         }
 
         /// <summary>
@@ -158,6 +187,14 @@ namespace Manager
         /// <summary>
         /// 
         /// </summary>
+        public void ShowExitGameDisplay()
+        {
+            _exitGameDisplay.SetActive(true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void HidePerformanceDisplay()
         {
             ActivePerformanceDisplay = false;
@@ -170,6 +207,14 @@ namespace Manager
         public void HideSignOutDisplay()
         {
             _signOutDisplay.SetActive(false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void HideExitGameDisplay()
+        {
+            _exitGameDisplay.SetActive(false);
         }
 
         /// <summary>

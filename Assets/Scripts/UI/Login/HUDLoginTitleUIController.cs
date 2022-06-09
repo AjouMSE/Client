@@ -26,6 +26,9 @@ namespace UI.Login
         [Header("Title Text")] 
         [SerializeField] private Text titleText;
 
+        [Header("Exit Game Display")] 
+        [SerializeField] private GameObject exitGameDisplay;
+
         [Header("3D Scroll UI")] 
         [SerializeField] private ScrollScript3D signinScroll;
 
@@ -51,6 +54,7 @@ namespace UI.Login
             _titleCanvasGroup = GetComponent<CanvasGroup>();
             titleText.text = CustomUtils.MakeTitleColor();
             AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.MainBGM1, true);
+            UIManager.Instance.SetExitGameDisplay(exitGameDisplay);
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, _titleCanvasGroup, FadeInDuration);
         }
 

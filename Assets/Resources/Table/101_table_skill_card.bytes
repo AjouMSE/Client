@@ -21,11 +21,11 @@
 [101100011,"Flame Smash",100,"00000 00100 01110 00100 00000",6,2,30,"Toon punch 2","Flame Smash",301007001],
 [101100012,"Torrential Tribute",100,"00000 11111 11111 11111 00000",4,2,20,"Water tornado","Torrential Tribute",0],
 [101100013,"Fire Storm",100,"10001 01110 01010 01110 10001",5,2,30,"Fire Buff","Fire Storm",301001002],
-[101200000,"Mana Overload",200,"00000 00000 00100 00000 00000",5,1,0,"LevelupCylinderBlue","Mana Overload",301002002],
-[101200001,"Concentration",200,"00000 00000 00100 00000 00000",3,1,0,"MagicCircleBlue","Concentration",301003001],
-[101200002,"Mana Charge",200,"00000 00000 00100 00000 00000",0,1,0,"MagicSphereBlue","Mana Charge",301004001],
-[101200003,"Cleanse",200,"00000 00000 00100 00000 00000",3,1,0,"MagicNovaBlue","Cleanse",301005001],
-[101200004,"Mana Disorder",200,"00000 00100 01110 00100 00000",3,1,5,"ShadowMuzzle","Mana Disorder",301003002],
-[101200005,"Life Recovery",200,"00000 00000 00100 00000 00000",5,1,20,"Healing","Life Recovery",301001001],
-[101200006,"Mana Shield",200,"00000 00000 00100 00000 00000",4,1,20,"ShieldSoftYellow","Mana Shield",301002001]
+[101202000,"Mana Overload",202,"00000 00000 00100 00000 00000",5,1,0,"LevelupCylinderBlue","Mana Overload",301002002],
+[101203001,"Concentration",203,"00000 00000 00100 00000 00000",3,1,0,"MagicCircleBlue","Concentration",301003001],
+[101201002,"Mana Charge",201,"00000 00000 00100 00000 00000",0,1,0,"MagicSphereBlue","Mana Charge",301004001],
+[101204003,"Cleanse",204,"00000 00000 00100 00000 00000",3,1,0,"MagicNovaBlue","Cleanse",301005001],
+[101205004,"Mana Disorder",205,"00000 00100 01110 00100 00000",3,1,5,"ShadowMuzzle","Mana Disorder",301003002],
+[101206005,"Life Recovery",206,"00000 00000 00100 00000 00000",5,1,20,"Healing","Life Recovery",301001001],
+[101207006,"Mana Shield",207,"00000 00000 00100 00000 00000",4,1,20,"ShieldSoftYellow","Mana Shield",301002001]
 ]}

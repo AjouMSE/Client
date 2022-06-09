@@ -67,7 +67,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if(cardlist[i].GetComponent<Skill_Icon>().cardData.type == (int)Card.SkillType.Move)
+                    if(cardlist[i].GetComponent<Skill_Icon>().cardData.category == (int)Card.SkillType.Move)
                     {
                         cardlist[i].SetActive(true);
                     }
@@ -82,7 +82,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.type == (int) Card.SkillType.Attack)
+                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.category == (int) Card.SkillType.Attack)
                     {
                         cardlist[i].SetActive(true);
                     }
@@ -97,7 +97,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.type == (int)Card.SkillType.Special)
+                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.category == (int)Card.SkillType.Special)
                     {
                         cardlist[i].SetActive(true);
                     }

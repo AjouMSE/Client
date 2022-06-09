@@ -13,9 +13,9 @@ namespace Utils
 
         public const int MaxHP = 100;
         // public const int StartMana = 3, MaxMana = 10;
-        public const int StartMana = 100, MaxMana = 100;
+        public const int StartMana = 3, MaxMana = 10;
 
-        public enum SkillType { Move = 1, Attack = 100, Special = 200, ManaCharge = 201 }
+        public enum SkillType { Move = 1, Attack = 100, Special = 200, ManaCharge = 201, ManaOverload = 202, Concentration = 203, Cleanse = 204, ManaDisorder = 205, LifeRecovery = 206, ManaShield = 207 }
 
         public enum GameUIType { HP, Mana }
 

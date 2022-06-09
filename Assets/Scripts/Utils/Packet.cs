@@ -95,7 +95,7 @@ namespace Utils
 
             public override string ToString()
             {
-                return $"AuthResult: [ result: {result.ToString()} ]";
+                return $"Result: [ result: {result.ToString()} ]";
             }
         }
 

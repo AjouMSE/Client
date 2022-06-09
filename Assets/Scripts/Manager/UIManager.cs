@@ -59,7 +59,7 @@ namespace Manager
         public int MaxHeight { get; private set; }
         public int MaxFrameRate { get; private set; }
         public float ResolutionRatio { get; private set; }
-        public bool IsFullScreen { get; private set; } = true;
+        public bool IsFullScreen { get; private set; } = false;
 
         public bool ActivePerformanceDisplay { get; private set; }
 

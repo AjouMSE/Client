@@ -59,10 +59,6 @@ namespace UI.Logo
 
         private void Awake()
         {
-            _loadingCanvasGroup = GetComponent<CanvasGroup>();
-            _tmProGameTip = CustomUtils.FindComponentByName<TextMeshProUGUI>(gameObject, UINameTxtGameTip);
-            _loadingIconImage = CustomUtils.FindComponentByName<Image>(gameObject, UINameLoadingImage);
-            _hudCamera = GameObject.FindWithTag(HudCamera);
             Init();
             gameObject.SetActive(false);
         }
@@ -74,8 +70,12 @@ namespace UI.Logo
 
         private void Init()
         {
+            _loadingCanvasGroup = GetComponent<CanvasGroup>();
+            _tmProGameTip = CustomUtils.FindComponentByName<TextMeshProUGUI>(gameObject, UINameTxtGameTip);
+            _loadingIconImage = CustomUtils.FindComponentByName<Image>(gameObject, UINameLoadingImage);
+            _hudCamera = GameObject.FindWithTag(HudCamera);
+            
             var currentScene = SceneManager.GetActiveScene();
-
             switch (currentScene.name)
             {
                 case UIManager.SceneNameLogo:
@@ -83,6 +83,7 @@ namespace UI.Logo
 
                     // Set maximum frame rate : 60
                     Application.targetFrameRate = MaxFrameRate;
+                    UIManager.Instance.SetResolution(1280, 720);
 
                     // Set Screen orientation : landscape
                     Screen.orientation = ScreenOrientation.Landscape;

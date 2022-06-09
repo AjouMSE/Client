@@ -90,7 +90,8 @@ namespace UI.Login
             {
                 // Save user information to UserManager
                 string json = req.downloadHandler.text;
-                UserManager.Instance.SignInUserInfo(json);
+                var user = JsonUtility.FromJson<Packet.User>(json);
+                UserManager.Instance.SignInUserInfo(user);
 
                 // Process scroll, camera movement effect
                 scroll3DSignin.CloseScroll();

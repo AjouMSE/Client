@@ -26,7 +26,7 @@ namespace UI.Lobby.MenuUI
         [SerializeField] private GameObject signOutDisplay;
 
         [Header("3D Scroll menu UI")] 
-        [SerializeField] private GameObject menuScroll3D;
+        [SerializeField] private ScrollScript3D scroll3D;
 
         #endregion
 
@@ -51,8 +51,8 @@ namespace UI.Lobby.MenuUI
             // Start fade in effect
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroups[0], UIManager.LobbyUIFadeInDuration, () =>
             {
-                menuScroll3D.GetComponent<ScrollScript3D>().OpenScroll();
-                MatchMakingManager.Instance.Init();
+                scroll3D.OpenScroll();
+                MatchMakingManager.Instance.SendAuthToServer();
             });
             
             // Set UI display
@@ -73,7 +73,7 @@ namespace UI.Lobby.MenuUI
         /// </summary>
         public void OnPvpBtnClick()
         {
-            menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            scroll3D.CloseScroll();
             matchMakingUI.SetActive(true);
             MatchMakingManager.Instance.MatchMaking();
         }
@@ -83,7 +83,7 @@ namespace UI.Lobby.MenuUI
         /// </summary>
         public void OnPvpCancelBtnClick()
         {
-            menuScroll3D.GetComponent<ScrollScript3D>().OpenScroll();
+            scroll3D.OpenScroll();
             matchMakingUI.SetActive(false);
             MatchMakingManager.Instance.StopMatchMaking();
         }
@@ -93,7 +93,7 @@ namespace UI.Lobby.MenuUI
         /// </summary>
         public void OnLeaderBoardBtnClick()
         {
-            menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            scroll3D.CloseScroll();
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroups[1], UIManager.LobbyMenuFadeInOutDuration);
         }
 
@@ -102,7 +102,7 @@ namespace UI.Lobby.MenuUI
         /// </summary>
         public void OnCardLibraryBtnClick()
         {
-            menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            scroll3D.CloseScroll();
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroups[2], UIManager.LobbyMenuFadeInOutDuration);
         }
 
@@ -111,7 +111,7 @@ namespace UI.Lobby.MenuUI
         /// </summary>
         public void OnUserInfoBtnClick()
         {
-            menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            scroll3D.CloseScroll();
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroups[3], UIManager.LobbyMenuFadeInOutDuration);
         }
 
@@ -120,7 +120,7 @@ namespace UI.Lobby.MenuUI
         /// </summary>
         public void OnSettingsBtnClick()
         {
-            menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            scroll3D.CloseScroll();
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroups[4], UIManager.LobbyMenuFadeInOutDuration);
         }        
         
@@ -129,7 +129,7 @@ namespace UI.Lobby.MenuUI
         /// </summary>
         public void OnSignOutBtnClick()
         {
-            menuScroll3D.GetComponent<ScrollScript3D>().CloseScroll();
+            scroll3D.CloseScroll();
             UIManager.Instance.ShowSignOutDisplay();
         }
 

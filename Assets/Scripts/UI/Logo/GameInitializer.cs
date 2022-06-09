@@ -50,13 +50,14 @@ namespace UI.Logo
         private void InitManagers()
         {
             // Init Managers
+            UIManager.Instance.Init();
             AudioManager.Instance.Init();
             AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.BGM, 0.05f);
             AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.SFX, 1.0f);
 
-            UIManager.Instance.Init();
-
+            // Init Net, User Managers
             HttpRequestManager.Instance.Init();
+            MatchMakingManager.Instance.Init();
             UserManager.Instance.Init();
         }
 

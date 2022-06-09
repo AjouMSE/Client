@@ -33,14 +33,14 @@ namespace Manager
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="json"></param>
-        public void SignInUserInfo(string json)
+        /// <param name="user"></param>
+        public void SignInUserInfo(Packet.User user)
         {
             if (IsSignedIn) return;
             
             try
             {
-                User = JsonUtility.FromJson<Packet.User>(json);
+                User = user;
                 IsSignedIn = true;
             }
             catch (Exception e)
@@ -70,11 +70,11 @@ namespace Manager
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="hostile"></param>
+        /// <param name="json"></param>
         public void AddHostileInfo(Packet.User hostile)
         {
-            if (!HostileExist) return;
-            
+            if (HostileExist) return;
+
             try
             {
                 Hostile = hostile;
@@ -91,7 +91,7 @@ namespace Manager
         /// </summary>
         public void RemoveHostileInfo()
         {
-            if (HostileExist) return;
+            if (!HostileExist) return;
             
             try
             {

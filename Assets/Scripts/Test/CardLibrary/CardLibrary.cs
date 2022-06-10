@@ -18,7 +18,7 @@ public class CardLibrary : MonoBehaviour
 
     private ScrollScript2D scroll2d;
 
-    enum SkillCategory { All = 0, Move = 1, Attack = 2, Special = 3}
+    enum SkillCategory { All = 0, Move = 1, Attack = 100, Special = 200}
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +35,7 @@ public class CardLibrary : MonoBehaviour
             icon.cardData = cardData.Value;
 
             cardlist.Add(tmp);
+            Debug.Log(icon.cardData.category);
         }
 
         scroll2d =  scrollPrefab.GetComponent<ScrollScript2D>();
@@ -67,7 +68,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if(cardlist[i].GetComponent<Skill_Icon>().cardData.category == (int)Card.SkillType.Move)
+                    if(cardlist[i].GetComponent<Skill_Icon>().cardData.type == (int)Card.SkillType.Move)
                     {
                         cardlist[i].SetActive(true);
                     }
@@ -82,7 +83,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.category == (int) Card.SkillType.Attack)
+                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.type == (int)Card.SkillType.Attack)
                     {
                         cardlist[i].SetActive(true);
                     }
@@ -97,7 +98,7 @@ public class CardLibrary : MonoBehaviour
                 scroll2d.animate();
                 for (int i = 0; i < cardlist.Count; i++)
                 {
-                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.category == (int)Card.SkillType.Special)
+                    if (cardlist[i].GetComponent<Skill_Icon>().cardData.category >= (int)Card.SkillType.Special)
                     {
                         cardlist[i].SetActive(true);
                     }

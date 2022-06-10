@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Manager.Net;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -52,7 +53,7 @@ namespace UI.Lobby.MenuUI
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroups[0], UIManager.LobbyUIFadeInDuration, () =>
             {
                 scroll3D.OpenScroll();
-                MatchMakingManager.Instance.SendAuthToServer();
+                NetMatchMakingManager.Instance.SendAuthToServer();
             });
             
             // Set UI display
@@ -75,7 +76,7 @@ namespace UI.Lobby.MenuUI
         {
             scroll3D.CloseScroll();
             matchMakingUI.SetActive(true);
-            MatchMakingManager.Instance.MatchMaking();
+            NetMatchMakingManager.Instance.MatchMaking();
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace UI.Lobby.MenuUI
         {
             scroll3D.OpenScroll();
             matchMakingUI.SetActive(false);
-            MatchMakingManager.Instance.StopMatchMaking();
+            NetMatchMakingManager.Instance.StopMatchMaking();
         }
 
         /// <summary>

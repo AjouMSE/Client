@@ -9,7 +9,7 @@ using Utils;
 
 namespace Data.Cache
 {
-    public class CacheAudioSource : CacheSource<CacheAudioSource, AudioManager.BgmTypes, AudioClip>
+    public class CacheAudioSource : AbstractCacheSource<CacheAudioSource, AudioManager.BgmTypes, AudioClip>
     {
         #region Private constants
 

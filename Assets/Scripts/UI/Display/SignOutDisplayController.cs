@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Manager.Net;
 using UnityEngine;
 
 namespace UI.Display
@@ -38,7 +39,7 @@ namespace UI.Display
         /// </summary>
         public void OnSignOutBtnClick()
         {
-            HttpRequestManager.Instance.Post(SignOutReqPath, "", (req) =>
+            NetHttpRequestManager.Instance.Post(SignOutReqPath, "", (req) =>
             {
                 UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLogin);
                 UserManager.Instance.SignOutUserInfo();

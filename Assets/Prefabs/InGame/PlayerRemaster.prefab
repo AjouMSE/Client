@@ -1229,10 +1229,9 @@ GameObject:
   - component: {fileID: 8899991094220859198}
   - component: {fileID: 8450219138121298675}
   - component: {fileID: 2276709406175112034}
-  - component: {fileID: 8899991094220859137}
-  - component: {fileID: 4622334894852571018}
+  - component: {fileID: -7352693064432780700}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PlayerRemaster
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1342,7 +1341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 8850728853705914408}
---- !u!114 &8899991094220859137
+--- !u!114 &-7352693064432780700
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1351,24 +1350,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8899991094220859136}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e33deb6fb123a994eaa5bd0e04e161a2, type: 3}
+  m_Script: {fileID: 11500000, guid: 3fc51d28abd9f264a8d9bc5dad988d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mat1: {fileID: 2100000, guid: bc69fc6ad5b6c7645aa0c00ecda79767, type: 2}
-  mat2: {fileID: 2100000, guid: aa2697fc5c62ddc469c79075db26cab4, type: 2}
-  mat3: {fileID: 2100000, guid: c33a548d6df8c8a4daca736f3300dd9c, type: 2}
---- !u!114 &4622334894852571018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8899991094220859136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f3dea54224d5f24597989365735061e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  clientMaterial: {fileID: 2100000, guid: aa2697fc5c62ddc469c79075db26cab4, type: 2}
 --- !u!1 &8899995101981409774
 GameObject:
   m_ObjectHideFlags: 0

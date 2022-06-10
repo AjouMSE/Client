@@ -4,16 +4,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using Core;
 using InGame;
-using Scene;
+using Manager.Net;
 using UI.Game;
-using UI.Login;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
-using Unity.Netcode;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 
 namespace Manager
 {
@@ -141,7 +138,7 @@ namespace Manager
             }
 
 
-            HttpRequestManager.Instance.Post("/battle/result", JsonUtility.ToJson(resultPacket), req =>
+            NetHttpRequestManager.Instance.Post("/battle/result", JsonUtility.ToJson(resultPacket), req =>
             {
                 if (req.result == UnityWebRequest.Result.Success)
                 {

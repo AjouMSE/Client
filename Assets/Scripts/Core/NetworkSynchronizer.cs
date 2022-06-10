@@ -335,7 +335,7 @@ namespace Core
 
             switch (type)
             {
-                case Consts.GameUIType.HP:
+                case Consts.GameUIType.Hp:
                     _hostHP.Value += value;
                     if (_hostHP.Value > Consts.MaxHP)
                         _hostHP.Value = Consts.MaxHP;
@@ -354,7 +354,7 @@ namespace Core
         {
             switch (type)
             {
-                case Consts.GameUIType.HP:
+                case Consts.GameUIType.Hp:
                     userInfoUIController.UpdateHostUI(type, value);
                     break;
             }
@@ -366,7 +366,7 @@ namespace Core
 
             switch (type)
             {
-                case Consts.GameUIType.HP:
+                case Consts.GameUIType.Hp:
                     _clientHP.Value += value;
                     if (_clientHP.Value > Consts.MaxHP)
                         _clientHP.Value = Consts.MaxHP;
@@ -385,7 +385,7 @@ namespace Core
         {
             switch (type)
             {
-                case Consts.GameUIType.HP:
+                case Consts.GameUIType.Hp:
                     userInfoUIController.UpdateClientUI(type, value);
                     break;
             }

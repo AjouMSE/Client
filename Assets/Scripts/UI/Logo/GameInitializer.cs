@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Data.Cache;
 using Manager;
+using Manager.Net;
 using UnityEngine;
 
 namespace UI.Logo
@@ -56,8 +57,8 @@ namespace UI.Logo
             AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.SFX, 1.0f);
 
             // Init Net, User Managers
-            HttpRequestManager.Instance.Init();
-            MatchMakingManager.Instance.Init();
+            NetHttpRequestManager.Instance.Init();
+            NetMatchMakingManager.Instance.Init();
             UserManager.Instance.Init();
         }
 

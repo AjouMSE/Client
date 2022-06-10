@@ -245,7 +245,7 @@ namespace InGame
 
             if (CheckPlayerHit(hostileController.GetIdx(), range))
             {
-                _netSync.UpdateGameValue(hostileType, Consts.GameUIType.HP, -data.value);
+                _netSync.UpdateGameValue(hostileType, Consts.GameUIType.Hp, -data.value);
                 StartCoroutine(hostileController.GetHitAction());
             }
         }

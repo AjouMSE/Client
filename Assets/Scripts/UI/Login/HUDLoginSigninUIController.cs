@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Manager.Net;
 using TMPro;
 using UI.Logo;
 using UnityEngine;
@@ -66,7 +67,7 @@ namespace UI.Login
                     password = CustomUtils.SHA(inputFieldPw.text, CustomUtils.SHA256)
                 };
                 string json = JsonUtility.ToJson(account);
-                HttpRequestManager.Instance.Post(SignInReqPath, json, SignInResultCallback);
+                NetHttpRequestManager.Instance.Post(SignInReqPath, json, SignInResultCallback);
             }
         }
 

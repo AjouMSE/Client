@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Manager.Net;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -104,7 +105,7 @@ namespace UI.Login
                     nickname = inputFieldNickname.text
                 };
                 string json = JsonUtility.ToJson(account);
-                HttpRequestManager.Instance.Post(SignUpReqPath, json, SignupReqCallback);
+                NetHttpRequestManager.Instance.Post(SignUpReqPath, json, SignupReqCallback);
             }
         }
 

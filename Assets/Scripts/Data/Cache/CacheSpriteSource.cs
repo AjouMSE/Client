@@ -7,7 +7,7 @@ using Utils;
 
 namespace Data.Cache
 {
-    public class CacheSpriteSource : CacheSource<CacheSpriteSource, int, Sprite>
+    public class CacheSpriteSource : AbstractCacheSource<CacheSpriteSource, int, Sprite>
     {
         #region Private constants
 

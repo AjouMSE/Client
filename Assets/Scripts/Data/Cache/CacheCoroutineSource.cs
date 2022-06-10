@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Data.Cache
 {
-    public class CacheCoroutineSource : CacheSource<CacheCoroutineSource, float, WaitForSeconds>
+    public class CacheCoroutineSource : AbstractCacheSource<CacheCoroutineSource, float, WaitForSeconds>
     {
         #region Public methods
 

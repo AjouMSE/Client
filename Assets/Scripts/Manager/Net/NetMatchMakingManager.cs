@@ -7,9 +7,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Utils;
 
-namespace Manager
+namespace Manager.Net
 {
-    public class MatchMakingManager : MonoSingleton<MatchMakingManager>
+    public class NetMatchMakingManager : MonoSingleton<NetMatchMakingManager>
     {
         #region Private variables
 
@@ -40,8 +40,8 @@ namespace Manager
         {
             if (!IsInitialized)
             {
-                SocketIOManager.Instance.Init();
-                _sio = SocketIOManager.Instance.Sio;
+                NetSocketIOManager.Instance.Init();
+                _sio = NetSocketIOManager.Instance.Sio;
                 StartCoroutine(MakeConnection());
                 IsInitialized = true;
             }
@@ -130,13 +130,14 @@ namespace Manager
             {
                 case MatchMadeType.Host:
                     // send join code to client
-                    var joinCode = await RelayManager.Instance.StartHost();
+                    var joinCode = await NetRelayManager.Instance.StartHost();
                     Packet.MatchCode sendPacket = new Packet.MatchCode { room = rcvPacket.room, code = joinCode };
                     _sio.Instance.Emit(SioEventSendMatchCode, JsonUtility.ToJson(sendPacket), false);
 
                     // set user to host & change scene
                     UserManager.Instance.SetHost();
                     UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGame);
+                    //SceneManager.LoadSceneAsync("GameSceneRemaster");
                     break;
 
                 case MatchMadeType.Client:
@@ -155,8 +156,9 @@ namespace Manager
         private async void OnReceiveMatchCodeCallback(string data)
         {
             var rcvPacket = JsonUtility.FromJson<Packet.MatchCode>(data);
-            await RelayManager.Instance.StartClient(rcvPacket.code);
-            UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGame);
+            await NetRelayManager.Instance.StartClient(rcvPacket.code);
+            //UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGame);
+            SceneManager.LoadSceneAsync("GameSceneRemaster");
         }
 
         #endregion

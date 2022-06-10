@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Manager.Net;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -64,7 +65,7 @@ namespace UI.Lobby.LeaderBoard
         {
             _leaderBoardCanvasGroup = GetComponent<CanvasGroup>();
             textPageNum.text = $"Page {_pageIdx.ToString()}.";
-            HttpRequestManager.Instance.Get($"{PageReqPath}?page={_pageIdx.ToString()}", LeaderBoardReqCallback);
+            NetHttpRequestManager.Instance.Get($"{PageReqPath}?page={_pageIdx.ToString()}", LeaderBoardReqCallback);
         }
 
         /// <summary>
@@ -136,7 +137,7 @@ namespace UI.Lobby.LeaderBoard
             {
                 _pageIdx += type == 0 ? -1 : 1;
                 textPageNum.text = $"Page {_pageIdx.ToString()}.";
-                HttpRequestManager.Instance.Get($"{PageReqPath}?page={_pageIdx.ToString()}", LeaderBoardReqCallback);
+                NetHttpRequestManager.Instance.Get($"{PageReqPath}?page={_pageIdx.ToString()}", LeaderBoardReqCallback);
             }
 
             // Check that user can move the page

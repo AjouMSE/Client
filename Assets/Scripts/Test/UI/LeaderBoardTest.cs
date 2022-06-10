@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Manager.Net;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -14,8 +15,8 @@ public class LeaderBoardTest : MonoBehaviour
     void Start()
     {
         var pageNum = 1;
-        HttpRequestManager.Instance.Init();
-        HttpRequestManager.Instance.Get($"/ranking/leader-board?page={pageNum.ToString()}", Callback);
+        NetHttpRequestManager.Instance.Init();
+        NetHttpRequestManager.Instance.Get($"/ranking/leader-board?page={pageNum.ToString()}", Callback);
     }
 
     private void Callback(UnityWebRequest req)

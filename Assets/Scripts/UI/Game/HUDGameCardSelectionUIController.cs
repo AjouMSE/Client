@@ -5,6 +5,7 @@ using System.Text;
 using Core;
 using Data.Cache;
 using Manager;
+using Manager.Net;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,7 +15,7 @@ namespace UI.Game
 {
     public class HUDGameCardSelectionUIController : MonoBehaviour
     {
-        #region
+        #region Constants
 
         private const int MaxCardCnt = 3;
 
@@ -36,10 +37,6 @@ namespace UI.Game
         [Header("3D card scroll UI")]
         [SerializeField] private ScrollScript3DTest cardScroll3D;
 
-        [Header("NetworkSynchronizer")]
-        [SerializeField] private NetworkSynchronizer _netSync;
-
-        
         private Image[] _hostCardImages;
         private Image[] _clientCardImages;
 
@@ -61,7 +58,7 @@ namespace UI.Game
         {
             if (GameManager.Instance.canSelect)
             {
-                _netSync.AddCardToList(id);
+                NetGameStatusManager.Instance.AddCardToList(id);
             }
         }
 
@@ -69,8 +66,18 @@ namespace UI.Game
         {
             if (GameManager.Instance.canSelect)
             {
-                _netSync.RemoveCardFromList(idx);
+                NetGameStatusManager.Instance.RemoveCardFromList(idx);
             }
+        }
+
+        #endregion
+
+
+        #region Unity event methods
+
+        private void Start()
+        {
+            Init();
         }
 
         #endregion

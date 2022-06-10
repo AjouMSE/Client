@@ -8,9 +8,9 @@ using UnityEngine.SceneManagement;
 using Utils;
 
 
-namespace Manager
+namespace Manager.Net
 {
-    public class SocketIOManager : MonoSingleton<SocketIOManager>
+    public class NetSocketIOManager : MonoSingleton<NetSocketIOManager>
     {
         #region Private constants
         

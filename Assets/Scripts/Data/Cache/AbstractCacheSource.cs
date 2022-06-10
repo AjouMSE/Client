@@ -7,7 +7,7 @@ using Utils;
 
 namespace Data.Cache
 {
-    public abstract class CacheSource<TChild, TId, TSource>
+    public abstract class AbstractCacheSource<TChild, TId, TSource>
         where TChild : new()
         where TId : unmanaged
     {

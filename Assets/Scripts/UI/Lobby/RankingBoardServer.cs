@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Manager.Net;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -65,7 +66,7 @@ public class RankingBoardServer : MonoBehaviour
         leftbutton.SetActive(false);
 
         pageNum = 1;
-        HttpRequestManager.Instance.Get($"/ranking/leader-board?page={pageNum}", Callback);
+        NetHttpRequestManager.Instance.Get($"/ranking/leader-board?page={pageNum.ToString()}", Callback);
         RankExpress(rankusernum);
 
     }

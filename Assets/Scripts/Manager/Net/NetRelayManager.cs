@@ -13,9 +13,9 @@ using Unity.Services.Relay.Models;
 using UnityEngine;
 using Utils;
 
-namespace Manager
+namespace Manager.Net
 {
-    public class RelayManager : MonoSingleton<RelayManager>
+    public class NetRelayManager : MonoSingleton<NetRelayManager>
     {
         #region Private variables
 
@@ -188,7 +188,6 @@ namespace Manager
                     NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(
                         ipv4, port, allocId, key, connData, hostConnData, true);
                     
-                    Debug.Log((ipv4, port, allocId, key, connData, hostConnData).ToString());
                     return null;
 
                 default:

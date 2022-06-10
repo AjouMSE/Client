@@ -7,7 +7,7 @@ using Utils;
 
 namespace Data.Cache
 {
-    public class CacheVFXSource : CacheSource<CacheVFXSource, int, ParticleSystem>
+    public class CacheVFXSource : AbstractCacheSource<CacheVFXSource, int, ParticleSystem>
     {
         #region Private constants
 

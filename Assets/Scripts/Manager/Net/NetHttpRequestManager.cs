@@ -5,9 +5,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Utils;
 
-namespace Manager
+namespace Manager.Net
 {
-    public class HttpRequestManager : MonoSingleton<HttpRequestManager>
+    public class NetHttpRequestManager : MonoSingleton<NetHttpRequestManager>
     {
         #region Private constants
 

@@ -7,7 +7,7 @@
 [101000005,"Double Left",1,"00000 00000 10000 00000 00000",2,0,0,"","DoubleMoveLeft",0],
 [101000006,"Double Up",1,"00100 00000 00000 00000 00000",2,0,0,"","DoubleMoveUp",0],
 [101000007,"Double Down",1,"00000 00000 00000 00000 00100",2,0,0,"","DoubleMoveDown",0],
-[101100000,"Wind Cutter",100,"00100 00100 11111 00100 00100",1,2,10,"SwordWhirlwindGreen","Wind Cutter",0],
+[101100000,"Wind Cutter",100,"00000 00100 01110 00100 00000",1,2,10,"SwordWhirlwindGreen","Wind Cutter",0],
 [101100001,"Fire Ball",100,"00000 00100 01110 00100 00000",3,2,15,"FireballMissileFire","Fire Ball",301001002],
 [101100002,"Explosion",100,"11111 11111 11111 11111 11111",8,2,45,"Explosion","Explosion",0],
 [101100003,"Magic Arrow",100,"11111 10001 10001 10001 11111",1,2,15,"RocketMeshMissileBlue","Magic Arrow",0],

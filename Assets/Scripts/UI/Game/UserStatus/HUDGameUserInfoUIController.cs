@@ -10,34 +10,28 @@ using UnityEngine.UI;
 using Utils;
 using TMPro;
 
-namespace UI.Game
+namespace UI.Game.UserStatus
 {
     public class HUDGameUserInfoUIController : MonoBehaviour
     {
         #region Private variables
 
-        [Header("Nickname Text")] [SerializeField]
-        private Text hostNicknameText;
+        [Header("Nickname Text")] 
+        [SerializeField] private Text hostNicknameText;
 
         [SerializeField] private Text clientNicknameText;
 
-        [Header("Host HP, Mana Text")] [SerializeField]
-        private GameObject hostHpUI;
+        [Header("Host Hp, Mana UI Controller")] 
+        [SerializeField] private UserStatusHpUIController hostHpUIController;
+        [SerializeField] private UserStatusManaUIController hostManaUIController;
 
-        [SerializeField] private GameObject hostManaUI;
+        [Header("Client Hp, Mana UI Controller")] 
+        [SerializeField] private UserStatusHpUIController clientHpUIController;
+        [SerializeField] private UserStatusManaUIController clientManaUIController;
 
-        [Header("Client HP, Mana UI")] [SerializeField]
-        private GameObject clientHpUI;
-
-        [SerializeField] private GameObject clientManaUI;
-
-        [Header("Timer, Turn Text")] [SerializeField]
-        private Text timerText;
-
+        [Header("Timer, Turn Text")] 
+        [SerializeField] private Text timerText;
         [SerializeField] private Text turnText;
-
-        private Text _textHostHp, _textHostMana;
-        private Text _textClientHp, _textClientMana;
 
         #endregion
 
@@ -56,32 +50,16 @@ namespace UI.Game
 
         private void Init()
         {
-            // Get Host Hp, Mana Text components
-            _textHostHp = hostHpUI.GetComponentInChildren<Text>();
-            _textHostMana = hostManaUI.GetComponentInChildren<Text>();
-
-            // Get Client Hp, Mana Text components
-            _textClientHp = clientHpUI.GetComponentInChildren<Text>();
-            _textClientMana = clientManaUI.GetComponentInChildren<Text>();
-
-            // Set text to default values
-            _textHostHp.text = Consts.MaxHP.ToString();
-            _textHostMana.text = Consts.StartMana.ToString();
-            _textClientHp.text = Consts.MaxHP.ToString();
-            _textClientMana.text = Consts.StartMana.ToString();
-
             Packet.User host, client;
             if (UserManager.Instance.IsHost)
             {
                 host = UserManager.Instance.User;
                 client = UserManager.Instance.Hostile;
-                clientManaUI.SetActive(false);
             }
             else
             {
                 host = UserManager.Instance.Hostile;
                 client = UserManager.Instance.User;
-                hostManaUI.SetActive(false);
             }
 
             // Set Nickname
@@ -124,11 +102,11 @@ namespace UI.Game
             switch (type)
             {
                 case Consts.GameUIType.Hp:
-                    _textHostHp.text = $"{value.ToString()}";
+                    hostHpUIController.UpdateHpUI(value);
                     break;
 
                 case Consts.GameUIType.Mana:
-                    _textHostMana.text = $"{value.ToString()}";
+                    hostManaUIController.UpdateManaUI(value);
                     break;
 
                 default:
@@ -147,11 +125,11 @@ namespace UI.Game
             switch (type)
             {
                 case Consts.GameUIType.Hp:
-                    _textClientHp.text = $"{value.ToString()}";
+                    clientHpUIController.UpdateHpUI(value);
                     break;
 
                 case Consts.GameUIType.Mana:
-                    _textClientMana.text = $"{value.ToString()}";
+                    clientManaUIController.UpdateManaUI(value);
                     break;
 
                 default:

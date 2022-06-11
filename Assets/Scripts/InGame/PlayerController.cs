@@ -5,6 +5,7 @@ using Data.Cache;
 using Manager;
 using Manager.InGame;
 using UI.Game;
+using UI.Game.UserStatus;
 using Unity.Netcode;
 using UnityEngine;
 using Utils;

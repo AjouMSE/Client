@@ -6,6 +6,7 @@ using UnityEngine;
 using Utils;
 using Core;
 using UI.Game;
+using UI.Game.UserStatus;
 using Unity.Netcode.Components;
 
 namespace InGame

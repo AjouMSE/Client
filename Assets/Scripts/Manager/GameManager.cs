@@ -6,6 +6,8 @@ using Core;
 using InGame;
 using Manager.Net;
 using UI.Game;
+using UI.Game.UserStatus;
+using UI.Game.Versus;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;

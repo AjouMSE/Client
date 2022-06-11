@@ -6,6 +6,7 @@ using InGame;
 using Manager;
 using Manager.InGame;
 using Manager.Net;
+using UI.Game.UserStatus;
 using UI.Game.Versus;
 using Unity.Netcode;
 using UnityEngine;
@@ -13,28 +14,32 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utils;
 
-namespace UI.Game
+namespace UI.Game.Versus
 {
     public class HUDGameVersusUIController : MonoBehaviour
     {
         #region Private constants
-        
+
         private const int VSTextSize = 125;
         private const int AreYouReadyTextSize = 100;
+        private const string TextVS = "VS";
+        private const string TextAreYouReady = "Are you\nReady?";
+        private const string TextMatchWillBeEnd = "The match will\nend soon.";
 
         #endregion
 
         #region Private variables
 
-        [Header("Text Information")] 
-        [SerializeField] private Text versusText;
+        [Header("Text Information")] [SerializeField]
+        private Text versusText;
 
-        [Header("Game Info object")] 
-        [SerializeField] private GameObject hostPanelInfo;
-        [SerializeField] private GameObject clientPanelInfo;
+        [Header("Game Info object")] [SerializeField]
+        private GameObject panelInfoTextHost;
 
-        [SerializeField] private GameObject hostBattleResult;
-        [SerializeField] private GameObject clientBattleResult;
+        [SerializeField] private GameObject panelInfoTextClient;
+
+        [SerializeField] private VersusBattleResultUIController battleResultUIControllerHost;
+        [SerializeField] private VersusBattleResultUIController battleResultUIControllerClient;
 
         private VersusCameraController _versusCameraController;
         private HUDGameUserInfoUIController _hudUserInfo;
@@ -57,14 +62,16 @@ namespace UI.Game
 
         private void Init()
         {
-            var mainCamera = GameObject.FindWithTag("MainCamera");
-            var hudCamera = GameObject.FindWithTag("HUDCamera");
+            var mainCamera = GameObject.FindWithTag(Consts.TagMainCamera);
+            var hudCamera = GameObject.FindWithTag(Consts.TagHudCamera);
 
             _versusCameraController = mainCamera.GetComponent<VersusCameraController>();
             _hudUserInfo = hudCamera.GetComponentInChildren<HUDGameUserInfoUIController>();
             _hudCardSelection = hudCamera.GetComponentInChildren<HUDGameCardSelectionUIController>();
 
-            // Start Unity Network
+            // Init Managers, Start Unity Network
+            GameManager.Instance.Init();
+            NetGameStatusManager.Instance.Init();
             if (UserManager.Instance.IsHost)
                 NetworkManager.Singleton.StartHost();
             else
@@ -89,28 +96,25 @@ namespace UI.Game
         /// <returns></returns>
         private IEnumerator ShowVersus()
         {
-            GameManager.Instance.Init();
-            NetGameStatusManager.Instance.Init();
+            panelInfoTextHost.SetActive(true);
+            panelInfoTextClient.SetActive(true);
 
-            hostPanelInfo.SetActive(true);
-            hostBattleResult.SetActive(false);
-
-            clientPanelInfo.SetActive(true);
-            clientBattleResult.SetActive(false);
+            battleResultUIControllerHost.gameObject.SetActive(false);
+            battleResultUIControllerClient.gameObject.SetActive(false);
 
             versusText.fontSize = VSTextSize;
-            versusText.text = "VS";
+            versusText.text = TextVS;
             yield return CacheCoroutineSource.Instance.GetSource(3f);
 
             versusText.fontSize = AreYouReadyTextSize;
-            versusText.text = "Are you\nReady?";
+            versusText.text = TextAreYouReady;
             yield return CacheCoroutineSource.Instance.GetSource(3f);
 
             _versusCameraController.RotateCameraEffect(() =>
             {
                 _hudUserInfo.gameObject.SetActive(true);
                 _hudCardSelection.gameObject.SetActive(true);
-                
+
                 GameManager2.Instance.HostController.PlayAnimation(WizardAnimations.Recovery);
                 GameManager2.Instance.ClientController.PlayAnimation(WizardAnimations.Recovery);
                 GameManager2.Instance.CheckReadyToRunTimer();
@@ -120,40 +124,32 @@ namespace UI.Game
 
         private IEnumerator ShowGameResultCoroutine(Consts.BattleResult hostResult, Consts.BattleResult clientResult)
         {
-            yield return new WaitForSeconds(3f);
+            yield return CacheCoroutineSource.Instance.GetSource(3f);
 
+            // disable the game hud object
             _hudUserInfo.gameObject.SetActive(false);
             _hudCardSelection.gameObject.SetActive(false);
 
-            hostPanelInfo.SetActive(false);
-            hostBattleResult.SetActive(true);
+            // disable the user info object in versus ui
+            panelInfoTextHost.SetActive(false);
+            panelInfoTextClient.SetActive(false);
 
-            clientPanelInfo.SetActive(false);
-            clientBattleResult.SetActive(true);
-
+            // enable the battle result object in versus ui
+            battleResultUIControllerHost.gameObject.SetActive(true);
+            battleResultUIControllerClient.gameObject.SetActive(true);
+            
+            // set versus text
             versusText.fontSize = 60;
-            versusText.text = "The match will\nend soon.";
+            versusText.text = TextMatchWillBeEnd;
 
-            var hostResultTexts = hostBattleResult.GetComponentsInChildren<Text>();
-            var clientResultTexts = clientBattleResult.GetComponentsInChildren<Text>();
+            // set result
+            battleResultUIControllerHost.SetBattleResult(hostResult, clientResult);
+            battleResultUIControllerClient.SetBattleResult(hostResult, clientResult);
 
-            hostResultTexts[0].text = (hostResult == Consts.BattleResult.WIN)
-                ? "WIN"
-                : (clientResult == Consts.BattleResult.WIN ? "LOSE" : "DRAW");
-            hostResultTexts[1].text = (hostResult == Consts.BattleResult.WIN)
-                ? "+10"
-                : (clientResult == Consts.BattleResult.WIN ? "-8" : "+0");
+            yield return CacheCoroutineSource.Instance.GetSource(5f);
 
-            clientResultTexts[0].text = (clientResult == Consts.BattleResult.WIN)
-                ? "WIN"
-                : (hostResult == Consts.BattleResult.WIN ? "LOSE" : "DRAW");
-            clientResultTexts[1].text = (clientResult == Consts.BattleResult.WIN)
-                ? "+10"
-                : (hostResult == Consts.BattleResult.WIN ? "-8" : "+0");
-
-            yield return new WaitForSeconds(5f);
-
-            if (UserManager.Instance.IsHost)
+            // Shutdown the host
+            if (NetworkManager.Singleton.IsHost)
                 NetworkManager.Singleton.Shutdown();
 
             UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);

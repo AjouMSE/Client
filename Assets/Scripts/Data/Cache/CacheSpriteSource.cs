@@ -20,7 +20,7 @@ namespace Data.Cache
         private const string SrcPathSoundOff = "Button_SoundOff";
         private const string SrcPathButtonBig = "Button_Big";
         private const string SrcPathButtonBigPressed = "Button_Big_Pressed";
-        
+
         private const string SrcPathLoadingIconFire = "LoadingFire";
         private const string SrcPathLoadingIconIce = "LoadingIce";
         private const string SrcPathLoadingIconEarth = "LoadingEarth";
@@ -41,7 +41,7 @@ namespace Data.Cache
                 { 1, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathSoundOff}") },
                 { 2, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathButtonBig}") },
                 { 3, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathButtonIcon}/{SrcPathButtonBigPressed}") },
-                
+
                 // Loading Icons (100 ~ 200)
                 { 100, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconFire}") },
                 { 101, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconIce}") },
@@ -53,7 +53,7 @@ namespace Data.Cache
             // Skill Icons
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
             {
-                CardData card = TableDatas.Instance.cardDatas[key];
+                var card = TableDatas.Instance.cardDatas[key];
                 Cache.Add(key, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathSkillIcon}/{card.icon}"));
             }
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using InGame;
 using Manager.Net;
 using UI.Game;
+using UI.Game.UserStatus;
+using UI.Game.Versus;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;

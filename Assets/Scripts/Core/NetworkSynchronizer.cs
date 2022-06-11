@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using Manager;
 using Scene;
 using UI.Game;
+using UI.Game.UserStatus;
 using Unity.Netcode;
 using UnityEngine;
 using Utils;

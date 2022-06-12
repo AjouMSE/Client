@@ -231,6 +231,18 @@ namespace Manager
             StartCoroutine(FadeEffectCoroutine(fadeType, group, duration, callback, disableAfterFadeOut));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fadeType"></param>
+        /// <param name="text"></param>
+        /// <param name="duration"></param>
+        /// <param name="callback"></param>
+        public void FadeText(FadeType fadeType, Text text, float duration, Action callback = null)
+        {
+            StartCoroutine(TextFadeEffectCoroutine(fadeType, text, duration, callback));
+        }
+
 
         /// <summary>
         /// Set display resolution
@@ -282,6 +294,18 @@ namespace Manager
             StopCoroutine(ClearInfoTmProCoroutine(textInfo));
             StartCoroutine(ClearInfoTmProCoroutine(textInfo));
             textInfo.text = info;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="a"></param>
+        public void SetTextAlpha(Text text, float a)
+        {
+            var c = text.color;
+            c.a = Mathf.Clamp(a, 0, 1);
+            text.color = c;
         }
 
         #endregion
@@ -340,6 +364,56 @@ namespace Manager
                     // Fade effect callback
                     if (disableAfterFadeOut)
                         group.gameObject.SetActive(false);
+                    callback?.Invoke();
+                    yield break;
+
+                default:
+                    throw new Exception("UndefinedFadeTypeException");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fadeType"></param>
+        /// <param name="text"></param>
+        /// <param name="duration"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private IEnumerator TextFadeEffectCoroutine(FadeType fadeType, Text text, float duration,
+            Action callback = null)
+        {
+            float gap;
+            switch (fadeType)
+            {
+                case FadeType.FadeIn:
+                    // Init alpha value
+                    SetTextAlpha(text, MinFadeValue);
+
+                    // Fade effect
+                    while (text.color.a < MaxFadeValue)
+                    {
+                        gap = Time.deltaTime / duration;
+                        SetTextAlpha(text, text.color.a + gap);
+                        yield return null;
+                    }
+
+                    callback?.Invoke();
+                    yield break;
+
+                case FadeType.FadeOut:
+                    // Init alpha value
+                    SetTextAlpha(text, MaxFadeValue);
+
+                    // Fade effect
+                    while (text.color.a > MinFadeValue)
+                    {
+                        gap = Time.deltaTime / duration;
+                        SetTextAlpha(text, text.color.a - gap);
+                        yield return null;
+                    }
+
                     callback?.Invoke();
                     yield break;
 

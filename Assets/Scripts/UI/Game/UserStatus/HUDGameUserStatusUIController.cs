@@ -18,7 +18,6 @@ namespace UI.Game.UserStatus
 
         [Header("Nickname Text")] 
         [SerializeField] private Text hostNicknameText;
-
         [SerializeField] private Text clientNicknameText;
 
         [Header("Host Hp, Mana UI Controller")] 
@@ -30,8 +29,7 @@ namespace UI.Game.UserStatus
         [SerializeField] private UserStatusManaUIController clientManaUIController;
 
         [Header("Timer, Turn Text")] 
-        [SerializeField] private Text timerText;
-        [SerializeField] private Text turnText;
+        [SerializeField] private UserStatusTimerUIController timerUIController;
 
         #endregion
 
@@ -41,6 +39,14 @@ namespace UI.Game.UserStatus
         private void Start()
         {
             Init();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                UpdateNotify();
+            }
         }
 
         #endregion
@@ -71,24 +77,26 @@ namespace UI.Game.UserStatus
 
 
         #region Public methods
-
+        
         /// <summary>
         /// Update timer text area
         /// </summary>
-        public void UpdateTimerText()
+        public void UpdateTimer(bool show)
         {
-            var timer = GameManager2.Instance.TimerValue;
-            if (timer >= 10) timerText.text = $"{Mathf.Round(timer).ToString(CultureInfo.CurrentCulture)}";
-            else if (timer > 0) timerText.text = $"{timer:0.0}";
-            else timerText.text = "0";
+            timerUIController.UpdateTimerText();
         }
 
         /// <summary>
         /// Update turn text area
         /// </summary>
-        public void UpdateTurnText()
+        public void UpdateTurn()
         {
-            turnText.text = $"Turn {GameManager.Instance.turnValue.ToString()}";
+            timerUIController.UpdateTurnText();
+        }
+
+        public void UpdateNotify(string text = null, bool fade = false)
+        {
+            timerUIController.UpdateNotifyText(text, fade);
         }
 
         /// <summary>

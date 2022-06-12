@@ -31,7 +31,6 @@ namespace UI.Game.UserStatus
 
         private void Start()
         {
-            gameObject.SetActive(!(isHostUI ^ UserManager.Instance.IsHost));
             _imageHpBar = GetComponentsInChildren<Image>()[0];
             _rectTransform = _imageHpBar.GetComponent<RectTransform>();
             _textHpValue = GetComponentInChildren<Text>();

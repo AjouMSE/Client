@@ -18,8 +18,7 @@ namespace UI.Game.Versus
         #endregion
 
         #region Private variables
-
-        private GameObject _mainCamera;
+        
         private float _mainCameraXAngle;
 
         #endregion
@@ -48,7 +47,6 @@ namespace UI.Game.Versus
 
         private void Init()
         {
-            _mainCamera = GameObject.FindWithTag(Consts.TagMainCamera);
             _mainCameraXAngle = MinMainCameraAngle;
         }
 
@@ -67,7 +65,7 @@ namespace UI.Game.Versus
             while (_mainCameraXAngle < MaxMainCameraAngle)
             {
                 _mainCameraXAngle += RotationScale * Time.deltaTime;
-                _mainCamera.transform.localEulerAngles = new Vector3(_mainCameraXAngle, 0, 0);
+                transform.localEulerAngles = new Vector3(_mainCameraXAngle, 0, 0);
                 yield return null;
             }
             callback();

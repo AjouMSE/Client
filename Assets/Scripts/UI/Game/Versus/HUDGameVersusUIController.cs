@@ -6,6 +6,7 @@ using InGame;
 using Manager;
 using Manager.InGame;
 using Manager.Net;
+using UI.Game.CardSelection;
 using UI.Game.UserStatus;
 using UI.Game.Versus;
 using Unity.Netcode;
@@ -30,20 +31,22 @@ namespace UI.Game.Versus
 
         #region Private variables
 
-        [Header("Text Information")] [SerializeField]
-        private Text versusText;
+        [Header("Text Information")] 
+        [SerializeField] private Text versusText;
 
-        [Header("Game Info object")] [SerializeField]
-        private GameObject panelInfoTextHost;
-
+        [Header("Game Info object")] 
+        [SerializeField] private GameObject panelInfoTextHost;
         [SerializeField] private GameObject panelInfoTextClient;
-
         [SerializeField] private VersusBattleResultUIController battleResultUIControllerHost;
         [SerializeField] private VersusBattleResultUIController battleResultUIControllerClient;
+        
+        [Header("UI Controllers")]
+        [SerializeField] private VersusCameraController versusCameraController;
+        [SerializeField] private HUDGameUserStatusUIController hudUserInfo;
+        [SerializeField] private HUDGameSelectedCardUIController hudCardSelection;
 
-        private VersusCameraController _versusCameraController;
-        private HUDGameUserInfoUIController _hudUserInfo;
-        private HUDGameCardSelectionUIController _hudCardSelection;
+        [Header("Panel Template")]
+        [SerializeField] private GameObject panelTemplate;
 
         #endregion
 
@@ -62,16 +65,13 @@ namespace UI.Game.Versus
 
         private void Init()
         {
-            var mainCamera = GameObject.FindWithTag(Consts.TagMainCamera);
-            var hudCamera = GameObject.FindWithTag(Consts.TagHudCamera);
-
-            _versusCameraController = mainCamera.GetComponent<VersusCameraController>();
-            _hudUserInfo = hudCamera.GetComponentInChildren<HUDGameUserInfoUIController>();
-            _hudCardSelection = hudCamera.GetComponentInChildren<HUDGameCardSelectionUIController>();
-
             // Init Managers, Start Unity Network
-            GameManager.Instance.Init();
+            GameManager2.Instance.Init();
+            GameManager2.Instance.GameVersusUIController = this;
+            PanelManager.Instance.PanelTemplate = panelTemplate;
+            PanelManager.Instance.Init();
             NetGameStatusManager.Instance.Init();
+            
             if (UserManager.Instance.IsHost)
                 NetworkManager.Singleton.StartHost();
             else
@@ -110,13 +110,11 @@ namespace UI.Game.Versus
             versusText.text = TextAreYouReady;
             yield return CacheCoroutineSource.Instance.GetSource(3f);
 
-            _versusCameraController.RotateCameraEffect(() =>
+            versusCameraController.RotateCameraEffect(() =>
             {
-                _hudUserInfo.gameObject.SetActive(true);
-                _hudCardSelection.gameObject.SetActive(true);
-
-                GameManager2.Instance.HostController.PlayAnimation(WizardAnimations.Recovery);
-                GameManager2.Instance.ClientController.PlayAnimation(WizardAnimations.Recovery);
+                hudUserInfo.gameObject.SetActive(true);
+                hudCardSelection.gameObject.SetActive(true);
+                
                 GameManager2.Instance.CheckReadyToRunTimer();
             });
             gameObject.SetActive(false);
@@ -127,8 +125,8 @@ namespace UI.Game.Versus
             yield return CacheCoroutineSource.Instance.GetSource(3f);
 
             // disable the game hud object
-            _hudUserInfo.gameObject.SetActive(false);
-            _hudCardSelection.gameObject.SetActive(false);
+            hudUserInfo.gameObject.SetActive(false);
+            hudCardSelection.gameObject.SetActive(false);
 
             // disable the user info object in versus ui
             panelInfoTextHost.SetActive(false);
@@ -137,7 +135,7 @@ namespace UI.Game.Versus
             // enable the battle result object in versus ui
             battleResultUIControllerHost.gameObject.SetActive(true);
             battleResultUIControllerClient.gameObject.SetActive(true);
-            
+
             // set versus text
             versusText.fontSize = 60;
             versusText.text = TextMatchWillBeEnd;

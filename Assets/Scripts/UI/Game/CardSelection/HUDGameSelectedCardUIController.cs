@@ -5,6 +5,7 @@ using System.Text;
 using Core;
 using Data.Cache;
 using Manager;
+using Manager.InGame;
 using Manager.Net;
 using Unity.Netcode;
 using UnityEngine;
@@ -26,16 +27,16 @@ namespace UI.Game.CardSelection
 
         [Header("Host Card Selections")] 
         [SerializeField] private GameObject cardListHost;
-        
+
         [Header("Client Card Selections")] 
         [SerializeField] private GameObject cardListClient;
 
-        [Header("Base, Confirm card Images")]
+        [Header("Base, Confirm card Images")] 
         [SerializeField] private Sprite baseCardImg;
         [SerializeField] private Sprite confirmCardImg;
 
-        [Header("3D card scroll UI")]
-        [SerializeField] private ScrollScript3DTest cardScroll3D;
+        [Header("3D card scroll UI")] 
+        [SerializeField] private CardListScrollUIController cardScroll3D;
 
         private Image[] _hostCardImages;
         private Image[] _clientCardImages;
@@ -43,39 +44,9 @@ namespace UI.Game.CardSelection
         #endregion
 
 
-        #region Callbacks
-
-        /// <summary>
-        /// Confirm card button callback
-        /// </summary>
-        public void OnConfirmBtnClick()
-        {
-            if (GameManager.Instance.canSelect)
-                GameManager.Instance.StopTimer();
-        }
-
-        public void OnCardAddBtnClick(int id)
-        {
-            if (GameManager.Instance.canSelect)
-            {
-                NetGameStatusManager.Instance.AddCardToList(id);
-            }
-        }
-
-        public void OnCardRemoveBtnClick(int idx)
-        {
-            if (GameManager.Instance.canSelect)
-            {
-                NetGameStatusManager.Instance.RemoveCardFromList(idx);
-            }
-        }
-
-        #endregion
-
-
         #region Unity event methods
 
-        private void Start()
+        private void Awake()
         {
             Init();
         }
@@ -83,25 +54,34 @@ namespace UI.Game.CardSelection
         #endregion
 
 
-        #region Custom methods
+        #region Private methods
 
-        public void Init()
+        private void Init()
         {
-            Button[] hostCardListBtns = cardListHost.GetComponentsInChildren<Button>();
-            Button[] clientCardListBtns = cardListClient.GetComponentsInChildren<Button>();
-            
+            var hostCardListBtnArr = cardListHost.GetComponentsInChildren<Button>();
+            var clientCardListBtnArr = cardListClient.GetComponentsInChildren<Button>();
+
             _hostCardImages = new Image[MaxCardCnt];
             _clientCardImages = new Image[MaxCardCnt];
 
             for (int i = 0; i < 3; i++)
             {
-                _hostCardImages[i] = hostCardListBtns[i].GetComponent<Image>();
-                _clientCardImages[i] = clientCardListBtns[i].GetComponent<Image>();
+                _hostCardImages[i] = hostCardListBtnArr[i].GetComponent<Image>();
+                _clientCardImages[i] = clientCardListBtnArr[i].GetComponent<Image>();
             }
 
-            if (UserManager.Instance.IsHost) cardListClient.SetActive(false);
-            else cardListHost.SetActive(false);
+            if (UserManager.Instance.IsHost)
+                cardListClient.SetActive(false);
+            else
+                cardListHost.SetActive(false);
+
+            GameManager2.Instance.SelectedCardUIController = this;
         }
+
+        #endregion
+
+
+        #region Public methods
 
         public void OpenCardScroll()
         {
@@ -113,6 +93,10 @@ namespace UI.Game.CardSelection
             cardScroll3D.CloseScroll();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cards"></param>
         public void UpdateHostCardSelectionUI(int[] cards)
         {
             if (UserManager.Instance.IsHost)
@@ -130,6 +114,10 @@ namespace UI.Game.CardSelection
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cards"></param>
         public void UpdateClientCardSelectionUI(int[] cards)
         {
             if (!UserManager.Instance.IsHost)
@@ -147,6 +135,9 @@ namespace UI.Game.CardSelection
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void UpdateInvalidCards()
         {
             List<int> invalidCards = GameManager.Instance.GetInvalidCards();
@@ -166,6 +157,36 @@ namespace UI.Game.CardSelection
                 int id = invalidCards[i];
                 cardScroll3D.cardImageDict[id].color = new Color(1, 0.3f, 0.3f);
                 cardScroll3D.buttonDict[id].interactable = false;
+            }
+        }
+
+        #endregion
+
+
+        #region Callbacks
+
+        /// <summary>
+        /// Confirm card button callback
+        /// </summary>
+        public void OnConfirmBtnClick()
+        {
+            if (GameManager2.Instance.CanCardSelect)
+                GameManager.Instance.StopTimer();
+        }
+
+        public void OnCardAddBtnClick(int id)
+        {
+            if (GameManager2.Instance.CanCardSelect)
+            {
+                NetGameStatusManager.Instance.AddCardToList(id);
+            }
+        }
+
+        public void OnCardRemoveBtnClick(int idx)
+        {
+            if (GameManager2.Instance.CanCardSelect)
+            {
+                NetGameStatusManager.Instance.RemoveCardFromList(idx);
             }
         }
 

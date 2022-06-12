@@ -74,7 +74,6 @@ namespace InGame
             // todo-add OnValueChanged callback
 
             _animator = GetComponent<Animator>();
-            IsHostPlayerObject = !(IsHost ^ IsOwner);
         }
 
         private void ProcessAnimation(string animationName)
@@ -109,6 +108,9 @@ namespace InGame
 
         public override void OnNetworkSpawn()
         {
+            IsHostPlayerObject = IsOwnedByServer;
+            name = IsHostPlayerObject ? $"(h){name}" : $"(c){name}";
+            
             if (IsHost)
             {
                 if (IsHostPlayerObject)

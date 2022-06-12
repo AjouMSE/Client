@@ -11,7 +11,7 @@ namespace Manager.Net
     {
         #region Private constants
 
-        private const string Host = "localhost";
+        private const string Host = "14.33.110.230";
         private const ushort Port = 8080;
         private const bool Secure = false;
 

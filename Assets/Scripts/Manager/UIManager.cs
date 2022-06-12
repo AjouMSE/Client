@@ -38,6 +38,7 @@ namespace Manager
         public const string SceneNameLobby = "LobbyScene";
         public const string SceneNameLogin = "LoginScene";
         public const string SceneNameGame = "GameScene";
+        public const string SceneNameGameRemaster = "GameSceneRemaster";
 
         #endregion
 

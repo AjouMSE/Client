@@ -14,6 +14,13 @@ namespace UI.Game.UserStatus
 {
     public class HUDGameUserStatusUIController : MonoBehaviour
     {
+        #region Public constants
+
+        public const string NotifyWaitForOpponent = "Waiting for opponent...";
+
+        #endregion
+        
+        
         #region Private variables
 
         [Header("Nickname Text")] 
@@ -36,17 +43,9 @@ namespace UI.Game.UserStatus
 
         #region Unity event methods
 
-        private void Start()
+        private void Awake()
         {
             Init();
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                UpdateNotify();
-            }
         }
 
         #endregion
@@ -71,6 +70,8 @@ namespace UI.Game.UserStatus
             // Set Nickname
             hostNicknameText.text = host.nickname;
             clientNicknameText.text = client.nickname;
+
+            GameManager2.Instance.UserStatusUIController = this;
         }
 
         #endregion
@@ -81,7 +82,7 @@ namespace UI.Game.UserStatus
         /// <summary>
         /// Update timer text area
         /// </summary>
-        public void UpdateTimer(bool show)
+        public void UpdateTimer()
         {
             timerUIController.UpdateTimerText();
         }

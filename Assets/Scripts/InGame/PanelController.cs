@@ -32,7 +32,7 @@ namespace InGame
 
         private void Awake()
         {
-            GameManager.Instance.Init();
+            //GameManager.Instance.Init();
         }
 
         private void Start()

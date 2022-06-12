@@ -136,8 +136,7 @@ namespace Manager.Net
 
                     // set user to host & change scene
                     UserManager.Instance.SetHost();
-                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGame);
-                    //SceneManager.LoadSceneAsync("GameSceneRemaster");
+                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGameRemaster);
                     break;
 
                 case MatchMadeType.Client:
@@ -157,8 +156,7 @@ namespace Manager.Net
         {
             var rcvPacket = JsonUtility.FromJson<Packet.MatchCode>(data);
             await NetRelayManager.Instance.StartClient(rcvPacket.code);
-            //UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGame);
-            SceneManager.LoadSceneAsync("GameSceneRemaster");
+            UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameGameRemaster);
         }
 
         #endregion

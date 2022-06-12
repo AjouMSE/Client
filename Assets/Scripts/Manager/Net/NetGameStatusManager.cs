@@ -70,6 +70,16 @@ namespace Manager.Net
 
             _hostCardList = new NetworkList<int>();
             _clientCardList = new NetworkList<int>();
+
+            _hostCardList.OnListChanged += e =>
+            {
+                
+            };
+
+            _clientCardList.OnListChanged += e =>
+            {
+
+            };
         }
 
         #endregion

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using InGame;
 using Manager.Net;
 using UI.Game;
+using UI.Game.CardSelection;
 using UI.Game.UserStatus;
 using UI.Game.Versus;
 using Unity.Netcode;
@@ -26,9 +27,9 @@ namespace Manager.InGame
 
         #region Private variables
 
-        private HUDGameVersusUIController _gameVersusUIController;
-        private HUDGameUserInfoUIController _userInfoUIController;
-        private HUDGameCardSelectionUIController _cardSelectionUIController;
+        public HUDGameVersusUIController GameVersusUIController { get; set; }
+        public HUDGameUserStatusUIController UserStatusUIController { get; set; }
+        public HUDGameSelectedCardUIController SelectedCardUIController { get; set; }
 
         #endregion
 
@@ -48,15 +49,9 @@ namespace Manager.InGame
 
         public override void Init()
         {
-            var hudCamera = GameObject.FindWithTag(HudCameraTag);
-            _gameVersusUIController = hudCamera.GetComponentInChildren<HUDGameVersusUIController>();
-            _userInfoUIController = hudCamera.GetComponentInChildren<HUDGameUserInfoUIController>();
-            _cardSelectionUIController = hudCamera.GetComponentInChildren<HUDGameCardSelectionUIController>();
-
             TurnValue = DefaultTurnValue;
             TimerValue = DefaultTimerValue;
             CanCardSelect = false;
-
             IsInitialized = true;
         }
 
@@ -92,6 +87,7 @@ namespace Manager.InGame
         {
             NetGameStatusManager.Instance.ReadyToRunTimer(true);
             NetGameStatusManager.Instance.ReadyToProcessCards(false);
+            UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifyWaitForOpponent, true);
 
             while (!NetGameStatusManager.Instance.BothReadyToRunTimer())
             {
@@ -111,15 +107,15 @@ namespace Manager.InGame
             TimerValue = DefaultTimerValue;
             CanCardSelect = true;
 
-            _userInfoUIController.UpdateTimerText();
-            _userInfoUIController.UpdateTurnText();
-            _cardSelectionUIController.UpdateInvalidCards();
-            _cardSelectionUIController.OpenCardScroll();
+            UserStatusUIController.UpdateTimer();
+            UserStatusUIController.UpdateNotify("");
+            //SelectedCardUIController.UpdateInvalidCards();
+            SelectedCardUIController.OpenCardScroll();
 
             while (TimerValue > 0)
             {
                 TimerValue -= Time.deltaTime;
-                _userInfoUIController.UpdateTimerText();
+                UserStatusUIController.UpdateTimer();
                 yield return null;
             }
 
@@ -139,8 +135,8 @@ namespace Manager.InGame
             TimerValue = 0;
             CanCardSelect = false;
 
-            _userInfoUIController.UpdateTimerText();
-            _cardSelectionUIController.CloseCardScroll();
+            UserStatusUIController.UpdateTimer();
+            SelectedCardUIController.CloseCardScroll();
 
             while (!NetGameStatusManager.Instance.BothReadyToProcessCards())
             {

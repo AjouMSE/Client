@@ -7,6 +7,7 @@ the challenge of this script was to make the 3D scroll object and its UI canvas 
 
 */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Data.Cache;
@@ -21,11 +22,11 @@ namespace UI.Game.CardSelection
     {
         #region Private variables
 
-        [Header("Menu Canvas")] [SerializeField]
-        private Canvas menuCanvas;
+        [Header("Menu Canvas")] 
+        [SerializeField] private Canvas menuCanvas;
 
-        [Header("HUD GameCard Selection UI Controller")] [SerializeField]
-        private HUDGameCardSelectionUIController controller;
+        [Header("HUD GameCard Selection UI Controller")] 
+        [SerializeField] private HUDGameSelectedCardUIController controller;
 
         [Header("Backdrops, SectionButtons")] [SerializeField]
         private GameObject backdrops;
@@ -33,7 +34,8 @@ namespace UI.Game.CardSelection
         [SerializeField] private GameObject cardTemplate;
         [SerializeField] private GameObject[] sectionButtons;
 
-        [Header("Options")] [SerializeField] private int backdropLength = 6;
+        [Header("Options")] 
+        [SerializeField] private int backdropLength = 6;
         [SerializeField] private int menuPositionInt = 0;
         [SerializeField] private float menuSlideSpeed = 0.1f;
         [SerializeField] private float menuFadeInSpeed = 0.2f;
@@ -79,6 +81,12 @@ namespace UI.Game.CardSelection
 
         #region Unity event methods
 
+        private void Awake()
+        {
+            StartCoroutine(CacheCoroutineSource.Instance.InitCoroutine());
+            StartCoroutine(CacheSpriteSource.Instance.InitCoroutine());
+        }
+
         void Start()
         {
             Init();
@@ -89,61 +97,13 @@ namespace UI.Game.CardSelection
             _currentSliderPos = new Vector3(8.75f + (-3.5f * menuPositionInt), _menuPosY, _menuPosZ);
             _backdropTrans.localPosition =
                 Vector3.MoveTowards(_backdropTrans.localPosition, _currentSliderPos, menuSlideSpeed);
+        }
 
+        void Update()
+        {
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 OpenScroll();
-            }
-        }
-
-        #endregion
-
-
-        #region Callbacks
-
-        public void OnMenuBtnClick(int sectionOpen)
-        {
-            _sectionOpen = sectionOpen;
-            StartCoroutine(SortScroll());
-        }
-
-        public void OnMenuMoveLeftBtnClick()
-        {
-            if (menuPositionInt > 0)
-            {
-                menuPositionInt = (menuPositionInt - 1);
-                _animator.SetTrigger("RollRightTrig");
-                PlaySound();
-            }
-        }
-
-        public void OnMenuMoveRightBtnClick()
-        {
-            if (menuPositionInt < (backdropLength - 1))
-            {
-                menuPositionInt = (menuPositionInt + 1);
-                _animator.SetTrigger("RollLeftTrig");
-                PlaySound();
-            }
-        }
-
-        public void MoveMenuLeft()
-        {
-            if (menuPositionInt < (backdropLength - 1))
-            {
-                menuPositionInt = (menuPositionInt + 1);
-                _animator.SetTrigger("RollLeftTrig");
-                PlaySound();
-            }
-        }
-
-        public void MoveMenuRight()
-        {
-            if (menuPositionInt > 0)
-            {
-                menuPositionInt = (menuPositionInt - 1);
-                _animator.SetTrigger("RollRightTrig");
-                PlaySound();
             }
         }
 
@@ -159,8 +119,7 @@ namespace UI.Game.CardSelection
             _selectedColor = new Color(1, 0.75f, 0.36f);
             _buttonRectTrans = new RectTransform[4];
             _buttonImages = new Image[4];
-
-            _backdropTrans = backdrops.GetComponent<RectTransform>();
+            
             for (int i = 0; i < sectionButtons.Length; i++)
             {
                 _buttonRectTrans[i] = sectionButtons[i].GetComponent<RectTransform>();
@@ -170,10 +129,12 @@ namespace UI.Game.CardSelection
             // Init components
             _animator = gameObject.GetComponent<Animator>();
             _audioSource = gameObject.GetComponent<AudioSource>();
+            _backdropTrans = backdrops.GetComponent<RectTransform>();
             _menuPosY = _backdropTrans.localPosition.y;
             _menuPosZ = _backdropTrans.localPosition.z;
             menuCanvas.worldCamera = GameObject.FindGameObjectWithTag(Consts.TagHudCamera).GetComponent<Camera>();
 
+            // Init Data structures
             cards = new List<CardInScroll>();
             cardDict = new Dictionary<int, CardInScroll>();
             cardImageDict = new Dictionary<int, Image>();
@@ -181,18 +142,17 @@ namespace UI.Game.CardSelection
 
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
             {
-                CardData cardData = TableDatas.Instance.cardDatas[key];
-                GameObject cardObj = Instantiate(cardTemplate, backdrops.transform);
-
-                // set name & image
-                cardObj.name = $"{cardObj.name}{cardData.text}";
-                Image cardImage = cardObj.GetComponent<Image>();
+                var cardData = TableDatas.Instance.cardDatas[key];
+                var cardObj = Instantiate(cardTemplate, backdrops.transform);
+                var cardImage = cardObj.GetComponent<Image>();
+                var cardButton = cardObj.GetComponent<Button>();
+                
                 cardImage.sprite = CacheSpriteSource.Instance.GetSource(key);
                 cardImageDict.Add(key, cardImage);
-                buttonDict.Add(key, cardObj.GetComponent<Button>());
+                buttonDict.Add(key, cardButton);
 
                 // set data & on click event listener
-                CardInScroll cardInScroll = cardObj.GetComponent<CardInScroll>();
+                var cardInScroll = cardObj.GetComponent<CardInScroll>();
                 cardInScroll.CardData = cardData;
                 cardObj.GetComponent<Button>().onClick.AddListener(delegate { controller.OnCardAddBtnClick(key); });
 
@@ -233,16 +193,15 @@ namespace UI.Game.CardSelection
             {
                 case (int)SectionType.All:
                     backdropLength = 6;
-                    foreach (CardInScroll c in cardDict.Values)
+                    foreach (var c in cardDict.Values)
                     {
                         c.gameObject.SetActive(true);
                     }
-
                     break;
 
                 case (int)SectionType.Move:
                     backdropLength = 2;
-                    foreach (CardInScroll c in cardDict.Values)
+                    foreach (var c in cardDict.Values)
                     {
                         var obj = c.gameObject;
                         obj.SetActive(c.CardData.type == (int)Card.SkillType.Move);
@@ -252,7 +211,7 @@ namespace UI.Game.CardSelection
 
                 case (int)SectionType.Attack:
                     backdropLength = 3;
-                    foreach (CardInScroll c in cardDict.Values)
+                    foreach (var c in cardDict.Values)
                     {
                         var obj = c.gameObject;
                         obj.SetActive(c.CardData.type == (int)Card.SkillType.Attack);
@@ -262,10 +221,10 @@ namespace UI.Game.CardSelection
 
                 case (int)SectionType.Special:
                     backdropLength = 2;
-                    foreach (CardInScroll c in cardDict.Values)
+                    foreach (var c in cardDict.Values)
                     {
                         var obj = c.gameObject;
-                        obj.SetActive(c.CardData.type == (int)Card.SkillType.Special);
+                        obj.SetActive(c.CardData.type >= (int)Card.SkillType.Special);
                     }
 
                     break;
@@ -281,7 +240,7 @@ namespace UI.Game.CardSelection
                 Color tmpColor;
                 if ((_sectionOpen & mask) > 0)
                 {
-                    tmpPos = new Vector3(_buttonRectTrans[i].localPosition.x, -0.42f, 0.03f);
+                    tmpPos = new Vector3(_buttonRectTrans[i].localPosition.x, -0.4f, 0.03f);
                     tmpColor = _selectedColor;
                 }
                 else
@@ -334,6 +293,57 @@ namespace UI.Game.CardSelection
         }
 
         #endregion
+        
+        
+        #region Callbacks
+
+        public void OnMenuBtnClick(int sectionOpen)
+        {
+            _sectionOpen = sectionOpen;
+            StartCoroutine(SortScroll());
+        }
+
+        public void OnMenuMoveLeftBtnClick()
+        {
+            if (menuPositionInt > 0)
+            {
+                menuPositionInt = (menuPositionInt - 1);
+                _animator.SetTrigger("RollRightTrig");
+                PlaySound();
+            }
+        }
+
+        public void OnMenuMoveRightBtnClick()
+        {
+            if (menuPositionInt < (backdropLength - 1))
+            {
+                menuPositionInt = (menuPositionInt + 1);
+                _animator.SetTrigger("RollLeftTrig");
+                PlaySound();
+            }
+        }
+
+        public void MoveMenuLeft()
+        {
+            if (menuPositionInt < (backdropLength - 1))
+            {
+                menuPositionInt = (menuPositionInt + 1);
+                _animator.SetTrigger("RollLeftTrig");
+                PlaySound();
+            }
+        }
+
+        public void MoveMenuRight()
+        {
+            if (menuPositionInt > 0)
+            {
+                menuPositionInt = (menuPositionInt - 1);
+                _animator.SetTrigger("RollRightTrig");
+                PlaySound();
+            }
+        }
+
+        #endregion
 
 
         #region Coroutines
@@ -341,7 +351,7 @@ namespace UI.Game.CardSelection
         IEnumerator SortScroll()
         {
             CloseScroll();
-            yield return new WaitForSeconds(0.6f);
+            yield return CacheCoroutineSource.Instance.GetSource(0.6f);
             OpenScroll();
             Sort();
         }

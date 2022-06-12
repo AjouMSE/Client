@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Core;
 using Data.Cache;
+using Manager;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace UI.Lobby.CardLibrary
@@ -29,6 +31,13 @@ namespace UI.Lobby.CardLibrary
         #endregion
 
 
+        #region Public variables
+
+        public RectTransform RectTrans { get; private set; }
+
+        #endregion
+
+
         #region Unity event methods
 
         private void Start()
@@ -44,6 +53,9 @@ namespace UI.Lobby.CardLibrary
         private void Init()
         {
             _gridImages = skillRangeGridObj.GetComponentsInChildren<Image>();
+            RectTrans = GetComponent<RectTransform>();
+            if(SceneManager.GetActiveScene().name.Equals(UIManager.SceneNameGameRemaster))
+                RectTrans.localPosition = new Vector3(0, -900, 0);
             IsEmptyCard(false);
         }
 
@@ -80,7 +92,6 @@ namespace UI.Lobby.CardLibrary
             // Set grid color
             BitMask.BitField25 skillRange = new BitMask.BitField25(skillData.range);
             var mask = BitMask.BitField25Msb;
-            skillRange.PrintBy2D();
             for (int i = 0; i < _gridImages.Length; i++)
             {
                 if ((skillRange.element & mask) > 0)

@@ -39,7 +39,9 @@ public class CardLibrarySpecialCardUIController : MonoBehaviour, IPointerEnterHa
     {
         if (_specialName != null)
         {
-            explainSpecial.SetActive(true);
+            if(explainSpecial != null)
+                explainSpecial.SetActive(true);
+            
             switch (_specialName)
             {
                 case "S_Burn":
@@ -78,7 +80,8 @@ public class CardLibrarySpecialCardUIController : MonoBehaviour, IPointerEnterHa
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        explainSpecial.SetActive(false);
+        if(explainSpecial != null)
+            explainSpecial.SetActive(false);
     }
 
     #endregion

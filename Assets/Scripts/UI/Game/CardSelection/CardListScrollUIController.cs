@@ -13,6 +13,7 @@ using Data.Cache;
 using UI.Game;
 using UnityEngine.UI;
 using UnityEngine;
+using Utils;
 
 namespace UI.Game.CardSelection
 {
@@ -171,7 +172,7 @@ namespace UI.Game.CardSelection
             _audioSource = gameObject.GetComponent<AudioSource>();
             _menuPosY = _backdropTrans.localPosition.y;
             _menuPosZ = _backdropTrans.localPosition.z;
-            menuCanvas.worldCamera = GameObject.FindGameObjectWithTag("HUDCamera").GetComponent<Camera>();
+            menuCanvas.worldCamera = GameObject.FindGameObjectWithTag(Consts.TagHudCamera).GetComponent<Camera>();
 
             cards = new List<CardInScroll>();
             cardDict = new Dictionary<int, CardInScroll>();
@@ -192,7 +193,7 @@ namespace UI.Game.CardSelection
 
                 // set data & on click event listener
                 CardInScroll cardInScroll = cardObj.GetComponent<CardInScroll>();
-                cardInScroll.cardData = cardData;
+                cardInScroll.CardData = cardData;
                 cardObj.GetComponent<Button>().onClick.AddListener(delegate { controller.OnCardAddBtnClick(key); });
 
                 cardDict.Add(key, cardInScroll);
@@ -244,7 +245,7 @@ namespace UI.Game.CardSelection
                     foreach (CardInScroll c in cardDict.Values)
                     {
                         var obj = c.gameObject;
-                        obj.SetActive(c.cardData.type == (int)Card.SkillType.Move);
+                        obj.SetActive(c.CardData.type == (int)Card.SkillType.Move);
                     }
 
                     break;
@@ -254,7 +255,7 @@ namespace UI.Game.CardSelection
                     foreach (CardInScroll c in cardDict.Values)
                     {
                         var obj = c.gameObject;
-                        obj.SetActive(c.cardData.type == (int)Card.SkillType.Attack);
+                        obj.SetActive(c.CardData.type == (int)Card.SkillType.Attack);
                     }
 
                     break;
@@ -264,7 +265,7 @@ namespace UI.Game.CardSelection
                     foreach (CardInScroll c in cardDict.Values)
                     {
                         var obj = c.gameObject;
-                        obj.SetActive(c.cardData.type == (int)Card.SkillType.Special);
+                        obj.SetActive(c.CardData.type == (int)Card.SkillType.Special);
                     }
 
                     break;

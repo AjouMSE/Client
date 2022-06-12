@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -49,6 +50,8 @@ namespace Data.Cache
                 { 103, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconLightning}") },
                 { 104, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconNature}") }
             };
+            
+            TableLoader.Instance.LoadTableData();
 
             // Skill Icons
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
@@ -59,6 +62,11 @@ namespace Data.Cache
 
             IsInitialized = true;
             yield break;
+        }
+
+        public bool IsInit()
+        {
+            return IsInitialized;
         }
 
         #endregion

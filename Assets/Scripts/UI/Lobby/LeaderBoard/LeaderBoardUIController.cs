@@ -150,7 +150,7 @@ namespace UI.Lobby.LeaderBoard
         /// </summary>
         public void OnLeaderBoardBackBtnClick()
         {
-            scroll3D.GetComponent<ScrollScript3D>().OpenScroll();
+            scroll3D.OpenScroll();
             UIManager.Instance.Fade(UIManager.FadeType.FadeOut, _leaderBoardCanvasGroup,
                 UIManager.LobbyMenuFadeInOutDuration);
         }

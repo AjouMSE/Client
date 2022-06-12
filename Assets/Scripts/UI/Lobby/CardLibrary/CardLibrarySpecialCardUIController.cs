@@ -1,34 +1,46 @@
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
+using UI.Lobby.CardLibrary;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SpecialExplain : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CardLibrarySpecialCardUIController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private Card cardPrefab;
+    #region Private variables
+
+    [SerializeField] private CardLibraryCardUIController cardUIController;
     [SerializeField] private GameObject explainSpecial;
     [SerializeField] private TMP_Text explainText;
-    private string getSpecialName;
+    
+    private string _specialName;
+    private Image _specialImage;
 
-    private void Start()
+    #endregion
+
+
+    #region Unity event methods
+    
+    void Start()
     {
+        Init();
     }
 
-    private void Update()
+    void Update()
     {
-        if (transform.gameObject.GetComponent<Image>().sprite != null)
-            getSpecialName = transform.gameObject.GetComponent<Image>().sprite.name;
+        if (_specialImage.sprite != null)
+            _specialName = _specialImage.sprite.name;
         else
-            getSpecialName = null;
+            _specialName = null;
     }
-
+    
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (getSpecialName != null)
+        if (_specialName != null)
         {
             explainSpecial.SetActive(true);
-
-            switch (getSpecialName)
+            switch (_specialName)
             {
                 case "S_Burn":
                     explainText.text = "3 Damage to HP per phase, Maintain for 3 phase";
@@ -68,4 +80,15 @@ public class SpecialExplain : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         explainSpecial.SetActive(false);
     }
+
+    #endregion
+
+    #region Private methods
+
+    private void Init()
+    {
+        _specialImage = GetComponent<Image>();
+    }
+
+    #endregion
 }

@@ -81,7 +81,4 @@ public class Card : MonoBehaviour
             special_Icon.color = new Color(255, 255, 255, 0);
         }
     }
-
-
-
 }

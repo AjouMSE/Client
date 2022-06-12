@@ -190,7 +190,7 @@ public class ScrollScript3DTest : MonoBehaviour
             
             // set data & on click event listener
             CardInScroll cardInScroll = cardObj.GetComponent<CardInScroll>();
-            cardInScroll.cardData = cardData;
+            cardInScroll.CardData = cardData;
             cardObj.GetComponent<Button>().onClick.AddListener(delegate { controller.OnCardAddBtnClick(key); });
             
             cardDict.Add(key, cardInScroll);
@@ -241,7 +241,7 @@ public class ScrollScript3DTest : MonoBehaviour
                 foreach (CardInScroll c in cardDict.Values)
                 {
                     var obj = c.gameObject;
-                    obj.SetActive(c.cardData.type == (int)Card.SkillType.Move);
+                    obj.SetActive(c.CardData.type == (int)Card.SkillType.Move);
                 }
                 break;
             
@@ -250,7 +250,7 @@ public class ScrollScript3DTest : MonoBehaviour
                 foreach (CardInScroll c in cardDict.Values)
                 {
                     var obj = c.gameObject;
-                    obj.SetActive(c.cardData.type == (int)Card.SkillType.Attack);
+                    obj.SetActive(c.CardData.type == (int)Card.SkillType.Attack);
                 }
                 break;
             
@@ -259,7 +259,7 @@ public class ScrollScript3DTest : MonoBehaviour
                 foreach (CardInScroll c in cardDict.Values)
                 {
                     var obj = c.gameObject;
-                    obj.SetActive(c.cardData.type == (int)Card.SkillType.Special);
+                    obj.SetActive(c.CardData.type == (int)Card.SkillType.Special);
                 }
                 break;
         }

@@ -20,12 +20,15 @@ public class ScrollScript2D : MonoBehaviour
     private AudioSource _audioSource;
     private bool isOpen = false;
 
+    public bool IsOpen => isOpen;
+    public Animator ScrollAnimator => _animator;
+
 
     // Here, we use the Start function to assign the anim variable to the Animator, and the Sound variable to the AudioSource 
     // then, we set ths object's Canvas's (parent) "Render Camera" component to the HUDcam. 
     // the Render Camera can be set manualy in the inspector... 
     // but if you forget to set it when you drag in a new prefab, things stop working - which is the purpose for this automation.
-    void Start()
+    void Awake()
     {
         _animator = GetComponent<Animator>();
         _audioSource = gameObject.GetComponent<AudioSource>();

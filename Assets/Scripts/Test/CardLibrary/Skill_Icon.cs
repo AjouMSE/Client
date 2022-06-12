@@ -27,6 +27,4 @@ public class Skill_Icon : MonoBehaviour, IPointerEnterHandler
     {
         cardPrefab.SetData(cardData);
     }
-
-
 }

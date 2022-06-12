@@ -14,6 +14,19 @@ namespace Utils
         #endregion
 
 
+        #region InGame-Skill constants
+
+        public enum SkillCategory
+        {
+            All = 0, 
+            Move = 1, 
+            Attack = 100,
+            Special = 200
+        }
+
+        #endregion
+
+
         #region InGame-Panel (Map) Constants
 
         #endregion

@@ -41,13 +41,8 @@ public class CardLibrary : MonoBehaviour
         scroll2d =  scrollPrefab.GetComponent<ScrollScript2D>();
         scroll2d.animate();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
-
+    
+    
     public void CategoryChange()
     {
         string btnName = EventSystem.current.currentSelectedGameObject.name;

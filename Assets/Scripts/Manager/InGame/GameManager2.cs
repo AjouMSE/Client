@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Data.Cache;
 using InGame;
 using Manager.Net;
 using UI.Game;
@@ -54,24 +55,32 @@ namespace Manager.InGame
             CanCardSelect = false;
             IsInitialized = true;
         }
-
+        
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="isHostPlayerController"></param>
         /// <param name="controller"></param>
-        public void SetPlayerController(PlayerController controller)
+        public void SetPlayerController(bool isHostPlayerController, PlayerController controller)
         {
             if (controller is null) return;
 
-            if (NetworkManager.Singleton.IsHost)
+            if (isHostPlayerController)
                 HostController = controller;
             else
+            {
                 ClientController = controller;
+            }
         }
 
         public void CheckReadyToRunTimer()
         {
             StartCoroutine(WaitForRunningTimer());
+        }
+
+        public void StopTimer()
+        {
+            TimerValue = 0.1f;
         }
 
         #endregion
@@ -106,6 +115,7 @@ namespace Manager.InGame
             TurnValue++;
             TimerValue = DefaultTimerValue;
             CanCardSelect = true;
+            UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifySelectCard, true);
 
             UserStatusUIController.UpdateTimer();
             UserStatusUIController.UpdateNotify("");
@@ -131,6 +141,7 @@ namespace Manager.InGame
         {
             NetGameStatusManager.Instance.ReadyToRunTimer(false);
             NetGameStatusManager.Instance.ReadyToProcessCards(true);
+            UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifyWaitForOpponent, true);
 
             TimerValue = 0;
             CanCardSelect = false;
@@ -152,9 +163,15 @@ namespace Manager.InGame
         /// <returns></returns>
         private IEnumerator ProcessPhases()
         {
+            UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifyProcessCard, true);
+            var hostCards = NetGameStatusManager.Instance.CopyHostCardList();
+            var clientCards = NetGameStatusManager.Instance.CopyClientCardList();
+            
             for (int i = 0; i < MaxPhaseCnt; i++)
             {
-                yield break;
+                HostController.ShowEmoji(CacheEmojiSource.EmojiType.EmojiAngry, 1.5f);
+                ClientController.ShowEmoji(CacheEmojiSource.EmojiType.EmojiCry, 1.5f);
+                yield return CacheCoroutineSource.Instance.GetSource(3f);
             }
         }
 

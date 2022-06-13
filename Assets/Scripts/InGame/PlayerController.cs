@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Core;
@@ -34,13 +35,14 @@ namespace InGame
 
         private NetworkVariable<int> _netHp, _netMana;
         private NetworkVariable<int> _netPosX, _netPosY;
+        private NetworkList<int> _buffList;
+        private NetworkList<int> _debuffList;
 
         private int _idx;
         private BitMask.BitField30 _bitIdx;
 
         private string _currentAnimation;
         private Animator _animator;
-        private HUDGameUserInfoUIController _userInfoUIController;
 
         #endregion
 
@@ -48,6 +50,10 @@ namespace InGame
         #region Public Variable
 
         public bool IsHostPlayerObject { get; private set; }
+        public HUDGameUserStatusUIController UserStatusUIController { get; set; }
+
+        public int Hp => _netHp?.Value ?? 0;
+        public int Mana => _netMana?.Value ?? 0;
 
         #endregion
 
@@ -66,14 +72,17 @@ namespace InGame
 
         private void Init()
         {
+            _animator = GetComponent<Animator>();
+
             _netHp = new NetworkVariable<int>();
             _netMana = new NetworkVariable<int>();
             _netPosX = new NetworkVariable<int>();
             _netPosY = new NetworkVariable<int>();
 
-            // todo-add OnValueChanged callback
-
-            _animator = GetComponent<Animator>();
+            _buffList = new NetworkList<int>();
+            _debuffList = new NetworkList<int>();
+            
+            SetDefaultValue();
         }
 
         private void ProcessAnimation(string animationName)
@@ -90,15 +99,52 @@ namespace InGame
 
         #region Public methods
 
-        public void RestoreMana()
+        public void SetDefaultValue()
         {
-            var mana = Mathf.Clamp(GameManager2.Instance.TurnValue + _netMana.Value, 0, MaxMana);
-            _netMana.Value = mana;
+            _netHp.Value = DefaultHp;
+            _netMana.Value = DefaultMana;
+
+            if (IsHost)
+            {
+                _netPosX.Value = InitHostX;
+                _netPosY.Value = InitHostY;
+            }
+            else
+            {
+                _netPosX.Value = InitClientX;
+                _netPosY.Value = InitClientY;
+            }
+            
+            _buffList.Clear();
+            _debuffList.Clear();
+        }
+        
+        public void ApplyDamage(int damage)
+        {
+            if (NetworkManager.Singleton.IsHost)
+                _netHp.Value = Mathf.Clamp(_netHp.Value - damage, 0, Consts.MaximumHp);
+        }
+
+        public void UseMana(int mana)
+        {
+            if (NetworkManager.Singleton.IsHost)
+                _netMana.Value = Mathf.Clamp(_netMana.Value - mana, 0, Consts.MaximumMana);
+        }
+
+        public void RestoreMana(int mana)
+        {
+            if (NetworkManager.Singleton.IsHost)
+                _netMana.Value = Mathf.Clamp(_netMana.Value + mana, 0, Consts.MaximumMana);
         }
 
         public void PlayAnimation(string animationName)
         {
             StartCoroutine(ProcessAnimationCoroutine(animationName));
+        }
+
+        public void ShowEmoji(CacheEmojiSource.EmojiType type, float duration = 1f)
+        {
+            StartCoroutine(ProcessEmojiCoroutine(type, duration));
         }
 
         #endregion
@@ -111,6 +157,38 @@ namespace InGame
             IsHostPlayerObject = IsOwnedByServer;
             name = IsHostPlayerObject ? $"(h){name}" : $"(c){name}";
             
+            // Add OnValueChanged Listener
+            _netHp.OnValueChanged += (value, newValue) =>
+            {
+                if (UserStatusUIController is null) return;
+                
+                if (IsHostPlayerObject)
+                    UserStatusUIController.UpdateHostUI(Consts.GameUIType.Hp, newValue);
+                else
+                    UserStatusUIController.UpdateClientUI(Consts.GameUIType.Hp, newValue);
+            };
+
+            _netMana.OnValueChanged += (value, newValue) =>
+            {
+                if (UserStatusUIController is null) return;
+                
+                switch (NetworkManager.Singleton.IsHost)
+                {
+                    case true when IsHostPlayerObject:
+                        UserStatusUIController.UpdateHostUI(Consts.GameUIType.Mana, newValue);
+                        break;
+                    case false when !IsHostPlayerObject:
+                        UserStatusUIController.UpdateClientUI(Consts.GameUIType.Mana, newValue);
+                        break;
+                }
+            };
+
+            // todo-add OnValueChanged callback
+
+            _buffList.OnListChanged += e => { };
+            _debuffList.OnListChanged += e => { };
+
+            // Set Position
             if (IsHost)
             {
                 if (IsHostPlayerObject)
@@ -122,8 +200,6 @@ namespace InGame
 
                     _netPosX.Value = InitHostX;
                     _netPosY.Value = InitHostY;
-                    _netHp.Value = DefaultHp;
-                    _netMana.Value = DefaultMana;
                 }
                 else
                 {
@@ -134,15 +210,14 @@ namespace InGame
 
                     _netPosX.Value = InitClientX;
                     _netPosY.Value = InitClientY;
-                    _netHp.Value = DefaultHp;
-                    _netMana.Value = DefaultMana;
                 }
             }
 
+            // Set Client Material
             if (!IsHostPlayerObject)
                 GetComponentInChildren<SkinnedMeshRenderer>().material = clientMaterial;
 
-            GameManager2.Instance.SetPlayerController(this);
+            GameManager2.Instance.SetPlayerController(IsHostPlayerObject, this);
         }
 
         #endregion
@@ -155,6 +230,23 @@ namespace InGame
             ProcessAnimation(animationName);
             yield return CacheCoroutineSource.Instance.GetSource(1f);
             ProcessAnimation(WizardAnimations.Idle);
+        }
+
+        private IEnumerator ProcessEmojiCoroutine(CacheEmojiSource.EmojiType type, float duration)
+        {
+            var emoji = CacheEmojiSource.Instance.GetSource(type);
+            
+            // Play Emoji effect
+            emoji.gameObject.SetActive(true);
+            emoji.transform.position = transform.position + new Vector3(0, 4, 0);
+            emoji.Play();
+            
+            yield return CacheCoroutineSource.Instance.GetSource(duration);
+            
+            // Stop Emoji effect
+            emoji.Stop();
+            emoji.transform.position = Vector3.zero;
+            emoji.gameObject.SetActive(false);
         }
 
         #endregion

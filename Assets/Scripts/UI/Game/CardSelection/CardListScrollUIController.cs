@@ -99,14 +99,6 @@ namespace UI.Game.CardSelection
                 Vector3.MoveTowards(_backdropTrans.localPosition, _currentSliderPos, menuSlideSpeed);
         }
 
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                OpenScroll();
-            }
-        }
-
         #endregion
 
 

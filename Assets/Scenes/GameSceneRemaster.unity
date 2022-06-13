@@ -1401,8 +1401,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UI.Game.HUDGameCardSelectionUIController, Assembly-CSharp
+      - m_Target: {fileID: 1205434516}
+        m_TargetAssemblyTypeName: UI.Game.CardSelection.HUDGameSelectedCardUIController,
+          Assembly-CSharp
         m_MethodName: OnCardRemoveBtnClick
         m_Mode: 3
         m_Arguments:
@@ -4429,8 +4430,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UI.Game.HUDGameCardSelectionUIController, Assembly-CSharp
+      - m_Target: {fileID: 1205434516}
+        m_TargetAssemblyTypeName: UI.Game.CardSelection.HUDGameSelectedCardUIController,
+          Assembly-CSharp
         m_MethodName: OnConfirmBtnClick
         m_Mode: 1
         m_Arguments:
@@ -7354,8 +7356,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UI.Game.HUDGameCardSelectionUIController, Assembly-CSharp
+      - m_Target: {fileID: 1205434516}
+        m_TargetAssemblyTypeName: UI.Game.CardSelection.HUDGameSelectedCardUIController,
+          Assembly-CSharp
         m_MethodName: OnCardRemoveBtnClick
         m_Mode: 3
         m_Arguments:
@@ -8764,8 +8767,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UI.Game.HUDGameCardSelectionUIController, Assembly-CSharp
+      - m_Target: {fileID: 1205434516}
+        m_TargetAssemblyTypeName: UI.Game.CardSelection.HUDGameSelectedCardUIController,
+          Assembly-CSharp
         m_MethodName: OnConfirmBtnClick
         m_Mode: 1
         m_Arguments:
@@ -9565,8 +9569,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UI.Game.HUDGameCardSelectionUIController, Assembly-CSharp
+      - m_Target: {fileID: 1205434516}
+        m_TargetAssemblyTypeName: UI.Game.CardSelection.HUDGameSelectedCardUIController,
+          Assembly-CSharp
         m_MethodName: OnCardRemoveBtnClick
         m_Mode: 3
         m_Arguments:
@@ -10085,8 +10090,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UI.Game.HUDGameCardSelectionUIController, Assembly-CSharp
+      - m_Target: {fileID: 1205434516}
+        m_TargetAssemblyTypeName: UI.Game.CardSelection.HUDGameSelectedCardUIController,
+          Assembly-CSharp
         m_MethodName: OnCardRemoveBtnClick
         m_Mode: 3
         m_Arguments:
@@ -13845,9 +13851,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 890, y: -20}
+  m_AnchoredPosition: {x: 890, y: -170}
   m_SizeDelta: {x: 300, y: 40}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &964213961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14233,8 +14239,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UI.Game.HUDGameCardSelectionUIController, Assembly-CSharp
+      - m_Target: {fileID: 1205434516}
+        m_TargetAssemblyTypeName: UI.Game.CardSelection.HUDGameSelectedCardUIController,
+          Assembly-CSharp
         m_MethodName: OnCardRemoveBtnClick
         m_Mode: 3
         m_Arguments:
@@ -25226,8 +25233,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UI.Game.HUDGameCardSelectionUIController, Assembly-CSharp
+      - m_Target: {fileID: 1205434516}
+        m_TargetAssemblyTypeName: UI.Game.CardSelection.HUDGameSelectedCardUIController,
+          Assembly-CSharp
         m_MethodName: OnCardRemoveBtnClick
         m_Mode: 3
         m_Arguments:

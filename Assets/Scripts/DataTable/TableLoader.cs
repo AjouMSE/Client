@@ -10,6 +10,8 @@ using UnityEditor;
 
 public partial class TableLoader : MonoSingleton<TableLoader>
 {
+    public bool IsLoaded => _IsLoaded;
+    
     protected bool _IsLoaded = false;
 
     protected int _CurrentStep;
@@ -48,7 +50,6 @@ public partial class TableLoader : MonoSingleton<TableLoader>
     public void LoadTableDataProcess(System.Action complete)
     {
         StartCoroutine(LoadTableDataProcess());
-        _IsLoaded = true;
 
         if (null != complete)
             complete();

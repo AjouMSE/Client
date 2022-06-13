@@ -16,6 +16,7 @@ namespace Data.Cache
         private const string SrcPathButtonIcon = "Button_Icon";
         private const string SrcPathLoadingIcon = "Loading_Icon";
         private const string SrcPathSkillIcon = "Skill_Icon";
+        private const string SrcPathSpecialIcon = "Special_Icon";
 
         private const string SrcPathSoundOn = "Button_SoundOn";
         private const string SrcPathSoundOff = "Button_SoundOff";
@@ -51,13 +52,17 @@ namespace Data.Cache
                 { 104, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathLoadingIcon}/{SrcPathLoadingIconNature}") }
             };
             
-            TableLoader.Instance.LoadTableData();
-
-            // Skill Icons
             foreach (int key in TableDatas.Instance.cardDatas.Keys)
             {
+                // Add skill icon
                 var card = TableDatas.Instance.cardDatas[key];
                 Cache.Add(key, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathSkillIcon}/{card.icon}"));
+
+                // Add special icon
+                if (card.special == 0) continue;
+                if (Cache.ContainsKey(card.special)) continue;
+                var special = TableDatas.Instance.GetSpecialData(card.special);
+                Cache.Add(card.special, Resources.Load<Sprite>($"{SrcPathRoot}/{SrcPathSpecialIcon}/{special.icon}"));
             }
 
             IsInitialized = true;

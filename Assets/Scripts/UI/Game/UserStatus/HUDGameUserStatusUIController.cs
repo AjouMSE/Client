@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using InGame;
 using Manager;
 using Manager.InGame;
 using Unity.Netcode;
@@ -17,10 +18,12 @@ namespace UI.Game.UserStatus
         #region Public constants
 
         public const string NotifyWaitForOpponent = "Waiting for opponent...";
+        public const string NotifySelectCard = "Choose the card\nyou want to use";
+        public const string NotifyProcessCard = "Processing card logic...";
 
         #endregion
-        
-        
+
+
         #region Private variables
 
         [Header("Nickname Text")] 
@@ -72,13 +75,20 @@ namespace UI.Game.UserStatus
             clientNicknameText.text = client.nickname;
 
             GameManager2.Instance.UserStatusUIController = this;
+            
+            var players = GameObject.FindGameObjectsWithTag("Player");
+            for (var i = 0; i < players.Length; i++)
+            {
+                var controller = players[i].GetComponent<PlayerController>();
+                controller.UserStatusUIController = this;
+            }
         }
 
         #endregion
 
 
         #region Public methods
-        
+
         /// <summary>
         /// Update timer text area
         /// </summary>

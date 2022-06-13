@@ -116,17 +116,22 @@ namespace UI.Game.UserStatus
         /// <param name="fade"></param>
         public void UpdateNotifyText(string text = null, bool fade = false)
         {
-            _fadeTextNotify = fade;
             if (text != null)
                 textNotify.text = text;
-            if (fade)
+            
+            if (!_fadeTextNotify && fade)
+            {
                 UIManager.Instance.FadeText(UIManager.FadeType.FadeIn, textNotify, TextNotifyFadeEffectDuration,
                     TextNotifyFadeInCallback);
-            else
+            }
+
+            if (!fade)
             {
                 UIManager.Instance.FadeText(UIManager.FadeType.FadeIn, textNotify, TextNotifyFadeEffectDuration);
                 UIManager.Instance.SetTextAlpha(textNotify, 1);
             }
+            
+            _fadeTextNotify = fade;
         }
 
         #endregion

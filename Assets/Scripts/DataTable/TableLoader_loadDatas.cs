@@ -19,10 +19,9 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 		yield return Load_table_ranking_tier("201_table_ranking_tier");
 		yield return Load_table_skill_special("301_table_skill_special");
 #endif
-
+        _IsLoaded = true;
         yield return Resources.UnloadUnusedAssets();
         System.GC.Collect();
-
 
         if (m_isLoadFail)
             yield break;
@@ -90,6 +89,7 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 #endif
     {
         List<object> dataList = GetDataList(fileName);
+
         if (dataList == null)
         {
             Debug.Log(GetType().Name + " Load_table_ranking_tier() : data list is null" + fileName);
@@ -136,5 +136,4 @@ public partial class TableLoader : MonoSingleton<TableLoader>
 		yield break;
 #endif
     }
-
 }

@@ -55,7 +55,7 @@ namespace UI.Lobby.CardLibrary
             _gridImages = skillRangeGridObj.GetComponentsInChildren<Image>();
             RectTrans = GetComponent<RectTransform>();
             if(SceneManager.GetActiveScene().name.Equals(UIManager.SceneNameGameRemaster))
-                RectTrans.localPosition = new Vector3(0, -900, 0);
+                RectTrans.localPosition = new Vector3(0, -1000, 0);
             IsEmptyCard(false);
         }
 
@@ -110,9 +110,7 @@ namespace UI.Lobby.CardLibrary
             else
             {
                 // show special icon
-                specialIcon.sprite =
-                    Resources.Load<Sprite>(
-                        $"Image/Skill_Icon/{TableDatas.Instance.GetSpecialData(skillData.special).icon}");
+                specialIcon.sprite = CacheSpriteSource.Instance.GetSource(skillData.special);
                 specialIcon.color = new Color(255, 255, 255, 255);
             }
         }

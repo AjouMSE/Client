@@ -76,6 +76,7 @@ namespace UI.Game.CardSelection
                 cardListHost.SetActive(false);
 
             GameManager2.Instance.SelectedCardUIController = this;
+            NetGameStatusManager.Instance.SelectedCardUIController = this;
         }
 
         #endregion
@@ -171,7 +172,7 @@ namespace UI.Game.CardSelection
         public void OnConfirmBtnClick()
         {
             if (GameManager2.Instance.CanCardSelect)
-                GameManager.Instance.StopTimer();
+                GameManager2.Instance.StopTimer();
         }
 
         public void OnCardAddBtnClick(int id)

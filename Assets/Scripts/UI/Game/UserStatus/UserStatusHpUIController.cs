@@ -29,11 +29,12 @@ namespace UI.Game.UserStatus
 
         #region Unity event methods
 
-        private void Start()
+        private void Awake()
         {
             _imageHpBar = GetComponentsInChildren<Image>()[0];
             _rectTransform = _imageHpBar.GetComponent<RectTransform>();
             _textHpValue = GetComponentInChildren<Text>();
+            UpdateHpUI(Consts.DefaultHp);
         }
 
         #endregion
@@ -43,11 +44,11 @@ namespace UI.Game.UserStatus
         public void UpdateHpUI(int currentHp)
         {
             if (currentHp > Consts.MaximumHp || currentHp < 0) return;
-
+            if (_rectTransform == null) return;
+            
             var size = _rectTransform.sizeDelta;
             size.x = MaxWidth * (currentHp / (float)Consts.MaximumHp);
             _rectTransform.sizeDelta = size;
-
             _textHpValue.text = currentHp.ToString();
         }
 

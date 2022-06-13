@@ -17,9 +17,8 @@ public class CardInScroll : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     #endregion
     
     #region Private variables
-
-    private bool _hideWhenExit;
     
+    private UnityEngine.SceneManagement.Scene _currentScene;
     private CardLibraryCardUIController _cardUIController;
 
     #endregion
@@ -41,23 +40,20 @@ public class CardInScroll : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_cardUIController != null)
-        {
-            if(!_cardUIController.gameObject.activeInHierarchy)
-                _cardUIController.gameObject.SetActive(true);
-            _cardUIController.SetData(CardData);
-        }
+        if (_cardUIController == null) return;
+        
+        // Set card data
+        _cardUIController.SetData(CardData);
+        if (_currentScene.name.Equals(UIManager.SceneNameGameRemaster))
+            _cardUIController.RectTrans.localPosition = new Vector3(0, -10, 0);
     }
     
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_cardUIController != null)
-        {
-            if (_hideWhenExit)
-            {
-                _cardUIController.gameObject.SetActive(false);
-            }   
-        }
+        if (_cardUIController == null) return;
+        
+        if (_currentScene.name.Equals(UIManager.SceneNameGameRemaster))
+            _cardUIController.RectTrans.localPosition = new Vector3(0, -1000, 0);
     }
 
     #endregion
@@ -68,24 +64,9 @@ public class CardInScroll : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private void Init()
     {
         var obj = GameObject.Find(CardUIName);
-        if (obj != null)
-        {
-            _cardUIController = obj.GetComponent<CardLibraryCardUIController>();
-            if (_cardUIController.RectTrans.localPosition.y < -10)
-                _cardUIController.RectTrans.localPosition = new Vector3(0, -10, 0);
-        }
-
-
-        switch (SceneManager.GetActiveScene().name)
-        {
-            case UIManager.SceneNameLobby:
-                _hideWhenExit = false;
-                break;
-            
-            case "GameSceneRemaster":
-                _hideWhenExit = true;
-                break;
-        }
+        if (obj == null) return;
+        _cardUIController = obj.GetComponent<CardLibraryCardUIController>();
+        _currentScene = SceneManager.GetActiveScene();
     }
 
     #endregion

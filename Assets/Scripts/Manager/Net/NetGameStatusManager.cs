@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UI.Game.CardSelection;
 using Unity.Netcode;
 using UnityEngine;
 using Utils;
@@ -24,6 +25,13 @@ namespace Manager.Net
         private NetworkVariable<bool> _hostReadyToProcessCard, _clientReadyToProcessCard;
 
         private NetworkList<int> _hostCardList, _clientCardList;
+        
+        #endregion
+
+
+        #region Public variables
+
+        public HUDGameSelectedCardUIController SelectedCardUIController { get; set; }
 
         #endregion
 
@@ -73,12 +81,14 @@ namespace Manager.Net
 
             _hostCardList.OnListChanged += e =>
             {
-                
+                var cards = CopyHostCardList();
+                SelectedCardUIController.UpdateHostCardSelectionUI(cards);
             };
 
             _clientCardList.OnListChanged += e =>
             {
-
+                var cards = CopyClientCardList();
+                SelectedCardUIController.UpdateClientCardSelectionUI(cards);
             };
         }
 
@@ -103,6 +113,36 @@ namespace Manager.Net
         public bool BothReadyToProcessCards()
         {
             return _hostReadyToProcessCard.Value && _clientReadyToProcessCard.Value;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public int[] CopyHostCardList()
+        {
+            var cards = new int[_hostCardList.Count];
+            for (var i = 0; i < cards.Length; i++)
+            {
+                cards[i] = _hostCardList[i];
+            }
+
+            return cards;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public int[] CopyClientCardList()
+        {
+            var cards = new int[_clientCardList.Count];
+            for (var i = 0; i < cards.Length; i++)
+            {
+                cards[i] = _clientCardList[i];
+            }
+
+            return cards;
         }
 
         #endregion

@@ -11,8 +11,9 @@ namespace UI.Logo
     {
         #region Private variables
 
-        [Header("HUD Loading, Logo UI Controller")] 
-        [SerializeField] private HUDLoadingUIController loadingUIController;
+        [Header("HUD Loading, Logo UI Controller")] [SerializeField]
+        private HUDLoadingUIController loadingUIController;
+
         [SerializeField] private HUDLogoUIController logoUIController;
 
         #endregion
@@ -37,12 +38,7 @@ namespace UI.Logo
         private void InitResources()
         {
             // Init Resources
-            TableLoader.Instance.LoadTableData();
-            StartCoroutine(CacheAudioSource.Instance.InitCoroutine());
-            StartCoroutine(CacheSpriteSource.Instance.InitCoroutine());
-            StartCoroutine(CacheVFXSource.Instance.InitCoroutine());
-            StartCoroutine(CacheCoroutineSource.Instance.InitCoroutine());
-            StartCoroutine(WaitForInitResources());
+            StartCoroutine(WaitForInitTables());
         }
 
         /// <summary>
@@ -67,8 +63,31 @@ namespace UI.Logo
 
         #region Coroutines
 
+        private IEnumerator WaitForInitTables()
+        {
+            // Init Tables
+            TableLoader.Instance.LoadTableData();
+
+            // Wait for init tables
+            while (!TableLoader.Instance.IsLoaded)
+            {
+                yield return null;
+            }
+
+            // Init Caches coroutine
+            StartCoroutine(WaitForInitResources());
+        }
+
         private IEnumerator WaitForInitResources()
         {
+            // Init Caches
+            StartCoroutine(CacheAudioSource.Instance.InitCoroutine());
+            StartCoroutine(CacheSpriteSource.Instance.InitCoroutine());
+            StartCoroutine(CacheVFXSource.Instance.InitCoroutine());
+            StartCoroutine(CacheEmojiSource.Instance.InitCoroutine());
+            StartCoroutine(CacheCoroutineSource.Instance.InitCoroutine());
+
+            // wait for init sprite sources
             bool result = false;
             while (!result)
             {
@@ -83,7 +102,7 @@ namespace UI.Logo
             while (!result)
             {
                 result = CacheAudioSource.IsInitialized && CacheVFXSource.IsInitialized &&
-                         CacheCoroutineSource.IsInitialized;
+                         CacheEmojiSource.IsInitialized && CacheCoroutineSource.IsInitialized;
 
                 yield return null;
             }

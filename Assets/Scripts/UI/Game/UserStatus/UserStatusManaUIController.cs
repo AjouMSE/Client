@@ -30,12 +30,13 @@ namespace UI.Game.UserStatus
 
         #region Unity event methods
 
-        private void Start()
+        private void Awake()
         {
             gameObject.SetActive(!(isHostUI ^ UserManager.Instance.IsHost));
             _imageManaBar = GetComponentsInChildren<Image>()[0];
             _rectTransform = _imageManaBar.GetComponent<RectTransform>();
             _textManaValue = GetComponentInChildren<Text>();
+            UpdateManaUI(Consts.DefaultMana);
         }
 
         #endregion
@@ -45,11 +46,11 @@ namespace UI.Game.UserStatus
         public void UpdateManaUI(int currentMana)
         {
             if (currentMana > Consts.MaximumMana || currentMana < 0) return;
+            if (_rectTransform == null) return;
 
             var size = _rectTransform.sizeDelta;
             size.x = MaxWidth * (currentMana / (float)Consts.MaximumMana);
             _rectTransform.sizeDelta = size;
-
             _textManaValue.text = currentMana.ToString();
         }
 

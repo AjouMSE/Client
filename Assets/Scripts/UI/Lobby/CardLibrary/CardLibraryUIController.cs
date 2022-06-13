@@ -32,9 +32,6 @@ namespace UI.Lobby.CardLibrary
 
         private void Awake()
         {
-            // tmp code
-            StartCoroutine(CacheSpriteSource.Instance.InitCoroutine());
-            StartCoroutine(CacheCoroutineSource.Instance.InitCoroutine());
             Init();
         }
 

@@ -22,8 +22,6 @@ namespace Manager.InGame
         {
             _panels = new GameObject[Consts.PanelCnt];
             _panelRenderers = new MeshRenderer[Consts.PanelCnt];
-            Debug.Log("Init panels");
-            Debug.Log(PanelTemplate);
 
             for (var i = 0; i < Consts.Height; i++)
             {

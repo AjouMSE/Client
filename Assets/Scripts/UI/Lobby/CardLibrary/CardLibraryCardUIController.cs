@@ -55,7 +55,7 @@ namespace UI.Lobby.CardLibrary
             _gridImages = skillRangeGridObj.GetComponentsInChildren<Image>();
             RectTrans = GetComponent<RectTransform>();
             if(SceneManager.GetActiveScene().name.Equals(UIManager.SceneNameGameRemaster))
-                RectTrans.localPosition = new Vector3(0, -1000, 0);
+                RectTrans.localPosition = new Vector3(UserManager.Instance.IsHost ? 780 : -780, -1000, 0);
             IsEmptyCard(false);
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Manager.InGame;
 using UI.Lobby.CardLibrary;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -45,15 +46,21 @@ public class CardInScroll : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         // Set card data
         _cardUIController.SetData(CardData);
         if (_currentScene.name.Equals(UIManager.SceneNameGameRemaster))
-            _cardUIController.RectTrans.localPosition = new Vector3(0, -10, 0);
+        {
+            _cardUIController.RectTrans.localPosition = new Vector3(UserManager.Instance.IsHost ? 780 : -780, -290, 0);
+            PanelManager.Instance.ShowSuitablePanels(CardData.range);
+        }
     }
     
     public void OnPointerExit(PointerEventData eventData)
     {
         if (_cardUIController == null) return;
-        
+
         if (_currentScene.name.Equals(UIManager.SceneNameGameRemaster))
-            _cardUIController.RectTrans.localPosition = new Vector3(0, -1000, 0);
+        {
+            _cardUIController.RectTrans.localPosition = new Vector3(UserManager.Instance.IsHost ? 780 : -780, -1000, 0);
+            PanelManager.Instance.InitPanelColor();
+        }
     }
 
     #endregion
@@ -76,6 +83,7 @@ public class CardInScroll : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnCardInScrollBtnClick()
     {
+        
     }
 
     #endregion

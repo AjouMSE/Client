@@ -54,6 +54,8 @@ namespace InGame
 
         public int Hp => _netHp?.Value ?? 0;
         public int Mana => _netMana?.Value ?? 0;
+        public int X => _netPosX?.Value ?? 0;
+        public int Y => _netPosY?.Value ?? 0;
 
         #endregion
 

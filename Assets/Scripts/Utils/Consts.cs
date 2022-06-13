@@ -7,6 +7,12 @@ namespace Utils
     public class Consts
     {
         #region UI Constants
+        
+        public enum GameUIType
+        {
+            Hp,
+            Mana
+        }
 
         public const string TagMainCamera = "MainCamera";
         public const string TagHudCamera = "HUDCamera";
@@ -18,37 +24,11 @@ namespace Utils
 
         public enum SkillCategory
         {
-            All = 0, 
-            Move = 1, 
+            All = 0,
+            Move = 1,
             Attack = 100,
             Special = 200
         }
-
-        #endregion
-
-
-        #region InGame-Panel (Map) Constants
-
-        #endregion
-
-
-        #region InGame-Player Constants
-
-        public const int DefaultHp = 100, DefaultMana = 3;
-        public const int MaximumHp = 100, MaximumMana = 10;
-
-        #endregion
-
-
-        public const int RangeLength = 5;
-        public const int Width = 6, Height = 5;
-        public const float PanelX = 4.2f, PanelY = 3.2f;
-        public const int PanelCnt = Width * Height;
-
-        public const int MaxHP = 100;
-
-        // public const int StartMana = 3, MaxMana = 10;
-        public const int StartMana = 3, MaxMana = 10;
 
         public enum SkillType
         {
@@ -64,11 +44,33 @@ namespace Utils
             ManaShield = 207
         }
 
-        public enum GameUIType
-        {
-            Hp,
-            Mana
-        }
+        public const int DefaultSkillX = 3, DefaultSkillY = 2;
+
+        #endregion
+
+
+        #region InGame-Panel (Map) Constants
+
+        public const int Width = 6, Height = 5;
+        public const int RangeLength = 5;
+        public const float PanelX = 4.2f, PanelY = 3.2f;
+        public const int PanelCnt = Width * Height;
+
+        #endregion
+
+
+        #region InGame-Player Constants
+
+        public const int DefaultHp = 100, DefaultMana = 3;
+        public const int MaximumHp = 100, MaximumMana = 10;
+
+        #endregion
+
+
+        public const int MaxHP = 100;
+
+        // public const int StartMana = 3, MaxMana = 10;
+        public const int StartMana = 3, MaxMana = 10;
 
         public enum BattleResult
         {

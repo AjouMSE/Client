@@ -17,6 +17,7 @@ namespace UI.Lobby.UserInfo
         [SerializeField] private Text drawText;
         [SerializeField] private Text rankingText;
         [SerializeField] private Text scoreText;
+        [SerializeField] private Text rankText;
 
         [Header("3D Scroll Menu UI")] 
         [SerializeField] private GameObject scroll3D;
@@ -36,7 +37,7 @@ namespace UI.Lobby.UserInfo
         #endregion
 
 
-        #region Custom methods
+        #region Private methods
         
         private void Init()
         {
@@ -48,6 +49,23 @@ namespace UI.Lobby.UserInfo
             drawText.text = UserManager.Instance.User.draw.ToString();
             rankingText.text = UserManager.Instance.User.ranking.ToString();
             scoreText.text = UserManager.Instance.User.score.ToString();
+            rankText.text = GetTier();
+        }
+
+        private string GetTier()
+        {
+            var tier = "";
+            var score = UserManager.Instance.User.score;
+            foreach(var key in TableDatas.Instance.tierDatas.Keys)
+            {
+                var tierData = TableDatas.Instance.GetTierData(key);
+                if (score >= tierData.required)
+                    tier = tierData.tier;
+                else
+                    break;
+            }
+
+            return tier;
         }
 
         #endregion

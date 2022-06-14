@@ -18,7 +18,7 @@ namespace Manager
 
         private const float MinFadeValue = 0f, MaxFadeValue = 1f;
         private const float MaxSceneLoadProgress = 0.9f;
-        private const int MaxResolutionCount = 4;
+        private const int MaxResolutionCount = 6;
 
         #endregion
 
@@ -63,7 +63,7 @@ namespace Manager
         public float ResolutionRatio { get; private set; }
         public bool IsFullScreen { get; private set; } = false;
         public bool ActivePerformanceDisplay { get; private set; }
-        
+
         public bool DuplicateLoginOccur { get; set; }
 
         #endregion
@@ -122,13 +122,13 @@ namespace Manager
 
                 var newWidth = MaxWidth;
                 var newHeight = MaxHeight;
-                for (int i = resolutions.Length - 2; i >= 0; i--)
+                for (var i = resolutions.Length - 2; i >= 0; i--)
                 {
                     if (resolutions[i].width == newWidth && resolutions[i].height == newHeight)
                         continue;
 
                     var ratioGap = Math.Abs((resolutions[i].width / (float)resolutions[i].height) - ResolutionRatio);
-                    if (ratioGap < 0.0001f)
+                    if (ratioGap < 0.001f)
                     {
                         SupportedResolutions.Add(new Vector2(resolutions[i].width, resolutions[i].height));
                         newWidth = resolutions[i].width;
@@ -185,8 +185,8 @@ namespace Manager
         public void ShowPerformanceDisplay()
         {
             ActivePerformanceDisplay = true;
-            
-            if(_performanceDisplay != null)
+
+            if (_performanceDisplay != null)
                 _performanceDisplay.SetActive(true);
         }
 
@@ -195,7 +195,7 @@ namespace Manager
         /// </summary>
         public void ShowSignOutDisplay()
         {
-            if(_signOutDisplay != null)
+            if (_signOutDisplay != null)
                 _signOutDisplay.SetActive(true);
         }
 
@@ -204,16 +204,16 @@ namespace Manager
         /// </summary>
         public void ShowExitGameDisplay()
         {
-            if(_exitGameDisplay != null)
+            if (_exitGameDisplay != null)
                 _exitGameDisplay.SetActive(true);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
         public void ShowDuplicateLoginDisplay()
         {
-            if(_duplicateLoginDisplay != null)
+            if (_duplicateLoginDisplay != null)
                 _duplicateLoginDisplay.SetActive(true);
         }
 
@@ -223,8 +223,8 @@ namespace Manager
         public void HidePerformanceDisplay()
         {
             ActivePerformanceDisplay = false;
-            
-            if(_performanceDisplay != null)
+
+            if (_performanceDisplay != null)
                 _performanceDisplay.SetActive(false);
         }
 
@@ -233,7 +233,7 @@ namespace Manager
         /// </summary>
         public void HideSignOutDisplay()
         {
-            if(_signOutDisplay != null)
+            if (_signOutDisplay != null)
                 _signOutDisplay.SetActive(false);
         }
 
@@ -242,7 +242,7 @@ namespace Manager
         /// </summary>
         public void HideExitGameDisplay()
         {
-            if(_exitGameDisplay != null)
+            if (_exitGameDisplay != null)
                 _exitGameDisplay.SetActive(false);
         }
 
@@ -424,7 +424,7 @@ namespace Manager
                     while (text.color.a < MaxFadeValue)
                     {
                         if (text == null) yield break;
-                        
+
                         gap = Time.deltaTime / duration;
                         SetTextAlpha(text, text.color.a + gap);
                         yield return null;
@@ -441,7 +441,7 @@ namespace Manager
                     while (text.color.a > MinFadeValue)
                     {
                         if (text == null) yield break;
-                        
+
                         gap = Time.deltaTime / duration;
                         SetTextAlpha(text, text.color.a - gap);
                         yield return null;

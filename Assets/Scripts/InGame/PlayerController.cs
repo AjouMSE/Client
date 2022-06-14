@@ -21,7 +21,7 @@ namespace InGame
         private const int InitHostX = 0, InitHostY = 2;
         private const int InitClientX = 5, InitClientY = 2;
         private const int DirLeft = -90, DirRight = 90;
-        private const int PaddingX = -1;
+        private const int PaddingX = 1;
 
         private enum Directions
         {
@@ -41,8 +41,8 @@ namespace InGame
 
         #region Private variables
 
-        [Header("Client wizard material")] [SerializeField]
-        private Material clientMaterial;
+        [Header("Client wizard material")] 
+        [SerializeField] private Material clientMaterial;
 
         private NetworkVariable<int> _netHp, _netMana;
         private NetworkVariable<int> _netPosX, _netPosY;
@@ -51,7 +51,6 @@ namespace InGame
 
         private int _idx, _dir;
         private float _speed = 4.0f;
-        private BitMask.BitField30 _bitIdx;
 
         private string _currentAnimation;
         private Animator _animator;
@@ -82,11 +81,6 @@ namespace InGame
         private void Awake()
         {
             Init();
-        }
-
-        private void Update()
-        {
-            Debug.Log($"{_netPosX.Value.ToString()} / {_netPosY.Value.ToString()} / {Idx.ToString()}");
         }
 
         private void OnApplicationQuit()
@@ -139,10 +133,25 @@ namespace InGame
             _currentAnimation = animationName;
         }
 
-        public void RotateDirection(int dir)
+        private void RotateDirection(int dir)
         {
             transform.localEulerAngles = new Vector3(0, dir, 0);
         }
+        
+        private void MoveX(int x)
+        {
+            if (x < 0 || x > Consts.Width - 1) return;
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netPosX.Value = x;
+        }
+
+        private void MoveY(int y)
+        {
+            if (y < 0 || y > Consts.Height - 1) return;
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netPosY.Value = y;
+        }
+
 
         private void SetPosition(int destIdx)
         {
@@ -152,7 +161,6 @@ namespace InGame
             MoveX(x);
             MoveY(y);
             _idx = destIdx;
-            _bitIdx = ConvertIdxToBitIdx(_idx);
         }
 
 
@@ -220,8 +228,6 @@ namespace InGame
         {
             if (!NetworkManager.Singleton.IsServer) return;
             _netHp.Value = Mathf.Clamp(_netHp.Value - damage, 0, Consts.MaximumHp);
-            PlayAnimation(WizardAnimations.GetHit, 1f);
-            ShowEmoji(CacheEmojiSource.EmojiType.EmojiInjured, 1.5f);
         }
 
         public void UseMana(int mana)
@@ -234,24 +240,8 @@ namespace InGame
         {
             if (!NetworkManager.Singleton.IsServer) return;
             _netMana.Value = Mathf.Clamp(_netMana.Value + mana, 0, Consts.MaximumMana);
-            ShowEmoji(CacheEmojiSource.EmojiType.EmojiXD, 2f);
-            PlayAnimation(WizardAnimations.Recovery, 1.2f);
         }
-
-        public void MoveX(int x)
-        {
-            if (x < 0 || x > Consts.Width - 1) return;
-            if (!NetworkManager.Singleton.IsServer) return;
-            _netPosX.Value = x;
-        }
-
-        public void MoveY(int y)
-        {
-            if (y < 0 || y > Consts.Height - 1) return;
-            if (!NetworkManager.Singleton.IsServer) return;
-            _netPosY.Value = y;
-        }
-
+        
         public void PlayAnimation(string animationName, float duration = 0f)
         {
             if (!NetworkManager.Singleton.IsServer) return;
@@ -334,14 +324,13 @@ namespace InGame
             {
                 case (int)Consts.SkillType.Move:
                     var movingDir = CalculateDir(panelIdxes[0]);
-                    SetPosition(panelIdxes[0]);
                     if (UserManager.Instance.IsHost) 
                         Move(panelIdxes[0], movingDir);
                     break;
 
                 case (int)Consts.SkillType.Attack:
                     if (UserManager.Instance.IsHost) 
-                        Attack(data, range, panelIdxes);
+                        Attack(data, range);
                     break;
 
                 case (int)Consts.SkillType.ManaCharge:
@@ -349,7 +338,12 @@ namespace InGame
                     if (UserManager.Instance.IsHost) 
                         StartCoroutine(HitAction());
                     break;
-
+                
+                case (int)Consts.SkillType.LifeRecovery:
+                    LifeRecovery(data.value);
+                    if (UserManager.Instance.IsHost) 
+                        StartCoroutine(HitAction());
+                    break;
                 // 임시
                 default:
                     if (UserManager.Instance.IsHost) 
@@ -377,28 +371,21 @@ namespace InGame
 
         private void Move(int destIdx, Directions movingDir)
         {
-            var destPosition = PanelManager.Instance.GetPanelByIdx(_idx).transform.position;
-            StartCoroutine(MoveAction(destPosition, movingDir));
+            var dest = PanelManager.Instance.GetPanelByIdx(destIdx).transform.position;
+            StartCoroutine(MoveAction(destIdx, dest, movingDir));
         }
 
-        private void Attack(CardData data, BitMask.BitField30 range, List<int> panelIdxes)
+        private void Attack(CardData data, BitMask.BitField30 range)
         {
             PlayerController hostileController;
-            Consts.UserType hostileType;
 
             if (IsOwner)
-            {
                 hostileController = GameManager2.Instance.ClientController;
-                hostileType = Consts.UserType.Client;
-            }
-            else
-            {
+            else 
                 hostileController = GameManager2.Instance.HostController;
-                hostileType = Consts.UserType.Host;
-            }
+        
 
             StartCoroutine(HitAction());
-
             if (CheckPlayerHit(hostileController.Idx, range))
             {
                 hostileController.ApplyDamage(data.value);
@@ -411,8 +398,14 @@ namespace InGame
             if (!NetworkManager.Singleton.IsServer) return;
             _netMana.Value += value;
         }
+        
+        private void LifeRecovery(int value)
+        {
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netHp.Value += value;
+        }
 
-        private IEnumerator MoveAction(Vector3 destination, Directions movingDir)
+        private IEnumerator MoveAction(int destIdx, Vector3 destination, Directions movingDir)
         {
             // Animation Move Front
             switch (movingDir)
@@ -454,6 +447,7 @@ namespace InGame
             }
 
             transform.position = destinationPosition;
+            SetPosition(destIdx);
             Rotate();
 
             // Animation Move Idle
@@ -487,28 +481,17 @@ namespace InGame
 
         private IEnumerator HitAction()
         {
-            int idx = UnityEngine.Random.Range(0, AttackAnimations.Length);
+            var idx = UnityEngine.Random.Range(0, AttackAnimations.Length);
+            PlayAnimation(AttackAnimations[idx], 1.0f);
 
-            // Animation Battle GetHit
-            PlayAnimation(AttackAnimations[idx]);
-
-            yield return new WaitForSeconds(1f);
-
-            // Animation Idle
-            PlayAnimation(WizardAnimations.Idle);
+            yield break;
         }
 
         private IEnumerator GetHitAction()
         {
             yield return new WaitForSeconds(1f);
-
-            // Animation Battle GetHit
-            PlayAnimation(WizardAnimations.GetHit);
-
-            yield return new WaitForSeconds(1f);
-
-            // Animation Idle
-            PlayAnimation(WizardAnimations.Idle);
+            PlayAnimation(WizardAnimations.GetHit, 1f);
+            ShowEmoji(CacheEmojiSource.EmojiType.EmojiInjured, 1.5f);
         }
 
         #endregion
@@ -565,7 +548,6 @@ namespace InGame
                     _netPosX.Value = InitHostX;
                     _netPosY.Value = InitHostY;
                     _idx = InitHostY * Consts.Width + InitHostX;
-                    _bitIdx = CvtPlayerIdxToBitField30(_idx);
                 }
                 else
                 {
@@ -577,7 +559,6 @@ namespace InGame
                     _netPosX.Value = InitClientX;
                     _netPosY.Value = InitClientY;
                     _idx = InitClientY * Consts.Width + InitClientX;
-                    _bitIdx = CvtPlayerIdxToBitField30(_idx);
                 }
             }
 

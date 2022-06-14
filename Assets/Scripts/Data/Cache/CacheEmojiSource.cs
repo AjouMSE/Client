@@ -37,7 +37,7 @@ namespace Data.Cache
             EmojiPoop = 11,
             EmojiQueasy = 12,
             EmojiSad = 13,
-            Emojisick = 14,
+            EmojiSick = 14,
             EmojiSinister = 15,
             EmojiSmile = 16,
             EmojiThumbsDown = 17,
@@ -45,6 +45,13 @@ namespace Data.Cache
             EmojiXD = 19,
             EmojiYawn = 20,
         }
+
+        #endregion
+
+
+        #region Public variables
+
+        public int EmojiCount => Cache.Count;
 
         #endregion
 

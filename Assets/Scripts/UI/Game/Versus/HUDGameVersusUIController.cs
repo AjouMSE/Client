@@ -34,11 +34,11 @@ namespace UI.Game.Versus
 
         #region Private variables
 
-        [Header("Text Information")] [SerializeField]
-        private Text versusText;
+        [Header("Text Information")] 
+        [SerializeField] private Text versusText;
 
-        [Header("Game Info object")] [SerializeField]
-        private GameObject panelInfoTextHost;
+        [Header("Game Info object")] 
+        [SerializeField] private GameObject panelInfoTextHost;
 
         [SerializeField] private GameObject panelInfoTextClient;
         [SerializeField] private VersusBattleResultUIController battleResultUIControllerHost;
@@ -50,8 +50,8 @@ namespace UI.Game.Versus
         [SerializeField] private HUDGameUserStatusUIController hudUserInfo;
         [SerializeField] private HUDGameSelectedCardUIController hudCardSelection;
 
-        [Header("Panel Template")] [SerializeField]
-        private GameObject panelTemplate;
+        [Header("Panel Template")] 
+        [SerializeField] private GameObject panelTemplate;
 
         #endregion
 
@@ -139,7 +139,7 @@ namespace UI.Game.Versus
                 hudUserInfo.gameObject.SetActive(true);
                 hudCardSelection.gameObject.SetActive(true);
 
-                GameManager2.Instance.CheckReadyToRunTimer();
+                GameManager2.Instance.BeginGame();
             });
             gameObject.SetActive(false);
         }
@@ -147,6 +147,7 @@ namespace UI.Game.Versus
         private IEnumerator ShowGameResultCoroutine(bool isHost, Consts.BattleResult hostResult,
             Consts.BattleResult clientResult, int scoreGap)
         {
+            versusText.text = "";
             yield return CacheCoroutineSource.Instance.GetSource(4f);
 
             // disable the game hud object

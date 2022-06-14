@@ -48,6 +48,7 @@ namespace Manager
         private GameObject _performanceDisplay;
         private GameObject _signOutDisplay;
         private GameObject _exitGameDisplay;
+        private GameObject _duplicateLoginDisplay;
 
         #endregion
 
@@ -61,8 +62,9 @@ namespace Manager
         public int MaxFrameRate { get; private set; }
         public float ResolutionRatio { get; private set; }
         public bool IsFullScreen { get; private set; } = false;
-
         public bool ActivePerformanceDisplay { get; private set; }
+        
+        public bool DuplicateLoginOccur { get; set; }
 
         #endregion
 
@@ -171,10 +173,21 @@ namespace Manager
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="display"></param>
+        public void SetDuplicateLoginDisplay(GameObject display)
+        {
+            _duplicateLoginDisplay = display;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void ShowPerformanceDisplay()
         {
             ActivePerformanceDisplay = true;
-            _performanceDisplay.SetActive(true);
+            
+            if(_performanceDisplay != null)
+                _performanceDisplay.SetActive(true);
         }
 
         /// <summary>
@@ -182,7 +195,8 @@ namespace Manager
         /// </summary>
         public void ShowSignOutDisplay()
         {
-            _signOutDisplay.SetActive(true);
+            if(_signOutDisplay != null)
+                _signOutDisplay.SetActive(true);
         }
 
         /// <summary>
@@ -190,7 +204,17 @@ namespace Manager
         /// </summary>
         public void ShowExitGameDisplay()
         {
-            _exitGameDisplay.SetActive(true);
+            if(_exitGameDisplay != null)
+                _exitGameDisplay.SetActive(true);
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ShowDuplicateLoginDisplay()
+        {
+            if(_duplicateLoginDisplay != null)
+                _duplicateLoginDisplay.SetActive(true);
         }
 
         /// <summary>
@@ -199,7 +223,9 @@ namespace Manager
         public void HidePerformanceDisplay()
         {
             ActivePerformanceDisplay = false;
-            _performanceDisplay.SetActive(false);
+            
+            if(_performanceDisplay != null)
+                _performanceDisplay.SetActive(false);
         }
 
         /// <summary>
@@ -207,7 +233,8 @@ namespace Manager
         /// </summary>
         public void HideSignOutDisplay()
         {
-            _signOutDisplay.SetActive(false);
+            if(_signOutDisplay != null)
+                _signOutDisplay.SetActive(false);
         }
 
         /// <summary>
@@ -215,7 +242,8 @@ namespace Manager
         /// </summary>
         public void HideExitGameDisplay()
         {
-            _exitGameDisplay.SetActive(false);
+            if(_exitGameDisplay != null)
+                _exitGameDisplay.SetActive(false);
         }
 
         /// <summary>
@@ -268,9 +296,9 @@ namespace Manager
         /// Change scene async
         /// </summary>
         /// <param name="destSceneName"></param>
-        public void ChangeSceneAsync(string destSceneName)
+        public void ChangeSceneAsync(string destSceneName, Action callback = null)
         {
-            StartCoroutine(ChangeSceneAsyncCoroutine(destSceneName));
+            StartCoroutine(ChangeSceneAsyncCoroutine(destSceneName, callback));
         }
 
         /// <summary>
@@ -432,7 +460,7 @@ namespace Manager
         /// </summary>
         /// <param name="destSceneName"></param>
         /// <returns></returns>
-        private IEnumerator ChangeSceneAsyncCoroutine(string destSceneName)
+        private IEnumerator ChangeSceneAsyncCoroutine(string destSceneName, Action callback = null)
         {
             var operation = SceneManager.LoadSceneAsync(destSceneName);
             operation.allowSceneActivation = false;
@@ -441,6 +469,7 @@ namespace Manager
                 if (operation.progress >= MaxSceneLoadProgress)
                 {
                     operation.allowSceneActivation = true;
+                    callback?.Invoke();
                     yield break;
                 }
 

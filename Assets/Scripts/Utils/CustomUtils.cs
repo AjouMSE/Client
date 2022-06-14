@@ -181,6 +181,17 @@ namespace Utils
 
             Debug.Log(sb.ToString());
         }
+        
+        public static int[] MakeCoupleRandomNum(int range)
+        {
+            var randNum = UnityEngine.Random.Range(0, range);
+            var randNum2 = randNum;
+
+            while (randNum == randNum2)
+                randNum2 = UnityEngine.Random.Range(0, range);
+
+            return new[] { randNum, randNum2 };
+        }
 
         #endregion
     }

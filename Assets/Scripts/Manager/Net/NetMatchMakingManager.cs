@@ -11,7 +11,7 @@ namespace Manager.Net
 {
     public class NetMatchMakingManager : MonoSingleton<NetMatchMakingManager>
     {
-        #region Private variables
+        #region Private constants
 
         private enum MatchMadeType
         {
@@ -27,7 +27,10 @@ namespace Manager.Net
         private const string SioEventSendMatchCode = "SendMatchCode";
         private const string SioEventReceiveMatchCode = "ReceiveMatchCode";
 
-        private const string DestSceneName = "GameScene";
+        #endregion
+
+
+        #region Private variables
 
         private SocketIOCommunicator _sio;
         private bool _isAuthed;
@@ -127,8 +130,24 @@ namespace Manager.Net
         /// <param name="data"></param>
         private void OnDuplicateLoginCallback(string data)
         {
-            Debug.Log(data);
-            //todo-expire the current user
+            switch (SceneManager.GetActiveScene().name)
+            {
+                case UIManager.SceneNameLobby:
+                    break;
+
+                case UIManager.SceneNameGameRemaster:
+                    if (UserManager.Instance.IsHost)
+                    {
+                        NetworkManager.Singleton.Shutdown();
+                    }
+
+                    break;
+            }
+
+            Disconnect();
+            UserManager.Instance.SignOutUserInfo();
+            UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLogin);
+            UIManager.Instance.DuplicateLoginOccur = true;
         }
 
         /// <summary>

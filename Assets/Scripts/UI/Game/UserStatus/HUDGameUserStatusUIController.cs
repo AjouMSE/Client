@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using Data.Cache;
 using InGame;
 using Manager;
 using Manager.InGame;
@@ -75,7 +76,6 @@ namespace UI.Game.UserStatus
             clientNicknameText.text = client.nickname;
 
             GameManager2.Instance.UserStatusUIController = this;
-            
             var players = GameObject.FindGameObjectsWithTag("Player");
             for (var i = 0; i < players.Length; i++)
             {

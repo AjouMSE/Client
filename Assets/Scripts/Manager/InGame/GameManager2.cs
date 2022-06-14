@@ -36,6 +36,8 @@ namespace Manager.InGame
         public HUDGameUserStatusUIController UserStatusUIController { get; set; }
         public HUDGameSelectedCardUIController SelectedCardUIController { get; set; }
 
+        private bool _showBeginEffect;
+
         #endregion
 
 
@@ -70,9 +72,16 @@ namespace Manager.InGame
                 HostController.PlayAnimation(hostResult == Consts.BattleResult.WIN
                     ? WizardAnimations.Victory
                     : WizardAnimations.Die);
+                HostController.ShowEmoji(hostResult == Consts.BattleResult.WIN
+                    ? CacheEmojiSource.EmojiType.EmojiXD
+                    : CacheEmojiSource.EmojiType.EmojiSad);
+
                 ClientController.PlayAnimation(clientResult == Consts.BattleResult.WIN
                     ? WizardAnimations.Victory
                     : WizardAnimations.Die);
+                ClientController.ShowEmoji(clientResult == Consts.BattleResult.WIN
+                    ? CacheEmojiSource.EmojiType.EmojiCool
+                    : CacheEmojiSource.EmojiType.EmojiCry);
 
                 resultPacket.result = HostController.Hp > 0 ? "WIN" : (ClientController.Hp > 0 ? "LOSE" : "DRAW");
             }
@@ -112,6 +121,51 @@ namespace Manager.InGame
             });
         }
 
+
+        /// <summary>
+        /// Process phase (1turn -> max 3 phase) (process each cards)
+        /// </summary>
+        /// <param name="isHostSkill"></param>
+        /// <param name="skillCode"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        private void ProcessPhase(bool isHostSkill, int skillCode)
+        {
+            SelectedCardUIController.ShowProcessingCard(skillCode, isHostSkill, () =>
+            {
+                if (isHostSkill)
+                {
+                    PanelManager.Instance.ProcessEffect(skillCode, Consts.UserType.Host, HostController,
+                        ClientController, () => { HostController.ProcessSkill(skillCode); });
+                }
+                else
+                {
+                    PanelManager.Instance.ProcessEffect(skillCode, Consts.UserType.Client, ClientController,
+                        HostController, () => { ClientController.ProcessSkill(skillCode); });
+                }
+
+                if (UserManager.Instance.IsHost)
+                    NetGameStatusManager.Instance.PollCardFromList(isHostSkill);
+            });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="animationName"></param>
+        private void BothRandomEmojiEffect(string animationName)
+        {
+            var nums = CustomUtils.MakeCoupleRandomNum(CacheEmojiSource.Instance.EmojiCount);
+
+            HostController.PlayAnimation(animationName, 1.2f);
+            HostController.ShowEmoji((CacheEmojiSource.EmojiType)nums[0], 1.5f);
+            PanelManager.Instance.ProcessEffect(101202000, Consts.UserType.Host, HostController, ClientController);
+
+            ClientController.PlayAnimation(animationName, 1.2f);
+            ClientController.ShowEmoji((CacheEmojiSource.EmojiType)nums[1], 1.5f);
+            PanelManager.Instance.ProcessEffect(101203001, Consts.UserType.Client, ClientController, HostController);
+        }
+
         #endregion
 
 
@@ -119,13 +173,11 @@ namespace Manager.InGame
 
         public override void Init()
         {
-            if (!IsInitialized)
-            {
-                TurnValue = DefaultTurnValue;
-                TimerValue = DefaultTimerValue;
-                CanCardSelect = false;
-                IsInitialized = true;
-            }
+            TurnValue = DefaultTurnValue;
+            TimerValue = DefaultTimerValue;
+            CanCardSelect = false;
+            _showBeginEffect = false;
+            IsInitialized = true;
         }
 
         /// <summary>
@@ -148,7 +200,7 @@ namespace Manager.InGame
         /// <summary>
         /// 
         /// </summary>
-        public void CheckReadyToRunTimer()
+        public void BeginGame()
         {
             StartCoroutine(WaitForRunningTimer());
         }
@@ -188,6 +240,12 @@ namespace Manager.InGame
             while (!NetGameStatusManager.Instance.BothReadyToRunTimer())
             {
                 yield return null;
+            }
+
+            if (!_showBeginEffect)
+            {
+                BothRandomEmojiEffect(WizardAnimations.Recovery);
+                _showBeginEffect = true;
             }
 
             StartCoroutine(RunTimer());
@@ -259,6 +317,9 @@ namespace Manager.InGame
             var hostCards = NetGameStatusManager.Instance.CopyHostCardList();
             var clientCards = NetGameStatusManager.Instance.CopyClientCardList();
 
+            if (hostCards.Length == 0 && clientCards.Length == 0)
+                yield return CacheCoroutineSource.Instance.GetSource(3f);
+
             // Process cards
             for (var i = 0; i < MaxPhaseCnt; i++)
             {
@@ -267,7 +328,7 @@ namespace Manager.InGame
                 {
                     hostSkillCode = hostCards[i];
                     clientSkillCode = clientCards[i];
-                    
+
                     var hostPriority = TableDatas.Instance.GetCardData(hostSkillCode).priority;
                     var clientPriority = TableDatas.Instance.GetCardData(clientSkillCode).priority;
                     var isHostFirst = hostPriority <= clientPriority;
@@ -276,7 +337,7 @@ namespace Manager.InGame
                     {
                         ProcessPhase(true, hostSkillCode);
                         yield return CacheCoroutineSource.Instance.GetSource(5f);
-                        
+
                         ProcessPhase(false, clientSkillCode);
                         yield return CacheCoroutineSource.Instance.GetSource(5f);
                     }
@@ -284,17 +345,17 @@ namespace Manager.InGame
                     {
                         ProcessPhase(false, clientSkillCode);
                         yield return CacheCoroutineSource.Instance.GetSource(5f);
-                        
+
                         ProcessPhase(true, hostSkillCode);
                         yield return CacheCoroutineSource.Instance.GetSource(5f);
                     }
-                } 
+                }
                 else if (hostCards.Length > i)
                 {
                     hostSkillCode = hostCards[i];
                     ProcessPhase(true, hostSkillCode);
                     yield return CacheCoroutineSource.Instance.GetSource(5f);
-                } 
+                }
                 else if (clientCards.Length > i)
                 {
                     clientSkillCode = clientCards[i];
@@ -310,48 +371,12 @@ namespace Manager.InGame
                     IsInitialized = false;
                     yield break;
                 }
-
-                HostController.RestoreMana(TurnValue);
-                ClientController.RestoreMana(TurnValue);
             }
 
+            HostController.RestoreMana(TurnValue);
+            ClientController.RestoreMana(TurnValue);
+            BothRandomEmojiEffect(WizardAnimations.Defend);
             StartCoroutine(WaitForRunningTimer());
-        }
-
-        /// <summary>
-        /// Process phase (1turn -> max 3 phase) (process each cards)
-        /// </summary>
-        /// <param name="isHostSkill"></param>
-        /// <param name="skillCode"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        private void ProcessPhase(bool isHostSkill, int skillCode)
-        {
-            Debug.Log($"{isHostSkill.ToString()} / {TableDatas.Instance.GetCardData(skillCode).text}");
-
-            SelectedCardUIController.ShowProcessingCard(skillCode, isHostSkill, () =>
-            {
-                if (isHostSkill)
-                {
-                    PanelManager.Instance.ProcessEffect(skillCode, Consts.UserType.Host, HostController,
-                        ClientController);
-                    HostController.ProcessSkill(skillCode);
-                }
-                else
-                {
-                    PanelManager.Instance.ProcessEffect(skillCode, Consts.UserType.Client, ClientController,
-                        HostController);
-                    ClientController.ProcessSkill(skillCode);
-                }
-                
-                if (UserManager.Instance.IsHost)
-                    NetGameStatusManager.Instance.PollCardFromList(isHostSkill);
-            });
-        }
-
-        private void Update()
-        {
-            Debug.Log(NetGameStatusManager.Instance.GetStatusDump());
         }
 
         #endregion

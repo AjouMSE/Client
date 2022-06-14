@@ -18,11 +18,9 @@ namespace Data.Cache
         public new WaitForSeconds GetSource(float id)
         {
             WaitForSeconds wls;
-            if (!Cache.TryGetValue(id, out wls))
-            {
-                wls = new WaitForSeconds(id);
-                Cache.Add(id, wls);
-            }
+            if (Cache.TryGetValue(id, out wls)) return wls;
+            wls = new WaitForSeconds(id);
+            Cache.Add(id, wls);
 
             return wls;
         }

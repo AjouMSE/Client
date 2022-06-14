@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Core;
@@ -15,6 +16,8 @@ namespace Manager.InGame
         private readonly Color DefaultColor = new Color(0.8f, 0.8f, 0.8f);
         private readonly Color HostRangeColor = new Color(0.5f, 0.5f, 1f);
         private readonly Color ClientRangeColor = new Color(0.5f, 1f, 0.5f);
+
+        private const string PlayerTemplate = "PlayerTemplate";
 
         #endregion
 
@@ -35,7 +38,7 @@ namespace Manager.InGame
         {
             _panels = new GameObject[Consts.PanelCnt];
             _panelRenderers = new MeshRenderer[Consts.PanelCnt];
-            _playerTemplate = GameObject.Find("PlayerTemplate");
+            _playerTemplate = GameObject.Find(PlayerTemplate);
 
             for (var i = 0; i < Consts.Height; i++)
             {
@@ -49,7 +52,7 @@ namespace Manager.InGame
                 }
             }
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -84,7 +87,7 @@ namespace Manager.InGame
             var playerController = UserManager.Instance.IsHost
                 ? GameManager2.Instance.HostController
                 : GameManager2.Instance.ClientController;
-            
+
             var ex = playerController.EstimateX;
             var ey = playerController.EstimateY;
             var shiftX = ex - Consts.DefaultSkillX;
@@ -96,7 +99,7 @@ namespace Manager.InGame
                 _playerTemplate.transform.rotation = playerController.transform.rotation;
                 var pos = GetPanelByIdx(ey * Consts.Width + ex).transform.position;
                 pos.y = 0.3f;
-                _playerTemplate.transform.position = pos;   
+                _playerTemplate.transform.position = pos;
             }
 
             // Parse skill range
@@ -114,28 +117,32 @@ namespace Manager.InGame
                 mask >>= 1;
             }
         }
-        
-        
-        public void ProcessEffect(int code, Consts.UserType userType, PlayerController srcController, PlayerController destController)
+
+
+        public void ProcessEffect(int code, Consts.UserType userType, PlayerController srcController,
+            PlayerController destController, Action callback = null)
         {
             // parse range
             var data = TableDatas.Instance.GetCardData(code);
             var fieldRange = new BitMask.BitField25(data.range).CvtBits25ToBits30();
             fieldRange.Shift(srcController.X - Consts.DefaultSkillX, srcController.Y - Consts.DefaultSkillY);
 
+
             // Show panel color effect (indicate skill range)
             var mask = BitMask.BitField30Msb;
-            for (int idx = 0; idx < Consts.PanelCnt; idx++)
+            for (var idx = 0; idx < Consts.PanelCnt; idx++)
             {
                 if ((fieldRange.element & mask) > 0)
-                    StartCoroutine(ChangeColor(idx, userType));
+                    StartCoroutine(ChangePanelColorCoroutine(idx, userType));
 
                 mask >>= 1;
             }
-            
+
             // show vfx
             if (data.type != (int)Consts.SkillType.Move)
                 StartCoroutine(ShowEffect(code, srcController, destController));
+
+            callback?.Invoke();
         }
 
         #endregion
@@ -143,7 +150,7 @@ namespace Manager.InGame
 
         #region MyRegion
 
-        private IEnumerator ChangeColor(int idx, Consts.UserType userType)
+        private IEnumerator ChangePanelColorCoroutine(int idx, Consts.UserType userType)
         {
             Color baseColor, changedColor;
             baseColor = new Color(0.8f, 0.8f, 0.8f);
@@ -152,49 +159,78 @@ namespace Manager.InGame
 
             for (int i = 0; i < 20; i++)
             {
-                if (i % 2 == 0)
-                    _panelRenderers[idx].material.color = changedColor;
-                else
-                    _panelRenderers[idx].material.color = baseColor;
-
-                yield return new WaitForSeconds(0.02f);
+                _panelRenderers[idx].material.color = i % 2 == 0 ? changedColor : baseColor;
+                yield return CacheCoroutineSource.Instance.GetSource(0.02f);
             }
 
             _panelRenderers[idx].material.color = changedColor;
-            yield return new WaitForSeconds(2f);
-
+            yield return CacheCoroutineSource.Instance.GetSource(2f);
             _panelRenderers[idx].material.color = baseColor;
         }
-        
+
         private IEnumerator ShowEffect(int code, PlayerController srcController, PlayerController destController)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return CacheCoroutineSource.Instance.GetSource(0.5f);
 
             var vfx = CacheVFXSource.Instance.GetSource(code);
             vfx.gameObject.SetActive(true);
 
             var idx = Consts.Width * srcController.Y + srcController.X;
             var panelPos = _panels[idx].transform.position;
-            vfx.transform.position = new Vector3(panelPos.x, panelPos.y + 0.3f, panelPos.z);
+            vfx.transform.position = new Vector3(panelPos.x, panelPos.y + 0.4f, panelPos.z);
             vfx.Play();
 
+            var speed = 0.005f;
             var data = TableDatas.Instance.GetCardData(code);
             if (data.type == (int)Consts.SkillType.Attack)
-                StartCoroutine(MoveVFX(vfx.transform, destController.transform.position));
+            {
+                switch (data.text)
+                {
+                    case "Magic Arrow":
+                        vfx.transform.LookAt(destController.transform.position);
+                        speed = 0.02f;
+                        break;
+                    case "Super Nova":
+                        vfx.transform.LookAt(destController.transform.position);
+                        break;
+                    case "Flame thrower":
+                        vfx.transform.LookAt(destController.transform.position);
+                        speed = 0.003f;
+                        break;
 
-            yield return new WaitForSeconds(2f);
+                    case "Water Bomb":
+                        vfx.transform.LookAt(destController.transform.position);
+                        speed = 0.002f;
+                        break;
+
+                    case "Fire Ball":
+                        vfx.transform.position += new Vector3(0, 0.5f, 0);
+                        break;
+
+                    case "Ice Spear":
+                        vfx.transform.LookAt(destController.transform.position);
+                        vfx.transform.position += new Vector3(0, 0.5f, 0);
+                        speed = 0.015f;
+                        break;
+                }
+
+                StartCoroutine(MoveVFX(vfx.transform, destController.transform.position, speed));
+            }
+
+            yield return CacheCoroutineSource.Instance.GetSource(2f);
 
             vfx.transform.position = new Vector3(0, 100, 0);
             vfx.gameObject.SetActive(false);
         }
 
-        private IEnumerator MoveVFX(Transform vfx, Vector3 dest)
+        private IEnumerator MoveVFX(Transform vfx, Vector3 dest, float speed)
         {
             var curr = vfx.position;
 
             while (Vector3.Distance(curr, dest) > 0.1f)
             {
-                curr = Vector3.Lerp(vfx.position, dest, 0.05f);
+                if (vfx.transform == null) yield break;
+                curr = Vector3.Lerp(vfx.position, dest, speed);
                 vfx.position = curr;
                 yield return null;
             }

@@ -27,6 +27,7 @@ namespace Manager.Net
         private NetworkVariable<bool> _hostReadyToProcessCard, _clientReadyToProcessCard;
 
         private NetworkList<int> _hostCardList, _clientCardList;
+        private bool _hostProcessCard;
 
         #endregion
 
@@ -34,7 +35,6 @@ namespace Manager.Net
         #region Public variables
 
         public HUDGameSelectedCardUIController SelectedCardUIController { get; set; }
-        private bool _hostProcessCard;
 
         #endregion
 
@@ -125,6 +125,11 @@ namespace Manager.Net
             };
         }
 
+        #endregion
+
+
+        #region Public methods
+        
         public void Init()
         {
             CreateNetworkValue();
@@ -156,11 +161,6 @@ namespace Manager.Net
 
             return sb.ToString();
         }
-
-        #endregion
-
-
-        #region Public methods
 
         /// <summary>
         /// Checks that both host and client are ready to run card selection timer
@@ -266,26 +266,6 @@ namespace Manager.Net
         private void ClientReadyToProcessCardServerRpc(bool isReady)
         {
             _clientReadyToProcessCard.Value = isReady;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void ClearBothReadyToRunTimerStatus()
-        {
-            if (!NetworkManager.Singleton.IsServer) return;
-            _hostReadyToRunTimer.Value = false;
-            _clientReadyToRunTimer.Value = false;
-        }        
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public void ClearBothReadyToProcessCardStatus()
-        {
-            if (!NetworkManager.Singleton.IsServer) return;
-            _hostReadyToProcessCard.Value = false;
-            _clientReadyToProcessCard.Value = false;
         }
 
         /// <summary>

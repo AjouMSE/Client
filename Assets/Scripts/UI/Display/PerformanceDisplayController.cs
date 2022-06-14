@@ -35,12 +35,12 @@ namespace UI.Display
         private void Init()
         {
             _frameRateText = GetComponentInChildren<Text>();
-            
+            gameObject.SetActive(UIManager.Instance.ActivePerformanceDisplay);
         }
 
         private void ShowFrameRate()
         {
-            int frameRate = (int)(1 / Time.deltaTime);
+            var frameRate = (int)(1 / Time.deltaTime);
             _frameRateText.text = $"FPS : {frameRate.ToString()}";
         }
 

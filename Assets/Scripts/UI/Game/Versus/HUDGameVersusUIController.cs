@@ -11,6 +11,7 @@ using UI.Game.UserStatus;
 using UI.Game.Versus;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utils;
@@ -27,26 +28,30 @@ namespace UI.Game.Versus
         private const string TextAreYouReady = "Are you\nReady?";
         private const string TextMatchWillBeEnd = "The match will\nend soon.";
 
+        private const string BattleStartReqPath = "/battle/start";
+
         #endregion
 
         #region Private variables
 
-        [Header("Text Information")] 
-        [SerializeField] private Text versusText;
+        [Header("Text Information")] [SerializeField]
+        private Text versusText;
 
-        [Header("Game Info object")] 
-        [SerializeField] private GameObject panelInfoTextHost;
+        [Header("Game Info object")] [SerializeField]
+        private GameObject panelInfoTextHost;
+
         [SerializeField] private GameObject panelInfoTextClient;
         [SerializeField] private VersusBattleResultUIController battleResultUIControllerHost;
         [SerializeField] private VersusBattleResultUIController battleResultUIControllerClient;
-        
-        [Header("UI Controllers")]
-        [SerializeField] private VersusCameraController versusCameraController;
+
+        [Header("UI Controllers")] [SerializeField]
+        private VersusCameraController versusCameraController;
+
         [SerializeField] private HUDGameUserStatusUIController hudUserInfo;
         [SerializeField] private HUDGameSelectedCardUIController hudCardSelection;
 
-        [Header("Panel Template")]
-        [SerializeField] private GameObject panelTemplate;
+        [Header("Panel Template")] [SerializeField]
+        private GameObject panelTemplate;
 
         #endregion
 
@@ -65,25 +70,44 @@ namespace UI.Game.Versus
 
         private void Init()
         {
+            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.BattleBGM1, true);
+
             // Init Managers, Start Unity Network
             GameManager2.Instance.Init();
             GameManager2.Instance.GameVersusUIController = this;
             PanelManager.Instance.PanelTemplate = panelTemplate;
             PanelManager.Instance.Init();
             NetGameStatusManager.Instance.Init();
-            
+
             if (UserManager.Instance.IsHost)
                 NetworkManager.Singleton.StartHost();
             else
                 NetworkManager.Singleton.StartClient();
 
-            AudioManager.Instance.PlayBgm(AudioManager.BgmTypes.BattleBGM1, true);
-            StartCoroutine(ShowVersus());
+            // Game start request
+            NetHttpRequestManager.Instance.Post(BattleStartReqPath, "", req =>
+            {
+                if (req.result == UnityWebRequest.Result.Success)
+                {
+                    StartCoroutine(ShowVersus());
+                }
+                else if (req.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    // Occured Error (Account does not exist, Wrong password etc..)
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                }
+                else
+                {
+                    // Occured Error (Server connection error)
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                }
+            });
         }
 
-        public void ShowGameResult(Consts.BattleResult hostResult, Consts.BattleResult clientResult)
+        public void ShowGameResult(bool isHost, Consts.BattleResult hostResult, Consts.BattleResult clientResult,
+            int scoreGap = 0)
         {
-            StartCoroutine(ShowGameResultCoroutine(hostResult, clientResult));
+            StartCoroutine(ShowGameResultCoroutine(isHost, hostResult, clientResult, scoreGap));
         }
 
         #endregion
@@ -114,15 +138,16 @@ namespace UI.Game.Versus
             {
                 hudUserInfo.gameObject.SetActive(true);
                 hudCardSelection.gameObject.SetActive(true);
-                
+
                 GameManager2.Instance.CheckReadyToRunTimer();
             });
             gameObject.SetActive(false);
         }
 
-        private IEnumerator ShowGameResultCoroutine(Consts.BattleResult hostResult, Consts.BattleResult clientResult)
+        private IEnumerator ShowGameResultCoroutine(bool isHost, Consts.BattleResult hostResult,
+            Consts.BattleResult clientResult, int scoreGap)
         {
-            yield return CacheCoroutineSource.Instance.GetSource(3f);
+            yield return CacheCoroutineSource.Instance.GetSource(4f);
 
             // disable the game hud object
             hudUserInfo.gameObject.SetActive(false);
@@ -141,10 +166,10 @@ namespace UI.Game.Versus
             versusText.text = TextMatchWillBeEnd;
 
             // set result
-            battleResultUIControllerHost.SetBattleResult(hostResult, clientResult);
-            battleResultUIControllerClient.SetBattleResult(hostResult, clientResult);
+            battleResultUIControllerHost.SetBattleResult(isHost, hostResult, clientResult, scoreGap);
+            battleResultUIControllerClient.SetBattleResult(isHost, hostResult, clientResult, scoreGap);
 
-            yield return CacheCoroutineSource.Instance.GetSource(5f);
+            yield return CacheCoroutineSource.Instance.GetSource(4f);
 
             // Shutdown the host
             if (NetworkManager.Singleton.IsHost)

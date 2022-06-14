@@ -72,11 +72,19 @@ namespace Utils
         // public const int StartMana = 3, MaxMana = 10;
         public const int StartMana = 3, MaxMana = 10;
 
+        public enum GameResult
+        {
+            Win,
+            Lose,
+            Draw,
+            Continue
+        }
+
         public enum BattleResult
         {
             WIN,
             LOSE,
-            DRAW
+            DRAW,
         }
 
         public enum UserType

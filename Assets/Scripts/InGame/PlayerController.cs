@@ -5,6 +5,7 @@ using Core;
 using Data.Cache;
 using Manager;
 using Manager.InGame;
+using Manager.Net;
 using UI.Game;
 using UI.Game.UserStatus;
 using Unity.Netcode;
@@ -22,8 +23,18 @@ namespace InGame
         private const int DirLeft = -90, DirRight = 90;
         private const int PaddingX = -1;
 
-        private const int DefaultHp = 100, DefaultMana = 3;
-        private const int MaxHp = 100, MaxMana = 10;
+        private enum Directions
+        {
+            Forward,
+            Back,
+            Left,
+            Right
+        };
+
+        private string[] AttackAnimations =
+        {
+            WizardAnimations.Attack01, WizardAnimations.Attack02, WizardAnimations.Attack03, WizardAnimations.Attack04
+        };
 
         #endregion
 
@@ -38,7 +49,8 @@ namespace InGame
         private NetworkList<int> _buffList;
         private NetworkList<int> _debuffList;
 
-        private int _idx;
+        private int _idx, _dir;
+        private float _speed = 4.0f;
         private BitMask.BitField30 _bitIdx;
 
         private string _currentAnimation;
@@ -56,6 +68,11 @@ namespace InGame
         public int Mana => _netMana?.Value ?? 0;
         public int X => _netPosX?.Value ?? 0;
         public int Y => _netPosY?.Value ?? 0;
+        
+        public int EstimateX { get; private set; }
+        public int EstimateY { get; private set; }
+
+        public int Idx => _idx;
 
         #endregion
 
@@ -67,10 +84,36 @@ namespace InGame
             Init();
         }
 
+        private void Update()
+        {
+            Debug.Log($"{_netPosX.Value.ToString()} / {_netPosY.Value.ToString()} / {Idx.ToString()}");
+        }
+
+        private void OnApplicationQuit()
+        {
+            DisposeAll();
+        }
+
         #endregion
 
 
         #region Private methods
+
+        private void DisposeAll()
+        {
+            _netHp.Dispose();
+            _netMana.Dispose();
+            _netPosX.Dispose();
+            _netPosY.Dispose();
+
+            _netHp = null;
+            _netMana = null;
+            _netPosX = null;
+            _netPosY = null;
+
+            _debuffList = null;
+            _buffList = null;
+        }
 
         private void Init()
         {
@@ -83,7 +126,7 @@ namespace InGame
 
             _buffList = new NetworkList<int>();
             _debuffList = new NetworkList<int>();
-            
+
             SetDefaultValue();
         }
 
@@ -96,6 +139,58 @@ namespace InGame
             _currentAnimation = animationName;
         }
 
+        public void RotateDirection(int dir)
+        {
+            transform.localEulerAngles = new Vector3(0, dir, 0);
+        }
+
+        private void SetPosition(int destIdx)
+        {
+            var x = destIdx % Consts.Width;
+            var y = destIdx / Consts.Width;
+
+            MoveX(x);
+            MoveY(y);
+            _idx = destIdx;
+            _bitIdx = ConvertIdxToBitIdx(_idx);
+        }
+
+
+        private BitMask.BitField30 ParseRangeWithPos(string range, int px, int py)
+        {
+            var fieldRange = new BitMask.BitField25(range).CvtBits25ToBits30();
+            fieldRange.Shift(px - Consts.DefaultSkillX, py - Consts.DefaultSkillY);
+            return fieldRange;
+        }
+
+        private List<int> GetPanelIdx(BitMask.BitField30 fieldRange)
+        {
+            var idxes = new List<int>();
+            var mask = BitMask.BitField30Msb;
+
+            for (var i = 0; i < Consts.PanelCnt; i++)
+            {
+                if ((fieldRange.element & mask) > 0)
+                    idxes.Add(i);
+
+                mask >>= 1;
+            }
+
+            return idxes;
+        }
+
+        private BitMask.BitField30 ConvertIdxToBitIdx(int idx)
+        {
+            int zero = BitMask.BitField30Msb;
+            return new BitMask.BitField30(zero >> idx);
+        }
+
+        private BitMask.BitField30 CvtPlayerIdxToBitField30(int idx)
+        {
+            if (idx < 0 || idx > Consts.PanelCnt - 1) return default;
+            return new BitMask.BitField30(BitMask.BitField30Msb >> idx);
+        }
+
         #endregion
 
 
@@ -103,8 +198,8 @@ namespace InGame
 
         public void SetDefaultValue()
         {
-            _netHp.Value = DefaultHp;
-            _netMana.Value = DefaultMana;
+            _netHp.Value = Consts.DefaultHp;
+            _netMana.Value = Consts.DefaultMana;
 
             if (IsHost)
             {
@@ -116,37 +211,304 @@ namespace InGame
                 _netPosX.Value = InitClientX;
                 _netPosY.Value = InitClientY;
             }
-            
+
             _buffList.Clear();
             _debuffList.Clear();
         }
-        
+
         public void ApplyDamage(int damage)
         {
-            if (NetworkManager.Singleton.IsHost)
-                _netHp.Value = Mathf.Clamp(_netHp.Value - damage, 0, Consts.MaximumHp);
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netHp.Value = Mathf.Clamp(_netHp.Value - damage, 0, Consts.MaximumHp);
+            PlayAnimation(WizardAnimations.GetHit, 1f);
+            ShowEmoji(CacheEmojiSource.EmojiType.EmojiInjured, 1.5f);
         }
 
         public void UseMana(int mana)
         {
-            if (NetworkManager.Singleton.IsHost)
-                _netMana.Value = Mathf.Clamp(_netMana.Value - mana, 0, Consts.MaximumMana);
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netMana.Value = Mathf.Clamp(_netMana.Value - mana, 0, Consts.MaximumMana);
         }
 
         public void RestoreMana(int mana)
         {
-            if (NetworkManager.Singleton.IsHost)
-                _netMana.Value = Mathf.Clamp(_netMana.Value + mana, 0, Consts.MaximumMana);
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netMana.Value = Mathf.Clamp(_netMana.Value + mana, 0, Consts.MaximumMana);
+            ShowEmoji(CacheEmojiSource.EmojiType.EmojiXD, 2f);
+            PlayAnimation(WizardAnimations.Recovery, 1.2f);
         }
 
-        public void PlayAnimation(string animationName)
+        public void MoveX(int x)
         {
-            StartCoroutine(ProcessAnimationCoroutine(animationName));
+            if (x < 0 || x > Consts.Width - 1) return;
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netPosX.Value = x;
+        }
+
+        public void MoveY(int y)
+        {
+            if (y < 0 || y > Consts.Height - 1) return;
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netPosY.Value = y;
+        }
+
+        public void PlayAnimation(string animationName, float duration = 0f)
+        {
+            if (!NetworkManager.Singleton.IsServer) return;
+            StartCoroutine(ProcessAnimationCoroutine(animationName, duration));
         }
 
         public void ShowEmoji(CacheEmojiSource.EmojiType type, float duration = 1f)
         {
+            if (!NetworkManager.Singleton.IsServer) return;
             StartCoroutine(ProcessEmojiCoroutine(type, duration));
+            ShowEmojiClientRpc(type, duration);
+        }
+
+        public List<int> InvalidCards()
+        {
+            var invalidCards = new List<int>();
+            var saveMana = _netMana.Value;
+            EstimateX = _netPosX.Value;
+            EstimateY = _netPosY.Value;
+
+            int[] cardList;
+            if (UserManager.Instance.IsHost)
+                cardList = NetGameStatusManager.Instance.CopyHostCardList();
+            else
+                cardList = NetGameStatusManager.Instance.CopyClientCardList();
+
+            // Calculate current status
+            for (var i = 0; i < cardList.Length; i++)
+            {
+                var data = TableDatas.Instance.GetCardData(cardList[i]);
+                var range = ParseRangeWithPos(data.range, EstimateX, EstimateY);
+                var panelIdxes = GetPanelIdx(range);
+
+                saveMana -= data.cost;
+
+                switch (data.type)
+                {
+                    case (int)Consts.SkillType.Move:
+                        EstimateX = panelIdxes[0] % Consts.Width;
+                        EstimateY = panelIdxes[0] / Consts.Width;
+                        break;
+
+                    case (int)Consts.SkillType.ManaCharge:
+                        saveMana += data.value;
+                        break;
+                }
+            }
+
+            // Find invalid cards
+            foreach (KeyValuePair<int, CardData> cardData in TableDatas.Instance.cardDatas)
+            {
+                var range = ParseRangeWithPos(cardData.Value.range, EstimateX, EstimateY);
+                var panelIdxes = GetPanelIdx(range);
+
+                switch (cardData.Value.type)
+                {
+                    case (int)Consts.SkillType.Move:
+                        if (panelIdxes.Count == 0 || saveMana - cardData.Value.cost < 0)
+                            invalidCards.Add(cardData.Value.code);
+                        break;
+
+                    default:
+                        if (saveMana - cardData.Value.cost < 0)
+                            invalidCards.Add(cardData.Value.code);
+                        break;
+                }
+            }
+
+            return invalidCards;
+        }
+
+        public void ProcessSkill(int code)
+        {
+            var data = TableDatas.Instance.GetCardData(code);
+            var range = ParseRangeWithPos(data.range, _netPosX.Value, _netPosY.Value);
+            var panelIdxes = GetPanelIdx(range);
+
+            UseMana(data.cost);
+            switch (data.type)
+            {
+                case (int)Consts.SkillType.Move:
+                    var movingDir = CalculateDir(panelIdxes[0]);
+                    SetPosition(panelIdxes[0]);
+                    if (UserManager.Instance.IsHost) 
+                        Move(panelIdxes[0], movingDir);
+                    break;
+
+                case (int)Consts.SkillType.Attack:
+                    if (UserManager.Instance.IsHost) 
+                        Attack(data, range, panelIdxes);
+                    break;
+
+                case (int)Consts.SkillType.ManaCharge:
+                    ManaCharge(data.value);
+                    if (UserManager.Instance.IsHost) 
+                        StartCoroutine(HitAction());
+                    break;
+
+                // 임시
+                default:
+                    if (UserManager.Instance.IsHost) 
+                        StartCoroutine(HitAction());
+                    break;
+            }
+        }
+
+        private Directions CalculateDir(int destIdx)
+        {
+            int destX = destIdx % Consts.Width;
+            int destY = destIdx / Consts.Width;
+
+            if (_netPosX.Value < destX)
+                return _dir == DirRight ? Directions.Forward : Directions.Back;
+            else if (_netPosX.Value > destX)
+                return _dir == DirRight ? Directions.Back : Directions.Forward;
+            else if (_netPosY.Value < destY)
+                return _dir == DirRight ? Directions.Right : Directions.Left;
+            else if (_netPosY.Value > destY)
+                return _dir == DirRight ? Directions.Left : Directions.Right;
+
+            return Directions.Forward;
+        }
+
+        private void Move(int destIdx, Directions movingDir)
+        {
+            var destPosition = PanelManager.Instance.GetPanelByIdx(_idx).transform.position;
+            StartCoroutine(MoveAction(destPosition, movingDir));
+        }
+
+        private void Attack(CardData data, BitMask.BitField30 range, List<int> panelIdxes)
+        {
+            PlayerController hostileController;
+            Consts.UserType hostileType;
+
+            if (IsOwner)
+            {
+                hostileController = GameManager2.Instance.ClientController;
+                hostileType = Consts.UserType.Client;
+            }
+            else
+            {
+                hostileController = GameManager2.Instance.HostController;
+                hostileType = Consts.UserType.Host;
+            }
+
+            StartCoroutine(HitAction());
+
+            if (CheckPlayerHit(hostileController.Idx, range))
+            {
+                hostileController.ApplyDamage(data.value);
+                StartCoroutine(hostileController.GetHitAction());
+            }
+        }
+
+        private void ManaCharge(int value)
+        {
+            if (!NetworkManager.Singleton.IsServer) return;
+            _netMana.Value += value;
+        }
+
+        private IEnumerator MoveAction(Vector3 destination, Directions movingDir)
+        {
+            // Animation Move Front
+            switch (movingDir)
+            {
+                case Directions.Forward:
+                    PlayAnimation(WizardAnimations.WalkForward);
+                    break;
+
+                case Directions.Back:
+                    PlayAnimation(WizardAnimations.WalkBack);
+                    break;
+
+                case Directions.Left:
+                    PlayAnimation(WizardAnimations.WalkLeft);
+                    break;
+
+                case Directions.Right:
+                    PlayAnimation(WizardAnimations.WalkRight);
+                    break;
+            }
+
+            var destinationPosition = new Vector3(destination.x, transform.position.y, destination.z);
+            if (IsOwner)
+                destinationPosition.x -= PaddingX;
+            else
+                destinationPosition.x += PaddingX;
+
+            var dir = destinationPosition - transform.position;
+            var dirNormalized = (destinationPosition - transform.position).normalized;
+
+            while (dir.sqrMagnitude > 0.1f)
+            {
+                dir = destinationPosition - transform.position;
+                dirNormalized = (destinationPosition - transform.position).normalized;
+
+                transform.position += dirNormalized * (_speed * Time.deltaTime);
+
+                yield return null;
+            }
+
+            transform.position = destinationPosition;
+            Rotate();
+
+            // Animation Move Idle
+            PlayAnimation(WizardAnimations.Idle);
+        }
+
+        private void Rotate()
+        {
+            PlayerController hostileController;
+            if (IsOwner)
+                hostileController = GameManager2.Instance.ClientController;
+            else
+                hostileController = GameManager2.Instance.HostController;
+
+            if (transform.position.x < hostileController.transform.position.x)
+            {
+                RotateDirection(DirRight);
+                hostileController.RotateDirection(DirLeft);
+            }
+            else
+            {
+                RotateDirection(DirLeft);
+                hostileController.RotateDirection(DirRight);
+            }
+        }
+
+        private bool CheckPlayerHit(int idx, BitMask.BitField30 range)
+        {
+            return (CvtPlayerIdxToBitField30(idx).element & range.element) > 0;
+        }
+
+        private IEnumerator HitAction()
+        {
+            int idx = UnityEngine.Random.Range(0, AttackAnimations.Length);
+
+            // Animation Battle GetHit
+            PlayAnimation(AttackAnimations[idx]);
+
+            yield return new WaitForSeconds(1f);
+
+            // Animation Idle
+            PlayAnimation(WizardAnimations.Idle);
+        }
+
+        private IEnumerator GetHitAction()
+        {
+            yield return new WaitForSeconds(1f);
+
+            // Animation Battle GetHit
+            PlayAnimation(WizardAnimations.GetHit);
+
+            yield return new WaitForSeconds(1f);
+
+            // Animation Idle
+            PlayAnimation(WizardAnimations.Idle);
         }
 
         #endregion
@@ -158,12 +520,12 @@ namespace InGame
         {
             IsHostPlayerObject = IsOwnedByServer;
             name = IsHostPlayerObject ? $"(h){name}" : $"(c){name}";
-            
+
             // Add OnValueChanged Listener
             _netHp.OnValueChanged += (value, newValue) =>
             {
                 if (UserStatusUIController is null) return;
-                
+
                 if (IsHostPlayerObject)
                     UserStatusUIController.UpdateHostUI(Consts.GameUIType.Hp, newValue);
                 else
@@ -173,8 +535,8 @@ namespace InGame
             _netMana.OnValueChanged += (value, newValue) =>
             {
                 if (UserStatusUIController is null) return;
-                
-                switch (NetworkManager.Singleton.IsHost)
+
+                switch (NetworkManager.Singleton.IsServer)
                 {
                     case true when IsHostPlayerObject:
                         UserStatusUIController.UpdateHostUI(Consts.GameUIType.Mana, newValue);
@@ -191,7 +553,7 @@ namespace InGame
             _debuffList.OnListChanged += e => { };
 
             // Set Position
-            if (IsHost)
+            if (NetworkManager.Singleton.IsServer)
             {
                 if (IsHostPlayerObject)
                 {
@@ -202,6 +564,8 @@ namespace InGame
 
                     _netPosX.Value = InitHostX;
                     _netPosY.Value = InitHostY;
+                    _idx = InitHostY * Consts.Width + InitHostX;
+                    _bitIdx = CvtPlayerIdxToBitField30(_idx);
                 }
                 else
                 {
@@ -212,6 +576,8 @@ namespace InGame
 
                     _netPosX.Value = InitClientX;
                     _netPosY.Value = InitClientY;
+                    _idx = InitClientY * Consts.Width + InitClientX;
+                    _bitIdx = CvtPlayerIdxToBitField30(_idx);
                 }
             }
 
@@ -222,29 +588,37 @@ namespace InGame
             GameManager2.Instance.SetPlayerController(IsHostPlayerObject, this);
         }
 
+        [ClientRpc]
+        private void ShowEmojiClientRpc(CacheEmojiSource.EmojiType type, float duration)
+        {
+            if (NetworkManager.Singleton.IsServer) return;
+            StartCoroutine(ProcessEmojiCoroutine(type, duration));
+        }
+
         #endregion
 
 
         #region Coroutines
 
-        private IEnumerator ProcessAnimationCoroutine(string animationName)
+        private IEnumerator ProcessAnimationCoroutine(string animationName, float duration)
         {
             ProcessAnimation(animationName);
-            yield return CacheCoroutineSource.Instance.GetSource(1f);
-            ProcessAnimation(WizardAnimations.Idle);
+            yield return CacheCoroutineSource.Instance.GetSource(duration);
+            if (duration > 0)
+                ProcessAnimation(WizardAnimations.Idle);
         }
 
         private IEnumerator ProcessEmojiCoroutine(CacheEmojiSource.EmojiType type, float duration)
         {
             var emoji = CacheEmojiSource.Instance.GetSource(type);
-            
+
             // Play Emoji effect
             emoji.gameObject.SetActive(true);
-            emoji.transform.position = transform.position + new Vector3(0, 4, 0);
+            emoji.transform.position = transform.position + new Vector3(0, 3, 0);
             emoji.Play();
-            
+
             yield return CacheCoroutineSource.Instance.GetSource(duration);
-            
+
             // Stop Emoji effect
             emoji.Stop();
             emoji.transform.position = Vector3.zero;

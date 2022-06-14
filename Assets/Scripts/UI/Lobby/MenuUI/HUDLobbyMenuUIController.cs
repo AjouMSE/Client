@@ -53,6 +53,7 @@ namespace UI.Lobby.MenuUI
             UIManager.Instance.Fade(UIManager.FadeType.FadeIn, canvasGroups[0], UIManager.LobbyUIFadeInDuration, () =>
             {
                 scroll3D.OpenScroll();
+                NetMatchMakingManager.Instance.Connect();
                 NetMatchMakingManager.Instance.SendAuthToServer();
             });
             

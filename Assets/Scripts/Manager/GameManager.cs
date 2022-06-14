@@ -160,7 +160,7 @@ namespace Manager
                 }
             });
             
-            _gameVersusUIController.ShowGameResult(hostResult, clientResult);
+            _gameVersusUIController.ShowGameResult(UserManager.Instance.IsHost, hostResult, clientResult);
         }
 
         public List<int> GetInvalidCards()

@@ -18,25 +18,33 @@ namespace UI.Game.CardSelection
     {
         #region Constants
 
+        private const int HostDefaultX = -1200, ClientDefaultX = 1200;
         private const int MaxCardCnt = 3;
+        private const int ProcessCardMoveSpeed = ClientDefaultX * 4;
 
         #endregion
 
 
         #region Private Variables
 
-        [Header("Host Card Selections")] 
-        [SerializeField] private GameObject cardListHost;
+        [Header("Host Card Selections")] [SerializeField]
+        private GameObject cardListHost;
 
-        [Header("Client Card Selections")] 
-        [SerializeField] private GameObject cardListClient;
+        [Header("Client Card Selections")] [SerializeField]
+        private GameObject cardListClient;
 
-        [Header("Base, Confirm card Images")] 
-        [SerializeField] private Sprite baseCardImg;
+        [Header("Base, Confirm card Images")] [SerializeField]
+        private Sprite baseCardImg;
+
         [SerializeField] private Sprite confirmCardImg;
 
-        [Header("3D card scroll UI")] 
-        [SerializeField] private CardListScrollUIController cardScroll3D;
+        [Header("3D card scroll UI")] [SerializeField]
+        private CardListScrollUIController cardScroll3D;
+
+        [Header("Process Card, Frame")] [SerializeField]
+        private Image imageProcessCard;
+
+        [SerializeField] private RectTransform processCardFrameRectTransform;
 
         private Image[] _hostCardImages;
         private Image[] _clientCardImages;
@@ -141,7 +149,7 @@ namespace UI.Game.CardSelection
         /// </summary>
         public void UpdateInvalidCards()
         {
-            List<int> invalidCards = GameManager.Instance.GetInvalidCards();
+           var invalidCards = GameManager2.Instance.GetInvalidCards();
 
             foreach (Image img in cardScroll3D.cardImageDict.Values)
             {
@@ -189,6 +197,40 @@ namespace UI.Game.CardSelection
             {
                 NetGameStatusManager.Instance.RemoveCardFromList(idx);
             }
+        }
+
+        public void ShowProcessingCard(int skillCode, bool isHostSkill, Action callback = null)
+        {
+            // Start Effect
+            imageProcessCard.sprite = CacheSpriteSource.Instance.GetSource(skillCode);
+            StartCoroutine(ProcessCardMovementEffectCoroutine(isHostSkill, callback));
+        }
+
+        #endregion
+
+
+        #region Coroutines
+
+        private IEnumerator ProcessCardMovementEffectCoroutine(bool isHostSkill, Action callback = null)
+        {
+            // Set default position
+            processCardFrameRectTransform.localPosition = new Vector3(isHostSkill ? HostDefaultX : ClientDefaultX, 0, 0);
+
+            var x = processCardFrameRectTransform.localPosition.x;
+            while (Mathf.Abs(x) > 0.1f)
+            {
+                processCardFrameRectTransform.localPosition = Vector3.MoveTowards(
+                    processCardFrameRectTransform.localPosition,
+                    Vector3.zero, ProcessCardMoveSpeed * Time.deltaTime);
+                x = processCardFrameRectTransform.localPosition.x;
+                yield return null;
+            }
+
+            // movement : 0.25sec, waiting 1.25sec => 1.5sec
+            yield return CacheCoroutineSource.Instance.GetSource(1.25f);
+
+            processCardFrameRectTransform.localPosition = new Vector3(HostDefaultX, 0, 0);
+            callback?.Invoke();
         }
 
         #endregion

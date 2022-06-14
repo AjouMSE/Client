@@ -30,6 +30,7 @@ namespace Manager.Net
         private const string DestSceneName = "GameScene";
 
         private SocketIOCommunicator _sio;
+        private bool _isAuthed;
 
         #endregion
 
@@ -42,7 +43,7 @@ namespace Manager.Net
             {
                 NetSocketIOManager.Instance.Init();
                 _sio = NetSocketIOManager.Instance.Sio;
-                StartCoroutine(MakeConnection());
+                StartCoroutine(MakeConnectionCoroutine());
                 IsInitialized = true;
             }
         }
@@ -53,10 +54,14 @@ namespace Manager.Net
         public void SendAuthToServer()
         {
             if (!IsInitialized) return;
+            if (_isAuthed) return;
 
-            Packet.Auth sendPacket = new Packet.Auth { id = UserManager.Instance.User.id };
-            string jsonPayload = JsonUtility.ToJson(sendPacket);
-            _sio.Instance.Emit(SioEventAuth, jsonPayload, false);
+            StartCoroutine(EmitEventCoroutine(() =>
+            {
+                var sendPacket = new Packet.Auth { id = UserManager.Instance.User.id };
+                var jsonPayload = JsonUtility.ToJson(sendPacket);
+                _sio.Instance.Emit(SioEventAuth, jsonPayload, false);
+            }));
         }
 
         /// <summary>
@@ -65,7 +70,7 @@ namespace Manager.Net
         public void MatchMaking()
         {
             if (!IsInitialized) return;
-            _sio.Instance.Emit(SioEventStartMatching);
+            StartCoroutine(EmitEventCoroutine(() => { _sio.Instance.Emit(SioEventStartMatching); }));
         }
 
         /// <summary>
@@ -74,7 +79,28 @@ namespace Manager.Net
         public void StopMatchMaking()
         {
             if (!IsInitialized) return;
-            _sio.Instance.Emit(SioEventCancelMatching);
+            StartCoroutine(EmitEventCoroutine(() => { _sio.Instance.Emit(SioEventCancelMatching); }));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Connect()
+        {
+            if (!IsInitialized) return;
+            if (_sio.Instance.IsConnected()) return;
+            _sio.Instance.Connect();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Disconnect()
+        {
+            if (!IsInitialized) return;
+            if (!_sio.Instance.IsConnected()) return;
+            _sio.Instance.Close();
+            _isAuthed = false;
         }
 
         #endregion
@@ -92,6 +118,7 @@ namespace Manager.Net
             Debug.Log(rcvPacket.result
                 ? "Successfully authenticated to the Socket.IO server"
                 : "Failed to authenticate to the Socket.IO server");
+            _isAuthed = rcvPacket.result;
         }
 
         /// <summary>
@@ -131,7 +158,7 @@ namespace Manager.Net
                 case MatchMadeType.Host:
                     // send join code to client
                     var joinCode = await NetRelayManager.Instance.StartHost();
-                    Packet.MatchCode sendPacket = new Packet.MatchCode { room = rcvPacket.room, code = joinCode };
+                    var sendPacket = new Packet.MatchCode { room = rcvPacket.room, code = joinCode };
                     _sio.Instance.Emit(SioEventSendMatchCode, JsonUtility.ToJson(sendPacket), false);
 
                     // set user to host & change scene
@@ -164,7 +191,7 @@ namespace Manager.Net
 
         #region Coroutines
 
-        private IEnumerator MakeConnection()
+        private IEnumerator MakeConnectionCoroutine()
         {
             // Wait for connecting with socket.io server
             while (!_sio.Instance.IsConnected())
@@ -178,6 +205,16 @@ namespace Manager.Net
             _sio.Instance.On(SioEventStartMatching, OnStartMatchingCallback);
             _sio.Instance.On(SioEventMatchMade, OnMatchMadeCallback);
             _sio.Instance.On(SioEventReceiveMatchCode, OnReceiveMatchCodeCallback);
+        }
+
+        private IEnumerator EmitEventCoroutine(Action callback)
+        {
+            while (!_sio.Instance.IsConnected())
+            {
+                yield return null;
+            }
+
+            callback();
         }
 
         #endregion

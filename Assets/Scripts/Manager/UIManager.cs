@@ -395,6 +395,8 @@ namespace Manager
                     // Fade effect
                     while (text.color.a < MaxFadeValue)
                     {
+                        if (text == null) yield break;
+                        
                         gap = Time.deltaTime / duration;
                         SetTextAlpha(text, text.color.a + gap);
                         yield return null;
@@ -410,6 +412,8 @@ namespace Manager
                     // Fade effect
                     while (text.color.a > MinFadeValue)
                     {
+                        if (text == null) yield break;
+                        
                         gap = Time.deltaTime / duration;
                         SetTextAlpha(text, text.color.a - gap);
                         yield return null;

@@ -20,7 +20,7 @@ namespace UI.Game.Versus
 
         #region Unity event methods
 
-        private void Start()
+        private void Awake()
         {
             Init();
         }
@@ -40,25 +40,25 @@ namespace UI.Game.Versus
 
         #region Public methods
 
-        public void SetBattleResult(Consts.BattleResult hostResult, Consts.BattleResult clientResult)
+        public void SetBattleResult(bool isHost, Consts.BattleResult hostResult, Consts.BattleResult clientResult,
+            int scoreGap = 0)
         {
+            var scoreText = scoreGap > 0 ? $"+{scoreGap.ToString()}" : scoreGap.ToString();
+            
             if (isHostInfo)
             {
                 _battleResultTexts[0].text = (hostResult == Consts.BattleResult.WIN)
                     ? "WIN"
                     : (clientResult == Consts.BattleResult.WIN ? "LOSE" : "DRAW");
-                _battleResultTexts[1].text = (hostResult == Consts.BattleResult.WIN)
-                    ? "+10"
-                    : (clientResult == Consts.BattleResult.WIN ? "-8" : "+0");
+                
+                _battleResultTexts[1].text = isHost ? scoreText : "-";
             }
             else
             {
                 _battleResultTexts[0].text = (clientResult == Consts.BattleResult.WIN)
                     ? "WIN"
                     : (hostResult == Consts.BattleResult.WIN ? "LOSE" : "DRAW");
-                _battleResultTexts[1].text = (clientResult == Consts.BattleResult.WIN)
-                    ? "+10"
-                    : (hostResult == Consts.BattleResult.WIN ? "-8" : "+0");
+                _battleResultTexts[1].text = isHost ? "-" : scoreText;
             }
         }
 

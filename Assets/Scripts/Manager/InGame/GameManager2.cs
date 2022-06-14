@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Data.Cache;
@@ -9,6 +10,7 @@ using UI.Game.UserStatus;
 using UI.Game.Versus;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Utils;
 
@@ -21,7 +23,9 @@ namespace Manager.InGame
         private const int DefaultTurnValue = 0;
         private const float DefaultTimerValue = 60;
         private const int MaxPhaseCnt = 3;
+
         private const string HudCameraTag = "HUDCamera";
+        private const string BattleResultReqPath = "/battle/result";
 
         #endregion
 
@@ -46,16 +50,84 @@ namespace Manager.InGame
 
         #endregion
 
+
+        #region Private variables
+
+        private bool CheckContinueGame()
+        {
+            return HostController.Hp > 0 && ClientController.Hp > 0;
+        }
+
+        private void GameOver()
+        {
+            var hostResult = HostController.Hp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+            var clientResult = ClientController.Hp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+            var resultPacket = new Packet.BattleResult();
+
+            // Set packet, play result animation
+            if (UserManager.Instance.IsHost)
+            {
+                HostController.PlayAnimation(hostResult == Consts.BattleResult.WIN
+                    ? WizardAnimations.Victory
+                    : WizardAnimations.Die);
+                ClientController.PlayAnimation(clientResult == Consts.BattleResult.WIN
+                    ? WizardAnimations.Victory
+                    : WizardAnimations.Die);
+
+                resultPacket.result = HostController.Hp > 0 ? "WIN" : (ClientController.Hp > 0 ? "LOSE" : "DRAW");
+            }
+            else
+            {
+                resultPacket.result = ClientController.Hp > 0 ? "WIN" : (HostController.Hp > 0 ? "LOSE" : "DRAW");
+            }
+
+            // Send result to server
+            NetHttpRequestManager.Instance.Post(BattleResultReqPath, JsonUtility.ToJson(resultPacket), req =>
+            {
+                if (req.result == UnityWebRequest.Result.Success)
+                {
+                    var scoreGap = UserManager.Instance.User.score;
+                    var json = req.downloadHandler.text;
+
+                    UserManager.Instance.UpdateUserInfo(json);
+                    UserManager.Instance.RemoveHostileInfo();
+                    scoreGap = UserManager.Instance.User.score - scoreGap;
+
+                    GameVersusUIController.gameObject.SetActive(true);
+                    UserStatusUIController.gameObject.SetActive(false);
+                    SelectedCardUIController.gameObject.SetActive(false);
+                    GameVersusUIController.ShowGameResult(UserManager.Instance.IsHost, hostResult, clientResult,
+                        scoreGap);
+                }
+                else if (req.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    // Occured Error (Account does not exist, Wrong password etc..)
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                }
+                else
+                {
+                    // Occured Error (Server connection error)
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                }
+            });
+        }
+
+        #endregion
+
+
         #region Public methods
 
         public override void Init()
         {
-            TurnValue = DefaultTurnValue;
-            TimerValue = DefaultTimerValue;
-            CanCardSelect = false;
-            IsInitialized = true;
+            if (!IsInitialized)
+            {
+                TurnValue = DefaultTurnValue;
+                TimerValue = DefaultTimerValue;
+                CanCardSelect = false;
+                IsInitialized = true;
+            }
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -73,14 +145,29 @@ namespace Manager.InGame
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void CheckReadyToRunTimer()
         {
             StartCoroutine(WaitForRunningTimer());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void StopTimer()
         {
             TimerValue = 0.1f;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<int> GetInvalidCards()
+        {
+            return UserManager.Instance.IsHost ? HostController.InvalidCards() : ClientController.InvalidCards();
         }
 
         #endregion
@@ -94,9 +181,9 @@ namespace Manager.InGame
         /// </summary>
         private IEnumerator WaitForRunningTimer()
         {
-            NetGameStatusManager.Instance.ReadyToRunTimer(true);
-            NetGameStatusManager.Instance.ReadyToProcessCards(false);
             UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifyWaitForOpponent, true);
+            NetGameStatusManager.Instance.ReadyToRunTimer(true);
+            NetGameStatusManager.Instance.ReadyToProcessCard(false);
 
             while (!NetGameStatusManager.Instance.BothReadyToRunTimer())
             {
@@ -112,14 +199,16 @@ namespace Manager.InGame
         /// <returns></returns>
         private IEnumerator RunTimer()
         {
+            // Update values
             TurnValue++;
             TimerValue = DefaultTimerValue;
             CanCardSelect = true;
-            UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifySelectCard, true);
 
+            // Update UI
+            UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifySelectCard, true);
             UserStatusUIController.UpdateTimer();
-            UserStatusUIController.UpdateNotify("");
-            //SelectedCardUIController.UpdateInvalidCards();
+            UserStatusUIController.UpdateTurn();
+            SelectedCardUIController.UpdateInvalidCards();
             SelectedCardUIController.OpenCardScroll();
 
             while (TimerValue > 0)
@@ -128,6 +217,14 @@ namespace Manager.InGame
                 UserStatusUIController.UpdateTimer();
                 yield return null;
             }
+
+            // Update values
+            TimerValue = 0;
+            CanCardSelect = false;
+
+            // Update UI
+            UserStatusUIController.UpdateTimer();
+            SelectedCardUIController.CloseCardScroll();
 
             StartCoroutine(WaitForProcessingCards());
         }
@@ -139,40 +236,122 @@ namespace Manager.InGame
         /// <returns></returns>
         private IEnumerator WaitForProcessingCards()
         {
-            NetGameStatusManager.Instance.ReadyToRunTimer(false);
-            NetGameStatusManager.Instance.ReadyToProcessCards(true);
             UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifyWaitForOpponent, true);
-
-            TimerValue = 0;
-            CanCardSelect = false;
-
-            UserStatusUIController.UpdateTimer();
-            SelectedCardUIController.CloseCardScroll();
+            NetGameStatusManager.Instance.ReadyToRunTimer(false);
+            NetGameStatusManager.Instance.ReadyToProcessCard(true);
 
             while (!NetGameStatusManager.Instance.BothReadyToProcessCards())
             {
                 yield return null;
             }
 
-            StartCoroutine(ProcessPhases());
+            StartCoroutine(ProcessTurn());
         }
 
         /// <summary>
-        /// Process cards in card list
+        /// Process turn
         /// </summary>
         /// <returns></returns>
-        private IEnumerator ProcessPhases()
+        private IEnumerator ProcessTurn()
         {
             UserStatusUIController.UpdateNotify(HUDGameUserStatusUIController.NotifyProcessCard, true);
+
             var hostCards = NetGameStatusManager.Instance.CopyHostCardList();
             var clientCards = NetGameStatusManager.Instance.CopyClientCardList();
-            
-            for (int i = 0; i < MaxPhaseCnt; i++)
+
+            // Process cards
+            for (var i = 0; i < MaxPhaseCnt; i++)
             {
-                HostController.ShowEmoji(CacheEmojiSource.EmojiType.EmojiAngry, 1.5f);
-                ClientController.ShowEmoji(CacheEmojiSource.EmojiType.EmojiCry, 1.5f);
-                yield return CacheCoroutineSource.Instance.GetSource(3f);
+                int hostSkillCode, clientSkillCode;
+                if (hostCards.Length > i && clientCards.Length > i)
+                {
+                    hostSkillCode = hostCards[i];
+                    clientSkillCode = clientCards[i];
+                    
+                    var hostPriority = TableDatas.Instance.GetCardData(hostSkillCode).priority;
+                    var clientPriority = TableDatas.Instance.GetCardData(clientSkillCode).priority;
+                    var isHostFirst = hostPriority <= clientPriority;
+
+                    if (isHostFirst)
+                    {
+                        ProcessPhase(true, hostSkillCode);
+                        yield return CacheCoroutineSource.Instance.GetSource(5f);
+                        
+                        ProcessPhase(false, clientSkillCode);
+                        yield return CacheCoroutineSource.Instance.GetSource(5f);
+                    }
+                    else
+                    {
+                        ProcessPhase(false, clientSkillCode);
+                        yield return CacheCoroutineSource.Instance.GetSource(5f);
+                        
+                        ProcessPhase(true, hostSkillCode);
+                        yield return CacheCoroutineSource.Instance.GetSource(5f);
+                    }
+                } 
+                else if (hostCards.Length > i)
+                {
+                    hostSkillCode = hostCards[i];
+                    ProcessPhase(true, hostSkillCode);
+                    yield return CacheCoroutineSource.Instance.GetSource(5f);
+                } 
+                else if (clientCards.Length > i)
+                {
+                    clientSkillCode = clientCards[i];
+                    ProcessPhase(false, clientSkillCode);
+                    yield return CacheCoroutineSource.Instance.GetSource(5f);
+                }
+                else break;
+
+                if (!CheckContinueGame())
+                {
+                    // game over
+                    GameOver();
+                    IsInitialized = false;
+                    yield break;
+                }
+
+                HostController.RestoreMana(TurnValue);
+                ClientController.RestoreMana(TurnValue);
             }
+
+            StartCoroutine(WaitForRunningTimer());
+        }
+
+        /// <summary>
+        /// Process phase (1turn -> max 3 phase) (process each cards)
+        /// </summary>
+        /// <param name="isHostSkill"></param>
+        /// <param name="skillCode"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        private void ProcessPhase(bool isHostSkill, int skillCode)
+        {
+            Debug.Log($"{isHostSkill.ToString()} / {TableDatas.Instance.GetCardData(skillCode).text}");
+
+            SelectedCardUIController.ShowProcessingCard(skillCode, isHostSkill, () =>
+            {
+                if (isHostSkill)
+                {
+                    PanelManager.Instance.ProcessEffect(skillCode, Consts.UserType.Host, HostController,
+                        ClientController);
+                    HostController.ProcessSkill(skillCode);
+                }
+                else
+                {
+                    PanelManager.Instance.ProcessEffect(skillCode, Consts.UserType.Client, ClientController,
+                        HostController);
+                    ClientController.ProcessSkill(skillCode);
+                }
+                
+                if (UserManager.Instance.IsHost)
+                    NetGameStatusManager.Instance.PollCardFromList(isHostSkill);
+            });
+        }
+
+        private void Update()
+        {
+            Debug.Log(NetGameStatusManager.Instance.GetStatusDump());
         }
 
         #endregion

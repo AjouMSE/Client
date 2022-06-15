@@ -60,7 +60,7 @@ namespace Manager.InGame
             return HostController.Hp > 0 && ClientController.Hp > 0;
         }
 
-        private void GameOver()
+        private IEnumerator GameOver()
         {
             var hostResult = HostController.Hp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
             var clientResult = ClientController.Hp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
@@ -74,14 +74,14 @@ namespace Manager.InGame
                     : WizardAnimations.Die);
                 HostController.ShowEmoji(hostResult == Consts.BattleResult.WIN
                     ? CacheEmojiSource.EmojiType.EmojiXD
-                    : CacheEmojiSource.EmojiType.EmojiSad);
+                    : CacheEmojiSource.EmojiType.EmojiSad, 2f);
 
                 ClientController.PlayAnimation(clientResult == Consts.BattleResult.WIN
                     ? WizardAnimations.Victory
                     : WizardAnimations.Die);
                 ClientController.ShowEmoji(clientResult == Consts.BattleResult.WIN
                     ? CacheEmojiSource.EmojiType.EmojiCool
-                    : CacheEmojiSource.EmojiType.EmojiCry);
+                    : CacheEmojiSource.EmojiType.EmojiCry, 2f);
 
                 resultPacket.result = HostController.Hp > 0 ? "WIN" : (ClientController.Hp > 0 ? "LOSE" : "DRAW");
             }
@@ -89,6 +89,8 @@ namespace Manager.InGame
             {
                 resultPacket.result = ClientController.Hp > 0 ? "WIN" : (HostController.Hp > 0 ? "LOSE" : "DRAW");
             }
+
+            yield return CacheCoroutineSource.Instance.GetSource(3f);
 
             // Send result to server
             NetHttpRequestManager.Instance.Post(BattleResultReqPath, JsonUtility.ToJson(resultPacket), req =>
@@ -367,7 +369,7 @@ namespace Manager.InGame
                 if (!CheckContinueGame())
                 {
                     // game over
-                    GameOver();
+                    StartCoroutine(GameOver());
                     IsInitialized = false;
                     yield break;
                 }

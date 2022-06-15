@@ -19,10 +19,7 @@ namespace Manager.Net
 
 
         #region Private variables
-
-        private static NetGameStatusManager _instance;
-        private static readonly object _lockObject = new object();
-
+        
         private NetworkVariable<bool> _hostReadyToRunTimer, _clientReadyToRunTimer;
         private NetworkVariable<bool> _hostReadyToProcessCard, _clientReadyToProcessCard;
 
@@ -42,39 +39,24 @@ namespace Manager.Net
         #region Public variables
 
         // Simple singleton pattern
-        public static NetGameStatusManager Instance
-        {
-            get
-            {
-                lock (_lockObject)
-                {
-                    if (_instance == null)
-                    {
-                        _instance = new GameObject().AddComponent<NetGameStatusManager>();
-                        var obj = _instance.gameObject;
-                        obj.AddComponent<NetworkObject>();
-                        obj.name = $"(s) {typeof(NetGameStatusManager)}";
-                        DontDestroyOnLoad(_instance);
-                    }
-                }
-
-                return _instance;
-            }
-        }
+        public static NetGameStatusManager Instance { get; private set; }
 
         #endregion
 
 
         #region Unity event methods
 
-        // private void Awake()
-        // {
-        //     _instance = this;
-        // }
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;   
+            }
+        }
 
         private void OnApplicationQuit()
         {
-            DisposeAll();
+            DisposeAllStatus();
         }
 
         #endregion
@@ -82,7 +64,7 @@ namespace Manager.Net
 
         #region Private methods
 
-        private void DisposeAll()
+        private void DisposeAllStatus()
         {
             _hostReadyToRunTimer.Dispose();
             _hostReadyToProcessCard.Dispose();
@@ -98,6 +80,15 @@ namespace Manager.Net
             _clientCardList = null;
         }
 
+        private void ClearAllStatus()
+        {
+            _hostReadyToRunTimer.Value = _hostReadyToProcessCard.Value =
+                _clientReadyToRunTimer.Value = _clientReadyToProcessCard.Value = false;
+
+            _hostCardList.Clear();
+            _clientCardList.Clear();
+        }
+
         private void CreateNetworkValue()
         {
             _hostReadyToRunTimer = new NetworkVariable<bool>();
@@ -110,6 +101,8 @@ namespace Manager.Net
 
             _hostCardList.OnListChanged += e =>
             {
+                if (SelectedCardUIController == null) return;
+
                 var cards = CopyHostCardList();
                 SelectedCardUIController.UpdateHostCardSelectionUI(cards);
                 if (NetworkManager.Singleton.IsServer)
@@ -118,24 +111,35 @@ namespace Manager.Net
 
             _clientCardList.OnListChanged += e =>
             {
+                if (SelectedCardUIController == null) return;
+
                 var cards = CopyClientCardList();
                 SelectedCardUIController.UpdateClientCardSelectionUI(cards);
                 if (!NetworkManager.Singleton.IsServer)
                     SelectedCardUIController.UpdateInvalidCards();
             };
+            
+            ReadyToRunTimer(false);
+            ReadyToProcessCard(false);
         }
 
         #endregion
 
 
         #region Public methods
-        
+
         public void Init()
         {
             CreateNetworkValue();
-
-            if (!NetworkManager.Singleton.IsServer)
-                _hostProcessCard = false;
+            switch (UserManager.Instance.IsHost)
+            {
+                case true:
+                    ClearAllStatus();
+                    break;
+                case false:
+                    _hostProcessCard = false;
+                    break;
+            }
         }
 
         public string GetStatusDump()

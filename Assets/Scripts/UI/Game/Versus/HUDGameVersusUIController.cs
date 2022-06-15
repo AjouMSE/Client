@@ -104,6 +104,13 @@ namespace UI.Game.Versus
             });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isHost"></param>
+        /// <param name="hostResult"></param>
+        /// <param name="clientResult"></param>
+        /// <param name="scoreGap"></param>
         public void ShowGameResult(bool isHost, Consts.BattleResult hostResult, Consts.BattleResult clientResult,
             int scoreGap = 0)
         {
@@ -144,11 +151,19 @@ namespace UI.Game.Versus
             gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isHost"></param>
+        /// <param name="hostResult"></param>
+        /// <param name="clientResult"></param>
+        /// <param name="scoreGap"></param>
+        /// <returns></returns>
         private IEnumerator ShowGameResultCoroutine(bool isHost, Consts.BattleResult hostResult,
             Consts.BattleResult clientResult, int scoreGap)
         {
             versusText.text = "";
-            yield return CacheCoroutineSource.Instance.GetSource(4f);
+            yield return CacheCoroutineSource.Instance.GetSource(2f);
 
             // disable the game hud object
             hudUserInfo.gameObject.SetActive(false);

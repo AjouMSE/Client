@@ -14,13 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LobbyScene.unity
     guid: 583c57367921d8948a125dfee7349085
-  - enabled: 0
-    path: Assets/Scenes/GameScene.unity
-    guid: 23ed98720072ef845a94ce02022fab2c
   - enabled: 1
     path: Assets/Scenes/GameSceneRemaster.unity
     guid: 4c6a207f596811945a02cb71d6ac8287
-  - enabled: 0
-    path: Assets/Scenes/Test/RankingTest.unity
-    guid: 73a0800cd3e91f84da2fa9f6ae49ac86
   m_configObjects: {}

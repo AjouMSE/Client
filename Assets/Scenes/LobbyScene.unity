@@ -13538,7 +13538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RunInBackground: 1
-  LogLevel: 1
+  LogLevel: 0
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 392462109}
@@ -68831,7 +68831,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5649413317850627238, guid: f91a388b0a484b34eb39bc7348d4ef8d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f91a388b0a484b34eb39bc7348d4ef8d, type: 3}

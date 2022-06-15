@@ -230,6 +230,13 @@ namespace InGame
             _netHp.Value = Mathf.Clamp(_netHp.Value - damage, 0, Consts.MaximumHp);
         }
 
+        public void RestoreHp(int hp)
+        {
+            if (!NetworkManager.Singleton.IsServer) return;
+            Debug.Log("here3");
+            _netHp.Value = Mathf.Clamp(_netHp.Value + hp, 0, Consts.MaximumHp);
+        }
+
         public void UseMana(int mana)
         {
             if (!NetworkManager.Singleton.IsServer) return;
@@ -239,6 +246,7 @@ namespace InGame
         public void RestoreMana(int mana)
         {
             if (!NetworkManager.Singleton.IsServer) return;
+            Debug.Log("here1");
             _netMana.Value = Mathf.Clamp(_netMana.Value + mana, 0, Consts.MaximumMana);
         }
         
@@ -334,15 +342,15 @@ namespace InGame
                     break;
 
                 case (int)Consts.SkillType.ManaCharge:
-                    ManaCharge(data.value);
-                    if (UserManager.Instance.IsHost) 
-                        StartCoroutine(HitAction());
+                    RestoreMana(data.value);
+                    Debug.Log($"{data.value.ToString()}");
+                    StartCoroutine(HitAction());
                     break;
                 
                 case (int)Consts.SkillType.LifeRecovery:
-                    LifeRecovery(data.value);
-                    if (UserManager.Instance.IsHost) 
-                        StartCoroutine(HitAction());
+                    Debug.Log("here2");
+                    RestoreHp(data.value);
+                    StartCoroutine(HitAction());
                     break;
                 // 임시
                 default:
@@ -397,12 +405,14 @@ namespace InGame
         {
             if (!NetworkManager.Singleton.IsServer) return;
             _netMana.Value += value;
+            StartCoroutine(HitAction());
         }
         
         private void LifeRecovery(int value)
         {
             if (!NetworkManager.Singleton.IsServer) return;
             _netHp.Value += value;
+            StartCoroutine(HitAction());
         }
 
         private IEnumerator MoveAction(int destIdx, Vector3 destination, Directions movingDir)

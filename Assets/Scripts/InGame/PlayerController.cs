@@ -246,7 +246,6 @@ namespace InGame
         public void RestoreMana(int mana)
         {
             if (!NetworkManager.Singleton.IsServer) return;
-            Debug.Log("here1");
             _netMana.Value = Mathf.Clamp(_netMana.Value + mana, 0, Consts.MaximumMana);
         }
         

@@ -60,35 +60,54 @@ namespace Manager.InGame
             return HostController.Hp > 0 && ClientController.Hp > 0;
         }
 
-        private IEnumerator GameOver()
+        private IEnumerator GameOver(bool allTurnOver)
         {
-            var hostResult = HostController.Hp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
-            var clientResult = ClientController.Hp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+            Consts.BattleResult hResult, cResult;
             var resultPacket = new Packet.BattleResult();
+
+            if (allTurnOver)
+            {
+                hResult = HostController.Hp > ClientController.Hp ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+                cResult = ClientController.Hp > HostController.Hp ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+            }
+            else
+            {
+                hResult = HostController.Hp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+                cResult = ClientController.Hp > 0 ? Consts.BattleResult.WIN : Consts.BattleResult.LOSE;
+            }
 
             // Set packet, play result animation
             if (UserManager.Instance.IsHost)
             {
-                HostController.PlayAnimation(hostResult == Consts.BattleResult.WIN
+                // Host plays Animation & Emoji
+                HostController.PlayAnimation(hResult == Consts.BattleResult.WIN
                     ? WizardAnimations.Victory
                     : WizardAnimations.Die);
-                HostController.ShowEmoji(hostResult == Consts.BattleResult.WIN
-                    ? CacheEmojiSource.EmojiType.EmojiXD
-                    : CacheEmojiSource.EmojiType.EmojiSad, 2f);
 
-                ClientController.PlayAnimation(clientResult == Consts.BattleResult.WIN
+                HostController.ShowEmoji(
+                    hResult == Consts.BattleResult.WIN
+                        ? CacheEmojiSource.EmojiType.EmojiXD
+                        : CacheEmojiSource.EmojiType.EmojiSad, 2f);
+
+                // Client plays Animation & Emoji
+                ClientController.PlayAnimation(cResult == Consts.BattleResult.WIN
                     ? WizardAnimations.Victory
                     : WizardAnimations.Die);
-                ClientController.ShowEmoji(clientResult == Consts.BattleResult.WIN
-                    ? CacheEmojiSource.EmojiType.EmojiCool
-                    : CacheEmojiSource.EmojiType.EmojiCry, 2f);
 
-                resultPacket.result = HostController.Hp > 0 ? "WIN" : (ClientController.Hp > 0 ? "LOSE" : "DRAW");
+                ClientController.ShowEmoji(
+                    cResult == Consts.BattleResult.WIN
+                        ? CacheEmojiSource.EmojiType.EmojiCool
+                        : CacheEmojiSource.EmojiType.EmojiCry, 2f);
+
+                resultPacket.result = hResult == Consts.BattleResult.WIN ? "WIN" :
+                    cResult == Consts.BattleResult.WIN ? "LOSE" : "DRAW";
             }
             else
             {
-                resultPacket.result = ClientController.Hp > 0 ? "WIN" : (HostController.Hp > 0 ? "LOSE" : "DRAW");
+                resultPacket.result = cResult == Consts.BattleResult.WIN ? "WIN" :
+                    hResult == Consts.BattleResult.WIN ? "LOSE" : "DRAW";
             }
+
 
             yield return CacheCoroutineSource.Instance.GetSource(3f);
 
@@ -107,7 +126,7 @@ namespace Manager.InGame
                     GameVersusUIController.gameObject.SetActive(true);
                     UserStatusUIController.gameObject.SetActive(false);
                     SelectedCardUIController.gameObject.SetActive(false);
-                    GameVersusUIController.ShowGameResult(UserManager.Instance.IsHost, hostResult, clientResult,
+                    GameVersusUIController.ShowGameResult(UserManager.Instance.IsHost, hResult, cResult,
                         scoreGap);
                 }
                 else if (req.result == UnityWebRequest.Result.ProtocolError)
@@ -369,7 +388,15 @@ namespace Manager.InGame
                 if (!CheckContinueGame())
                 {
                     // game over
-                    StartCoroutine(GameOver());
+                    StartCoroutine(GameOver(false));
+                    IsInitialized = false;
+                    yield break;
+                }
+                
+                if (TurnValue >= 15)
+                {
+                    // game over
+                    StartCoroutine(GameOver(true));
                     IsInitialized = false;
                     yield break;
                 }

@@ -66,16 +66,29 @@ namespace Manager.Net
 
         private void DisposeAllStatus()
         {
-            _hostReadyToRunTimer.Dispose();
-            _hostReadyToProcessCard.Dispose();
-            _clientReadyToRunTimer.Dispose();
-            _clientReadyToProcessCard.Dispose();
+            if(_hostReadyToRunTimer != null)
+                _hostReadyToRunTimer.Dispose();
+            
+            if(_hostReadyToProcessCard != null)
+                _hostReadyToProcessCard.Dispose();
+            
+             if(_clientReadyToRunTimer != null)
+                _clientReadyToRunTimer.Dispose();
+             
+             if(_clientReadyToProcessCard != null)
+                _clientReadyToProcessCard.Dispose();
+             
+             if(_hostCardList != null)
+                 _hostCardList.Dispose();
+             
+             if(_clientCardList != null)
+                 _clientCardList.Dispose();
 
+             
             _hostReadyToRunTimer = null;
             _hostReadyToProcessCard = null;
             _clientReadyToRunTimer = null;
             _clientReadyToProcessCard = null;
-
             _hostCardList = null;
             _clientCardList = null;
         }
@@ -84,9 +97,9 @@ namespace Manager.Net
         {
             _hostReadyToRunTimer.Value = _hostReadyToProcessCard.Value =
                 _clientReadyToRunTimer.Value = _clientReadyToProcessCard.Value = false;
-
-            _hostCardList.Clear();
-            _clientCardList.Clear();
+            
+            // _hostCardList.Clear();
+            // _clientCardList.Clear();
         }
 
         private void CreateNetworkValue()
@@ -95,7 +108,7 @@ namespace Manager.Net
             _hostReadyToProcessCard = new NetworkVariable<bool>();
             _clientReadyToRunTimer = new NetworkVariable<bool>();
             _clientReadyToProcessCard = new NetworkVariable<bool>();
-
+            
             _hostCardList = new NetworkList<int>();
             _clientCardList = new NetworkList<int>();
 
@@ -130,6 +143,9 @@ namespace Manager.Net
 
         public void Init()
         {
+            if(UserManager.Instance.IsHost)
+                DisposeAllStatus();
+            
             CreateNetworkValue();
             switch (UserManager.Instance.IsHost)
             {

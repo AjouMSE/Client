@@ -85,6 +85,7 @@ namespace Utils
 
             md5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(str));
             byte[] hash = md5.Hash;
+            md5.Dispose();
 
             StringBuilder sBuilder = new StringBuilder();
             foreach (byte bt in hash)
@@ -112,10 +113,12 @@ namespace Utils
                 case SHA256:
                     SHA256 sha256 = new SHA256Managed();
                     hash = sha256.ComputeHash(Encoding.ASCII.GetBytes(str));
+                    sha256.Dispose();
                     break;
                 case SHA512:
                     SHA512 sha512 = new SHA512Managed();
                     hash = sha512.ComputeHash(Encoding.ASCII.GetBytes(str));
+                    sha512.Dispose();
                     break;
                 default:
                     Debug.LogError("UnDefinedHashAlgorithmException");

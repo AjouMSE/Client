@@ -84,7 +84,7 @@ namespace Manager
 
         #endregion
 
-
+ 
         #region Public methods
 
         /// <summary>

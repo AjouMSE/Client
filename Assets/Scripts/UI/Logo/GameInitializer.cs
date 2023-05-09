@@ -48,6 +48,10 @@ namespace UI.Logo
         {
             // Init Managers
             UIManager.Instance.Init();
+            UIManager.Instance.ChangeScreenMode();
+            UIManager.Instance.SetResolution(1280, 720);
+            Application.targetFrameRate = 120;
+            
             AudioManager.Instance.Init();
             AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.BGM, 0.05f);
             AudioManager.Instance.SetVolume(AudioManager.VolumeTypes.SFX, 1.0f);

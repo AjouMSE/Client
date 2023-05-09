@@ -41,10 +41,13 @@ namespace UI.Display
         {
             NetHttpRequestManager.Instance.Post(SignOutReqPath, "", (req) =>
             {
-                UserManager.Instance.SignOutUserInfo();
-                NetMatchMakingManager.Instance.Disconnect();
-                UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLogin);
-                gameObject.SetActive(false);
+                using (req)
+                {
+                    UserManager.Instance.SignOutUserInfo();
+                    NetMatchMakingManager.Instance.Disconnect();
+                    UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLogin);
+                    gameObject.SetActive(false);   
+                }
             });
         }
 

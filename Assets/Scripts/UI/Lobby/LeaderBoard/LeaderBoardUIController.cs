@@ -101,29 +101,32 @@ namespace UI.Lobby.LeaderBoard
         /// <param name="req"></param>
         private void LeaderBoardReqCallback(UnityWebRequest req)
         {
-            // parse packet
-            string json = req.downloadHandler.text;
-            Packet.UserList userList = JsonUtility.FromJson<Packet.UserList>(json);
-
-            // get maximum page num
-            _totalUserCnt = userList.totalCount;
-            _maxPageNum = (((int)_totalUserCnt - 1) / MaxUserInfoRowCnt) + 1;
-
-            // Check that user can move the page
-            buttonPageLeft.gameObject.SetActive(CanMove(0));
-            buttonPageRight.gameObject.SetActive(CanMove(1));
-
-            // Set UI data
-            for (int i = 0; i < userList.users.Count; i++)
+            using (req)
             {
-                Packet.User user = userList.users[i];
-                userInfoRowControllers[i].gameObject.SetActive(true);
-                userInfoRowControllers[i].SetUserData(user);
-            }
+                // parse packet
+                string json = req.downloadHandler.text;
+                Packet.UserList userList = JsonUtility.FromJson<Packet.UserList>(json);
 
-            for (int i = userList.users.Count; i < MaxUserInfoRowCnt; i++)
-            {
-                userInfoRowControllers[i].gameObject.SetActive(false);
+                // get maximum page num
+                _totalUserCnt = userList.totalCount;
+                _maxPageNum = (((int)_totalUserCnt - 1) / MaxUserInfoRowCnt) + 1;
+
+                // Check that user can move the page
+                buttonPageLeft.gameObject.SetActive(CanMove(0));
+                buttonPageRight.gameObject.SetActive(CanMove(1));
+
+                // Set UI data
+                for (int i = 0; i < userList.users.Count; i++)
+                {
+                    Packet.User user = userList.users[i];
+                    userInfoRowControllers[i].gameObject.SetActive(true);
+                    userInfoRowControllers[i].SetUserData(user);
+                }
+
+                for (int i = userList.users.Count; i < MaxUserInfoRowCnt; i++)
+                {
+                    userInfoRowControllers[i].gameObject.SetActive(false);
+                }   
             }
         }
 

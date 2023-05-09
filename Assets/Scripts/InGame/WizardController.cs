@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
@@ -11,6 +12,7 @@ using Unity.Netcode.Components;
 
 namespace InGame
 {
+    [Obsolete]
     public class WizardController : NetworkBehaviour
     {
         #region Private constants

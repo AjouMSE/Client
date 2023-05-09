@@ -114,30 +114,33 @@ namespace Manager.InGame
             // Send result to server
             NetHttpRequestManager.Instance.Post(BattleResultReqPath, JsonUtility.ToJson(resultPacket), req =>
             {
-                if (req.result == UnityWebRequest.Result.Success)
+                using (req)
                 {
-                    var scoreGap = UserManager.Instance.User.score;
-                    var json = req.downloadHandler.text;
+                    if (req.result == UnityWebRequest.Result.Success)
+                    {
+                        var scoreGap = UserManager.Instance.User.score;
+                        var json = req.downloadHandler.text;
 
-                    UserManager.Instance.UpdateUserInfo(json);
-                    UserManager.Instance.RemoveHostileInfo();
-                    scoreGap = UserManager.Instance.User.score - scoreGap;
+                        UserManager.Instance.UpdateUserInfo(json);
+                        UserManager.Instance.RemoveHostileInfo();
+                        scoreGap = UserManager.Instance.User.score - scoreGap;
 
-                    GameVersusUIController.gameObject.SetActive(true);
-                    UserStatusUIController.gameObject.SetActive(false);
-                    SelectedCardUIController.gameObject.SetActive(false);
-                    GameVersusUIController.ShowGameResult(UserManager.Instance.IsHost, hResult, cResult,
-                        scoreGap);
-                }
-                else if (req.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    // Occured Error (Account does not exist, Wrong password etc..)
-                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
-                }
-                else
-                {
-                    // Occured Error (Server connection error)
-                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                        GameVersusUIController.gameObject.SetActive(true);
+                        UserStatusUIController.gameObject.SetActive(false);
+                        SelectedCardUIController.gameObject.SetActive(false);
+                        GameVersusUIController.ShowGameResult(UserManager.Instance.IsHost, hResult, cResult,
+                            scoreGap);
+                    }
+                    else if (req.result == UnityWebRequest.Result.ProtocolError)
+                    {
+                        // Occured Error (Account does not exist, Wrong password etc..)
+                        Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                    }
+                    else
+                    {
+                        // Occured Error (Server connection error)
+                        Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                    }   
                 }
             });
         }

@@ -73,43 +73,42 @@ public class RankingBoardServer : MonoBehaviour
 
     private void Callback(UnityWebRequest req)
     {
-        if (req.result == UnityWebRequest.Result.Success)
+        using (req)
         {
-            // Get json string from server
-            string json = req.downloadHandler.text;
-            Debug.Log(json);
-
-            // print all items in user list
-            UserList userList = JsonUtility.FromJson<UserList>(json);
-            Debug.Log(userList.ToString());
-
-            for (int i = 0; i < userList.users.Count; i++)
+            if (req.result == UnityWebRequest.Result.Success)
             {
-              
-                User user = userList.users[i];
-                usernum[i].nickname = user.nickname;
-                usernum[i].score = user.score;
-                usernum[i].win = user.win;
-                usernum[i].lose = user.lose;
-                usernum[i].draw = user.draw;
-                usernum[i].tier = TierCal(usernum[i].score);            
-                Debug.Log(user.ToString());
-            }
-        }
-        else if (req.result == UnityWebRequest.Result.ProtocolError)
-        {
-            // Error code (ex 400)
-            Debug.Log($"Protocol error: {req.error}");
-        }
-        else
-        {
-            // Error code (ex 500)
-            Debug.Log($"Another error: {req.error}");
-        }
-    }
-    void Update()
-    {
+                // Get json string from server
+                string json = req.downloadHandler.text;
+                Debug.Log(json);
 
+                // print all items in user list
+                UserList userList = JsonUtility.FromJson<UserList>(json);
+                Debug.Log(userList.ToString());
+
+                for (int i = 0; i < userList.users.Count; i++)
+                {
+              
+                    User user = userList.users[i];
+                    usernum[i].nickname = user.nickname;
+                    usernum[i].score = user.score;
+                    usernum[i].win = user.win;
+                    usernum[i].lose = user.lose;
+                    usernum[i].draw = user.draw;
+                    usernum[i].tier = TierCal(usernum[i].score);            
+                    Debug.Log(user.ToString());
+                }
+            }
+            else if (req.result == UnityWebRequest.Result.ProtocolError)
+            {
+                // Error code (ex 400)
+                Debug.Log($"Protocol error: {req.error}");
+            }
+            else
+            {
+                // Error code (ex 500)
+                Debug.Log($"Another error: {req.error}");
+            }   
+        }
     }
 
     private void RankExpress(int rankusernum)

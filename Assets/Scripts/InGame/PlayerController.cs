@@ -95,10 +95,17 @@ namespace InGame
 
         private void DisposeAll()
         {
-            _netHp.Dispose();
-            _netMana.Dispose();
-            _netPosX.Dispose();
-            _netPosY.Dispose();
+            if(_netHp != null)
+                _netHp.Dispose();
+            
+            if(_netMana != null)
+                _netMana.Dispose();
+            
+            if(_netPosX != null)
+                _netPosX.Dispose();
+            
+            if(_netPosY != null)
+                _netPosY.Dispose();
 
             _netHp = null;
             _netMana = null;
@@ -111,6 +118,8 @@ namespace InGame
 
         private void Init()
         {
+            DisposeAll();
+            
             _animator = GetComponent<Animator>();
 
             _netHp = new NetworkVariable<int>();
@@ -121,7 +130,8 @@ namespace InGame
             _buffList = new NetworkList<int>();
             _debuffList = new NetworkList<int>();
 
-            SetDefaultValue();
+            if(UserManager.Instance.IsHost)
+                StartCoroutine(SetDefaultValueCoroutine());
         }
 
         private void ProcessAnimation(string animationName)
@@ -209,7 +219,7 @@ namespace InGame
             _netHp.Value = Consts.DefaultHp;
             _netMana.Value = Consts.DefaultMana;
 
-            if (IsHost)
+            if (IsHostPlayerObject)
             {
                 _netPosX.Value = InitHostX;
                 _netPosY.Value = InitHostY;
@@ -220,8 +230,8 @@ namespace InGame
                 _netPosY.Value = InitClientY;
             }
 
-            _buffList.Clear();
-            _debuffList.Clear();
+            // _buffList.Clear();
+            // _debuffList.Clear();
         }
 
         public void ApplyDamage(int damage)
@@ -589,6 +599,14 @@ namespace InGame
 
 
         #region Coroutines
+
+        private IEnumerator SetDefaultValueCoroutine()
+        {
+            while (!IsSpawned)
+                yield return null;
+            
+            SetDefaultValue();
+        }
 
         private IEnumerator ProcessAnimationCoroutine(string animationName, float duration)
         {

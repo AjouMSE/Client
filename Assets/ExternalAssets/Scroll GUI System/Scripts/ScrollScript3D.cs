@@ -63,16 +63,15 @@ public class ScrollScript3D : MonoBehaviour
     //Here, I use it to update the scrolling menu backdrop position to the current desired position.
     void FixedUpdate()
     {
-
-        // SliderPosition = new Vector3(BackdropPositions[menuPositionInt], menPosY, menPosZ);
-        // RecTran.localPosition = Vector3.MoveTowards(RecTran.localPosition, SliderPosition, MenuSlideSpeed);
+        SliderPosition = new Vector3(BackdropPositions[menuPositionInt], menPosY, menPosZ);
+        RecTran.localPosition = Vector3.MoveTowards(RecTran.localPosition, SliderPosition, MenuSlideSpeed);
        
     }
 
     void Update()
     {
-        SliderPosition = new Vector3(BackdropPositions[menuPositionInt], menPosY, menPosZ);
-        RecTran.localPosition = Vector3.MoveTowards(RecTran.localPosition, SliderPosition, MenuSlideSpeed);
+        // SliderPosition = new Vector3(BackdropPositions[menuPositionInt], menPosY, menPosZ);
+        // RecTran.localPosition = Vector3.MoveTowards(RecTran.localPosition, SliderPosition, MenuSlideSpeed);
     }
 
     // The following functions handle opening and closing the scroll. 

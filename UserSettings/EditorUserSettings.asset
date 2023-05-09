@@ -5,6 +5,15 @@ EditorUserSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 4
   m_ConfigSettings:
+    RecentlyUsedSceneGuid-0:
+      value: 5752020757055e5d58575a7a41720644431648782f2a7161297f1c30bab26c6f
+      flags: 0
+    RecentlyUsedSceneGuid-1:
+      value: 57525656540d0b58580d5a7b14200744444e1e7d2e7b7f367d794e62e3e33260
+      flags: 0
+    RecentlyUsedSceneGuid-2:
+      value: 5304065650065108580c592445770f44454e1e7e7b71246029794932e0b4623d
+      flags: 0
     RecentlyUsedScenePath-0:
       value: 22424703114646680e0b0227036c6b1505035706292922353f0b1232f0e4003df1f378fce9332b25
       flags: 0
@@ -21,19 +30,19 @@ EditorUserSettings:
       value: 22424703114646680e0b0227036c78111b122b292926237e38271427fb
       flags: 0
     RecentlyUsedScenePath-5:
-      value: 22424703114646680e0b0227036c731f111e16192f2d2835633c133af6f9
-      flags: 0
-    RecentlyUsedScenePath-6:
-      value: 22424703114646680e0b0227036c731f141501192f2d2835633c133af6f9
-      flags: 0
-    RecentlyUsedScenePath-7:
       value: 22424703114646680e0b0227036c78111b122b292926230228241c20f6e52676f7e93ffdfe
       flags: 0
+    RecentlyUsedScenePath-6:
+      value: 224247031146460b5c315f065f045e1d13584b0e6c18273326662e27f7ed2407d2e635e2a8092b293412d00f05331133f73c000ee1451f05181ae4
+      flags: 0
+    RecentlyUsedScenePath-7:
+      value: 22424703114646680e0b0227036c731f111e16192f2d2835633c133af6f9
+      flags: 0
     RecentlyUsedScenePath-8:
-      value: 22424703114646680e0b0227036c731f11182b292926237e38271427fb
+      value: 22424703114646680e0b0227036c731f141501192f2d2835633c133af6f9
       flags: 0
     RecentlyUsedScenePath-9:
-      value: 224247031146460b5c315f065f045e1d13584b0e6c18273326662e27f7ed2407d2e635e2a8092b293412d00f05331133f73c000ee1451f05181ae4
+      value: 22424703114646680e0b0227036c731f11182b292926237e38271427fb
       flags: 0
     UnityRemoteDevice:
       value: 2d5e5a03
@@ -46,9 +55,13 @@ EditorUserSettings:
   m_VCDebugCmd: 0
   m_VCDebugOut: 0
   m_SemanticMergeMode: 2
+  m_DesiredImportWorkerCount: 4
+  m_StandbyImportWorkerCount: 2
+  m_IdleImportWorkerShutdownDelay: 60000
   m_VCShowFailedCheckout: 1
   m_VCOverwriteFailedCheckoutAssets: 1
   m_VCProjectOverlayIcons: 1
   m_VCHierarchyOverlayIcons: 1
   m_VCOtherOverlayIcons: 1
   m_VCAllowAsyncUpdate: 1
+  m_ArtifactGarbageCollection: 1

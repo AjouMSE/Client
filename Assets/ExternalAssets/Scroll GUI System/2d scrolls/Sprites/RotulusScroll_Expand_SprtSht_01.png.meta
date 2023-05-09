@@ -81,7 +81,7 @@ TextureImporter:
       213: 21300050
     second: RotulusScroll_Expand_SprtSht_01_25
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -102,6 +102,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -140,6 +141,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 1
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -191,6 +193,18 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 1
   - serializedVersion: 3
     buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -760,6 +774,33 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      RotulusScroll_Expand_SprtSht_01_0: 21300000
+      RotulusScroll_Expand_SprtSht_01_1: 21300002
+      RotulusScroll_Expand_SprtSht_01_10: 21300020
+      RotulusScroll_Expand_SprtSht_01_11: 21300022
+      RotulusScroll_Expand_SprtSht_01_12: 21300024
+      RotulusScroll_Expand_SprtSht_01_13: 21300026
+      RotulusScroll_Expand_SprtSht_01_14: 21300028
+      RotulusScroll_Expand_SprtSht_01_15: 21300030
+      RotulusScroll_Expand_SprtSht_01_16: 21300032
+      RotulusScroll_Expand_SprtSht_01_17: 21300034
+      RotulusScroll_Expand_SprtSht_01_18: 21300036
+      RotulusScroll_Expand_SprtSht_01_19: 21300038
+      RotulusScroll_Expand_SprtSht_01_2: 21300004
+      RotulusScroll_Expand_SprtSht_01_20: 21300040
+      RotulusScroll_Expand_SprtSht_01_21: 21300042
+      RotulusScroll_Expand_SprtSht_01_22: 21300044
+      RotulusScroll_Expand_SprtSht_01_23: 21300046
+      RotulusScroll_Expand_SprtSht_01_24: 21300048
+      RotulusScroll_Expand_SprtSht_01_25: 21300050
+      RotulusScroll_Expand_SprtSht_01_3: 21300006
+      RotulusScroll_Expand_SprtSht_01_4: 21300008
+      RotulusScroll_Expand_SprtSht_01_5: 21300010
+      RotulusScroll_Expand_SprtSht_01_6: 21300012
+      RotulusScroll_Expand_SprtSht_01_7: 21300014
+      RotulusScroll_Expand_SprtSht_01_8: 21300016
+      RotulusScroll_Expand_SprtSht_01_9: 21300018
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

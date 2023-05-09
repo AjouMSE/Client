@@ -56,25 +56,28 @@ namespace UI.Login
         /// <param name="req"></param>
         private void SignupReqCallback(UnityWebRequest req)
         {
-            string jsonPayload = req.downloadHandler.text;
-            if (req.result == UnityWebRequest.Result.Success)
+            using (req)
             {
-                // close the sign up scroll
-                scroll2DSignup.ScrollClose();
-                ScrollMoveUp();
-            }
-            else if (req.result == UnityWebRequest.Result.ProtocolError)
-            {
-                // Fail to sign up (duplicate nickname, account etc..)
-                Packet.WebServerException exception = JsonUtility.FromJson<Packet.WebServerException>(jsonPayload);
-                UIManager.Instance.ShowInfoTmPro(tmProInfo, exception.message);
-                Debug.Log(exception.ToString());
-            }
-            else
-            {
-                // Occured Error (Server connection error)
-                UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyServerError);
-                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                string jsonPayload = req.downloadHandler.text;
+                if (req.result == UnityWebRequest.Result.Success)
+                {
+                    // close the sign up scroll
+                    scroll2DSignup.ScrollClose();
+                    ScrollMoveUp();
+                }
+                else if (req.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    // Fail to sign up (duplicate nickname, account etc..)
+                    Packet.WebServerException exception = JsonUtility.FromJson<Packet.WebServerException>(jsonPayload);
+                    UIManager.Instance.ShowInfoTmPro(tmProInfo, exception.message);
+                    Debug.Log(exception.ToString());
+                }
+                else
+                {
+                    // Occured Error (Server connection error)
+                    UIManager.Instance.ShowInfoTmPro(tmProInfo, HUDLoginNotify.NotifyServerError);
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                }   
             }
         }
 

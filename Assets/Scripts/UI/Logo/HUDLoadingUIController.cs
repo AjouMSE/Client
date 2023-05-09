@@ -83,10 +83,11 @@ namespace UI.Logo
 
                     // Set maximum frame rate : 60
                     Application.targetFrameRate = MaxFrameRate;
-                    UIManager.Instance.SetResolution(1920, 1080);
+                    // UIManager.Instance.ChangeScreenMode();
+                    // UIManager.Instance.SetResolution(1280, 720);
 
                     // Set Screen orientation : landscape
-                    Screen.orientation = ScreenOrientation.Landscape;
+                    Screen.orientation = ScreenOrientation.LandscapeLeft;
                     break;
 
                 case UIManager.SceneNameLogin:

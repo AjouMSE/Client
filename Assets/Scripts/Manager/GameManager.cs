@@ -16,6 +16,7 @@ using UnityEngine.Networking;
 
 namespace Manager
 {
+    [Obsolete]
     public class GameManager : MonoSingleton<GameManager>
     {
         #region Private constants

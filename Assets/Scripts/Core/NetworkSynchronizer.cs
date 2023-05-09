@@ -10,8 +10,10 @@ using Unity.Netcode;
 using UnityEngine;
 using Utils;
 
+
 namespace Core
 {
+    [Obsolete]
     public class NetworkSynchronizer : NetworkBehaviour
     {
         #region Private constants

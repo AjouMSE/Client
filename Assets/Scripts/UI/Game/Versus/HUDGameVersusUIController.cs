@@ -87,19 +87,22 @@ namespace UI.Game.Versus
             // Game start request
             NetHttpRequestManager.Instance.Post(BattleStartReqPath, "", req =>
             {
-                if (req.result == UnityWebRequest.Result.Success)
+                using (req)
                 {
-                    StartCoroutine(ShowVersus());
-                }
-                else if (req.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    // Occured Error (Account does not exist, Wrong password etc..)
-                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
-                }
-                else
-                {
-                    // Occured Error (Server connection error)
-                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                    if (req.result == UnityWebRequest.Result.Success)
+                    {
+                        StartCoroutine(ShowVersus());
+                    }
+                    else if (req.result == UnityWebRequest.Result.ProtocolError)
+                    {
+                        // Occured Error (Account does not exist, Wrong password etc..)
+                        Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                    }
+                    else
+                    {
+                        // Occured Error (Server connection error)
+                        Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                    }
                 }
             });
         }

@@ -87,38 +87,44 @@ namespace UI.Login
         /// <param name="req"></param>
         private void SignInResultCallback(UnityWebRequest req)
         {
-            if (req.result == UnityWebRequest.Result.Success)
+            using (req)
             {
-                // Save user information to UserManager
-                string json = req.downloadHandler.text;
-                var user = JsonUtility.FromJson<Packet.User>(json);
-                UserManager.Instance.SignInUserInfo(user);
-
-                // Process scroll, camera movement effect
-                scroll3DSignin.CloseScroll();
-                mainCameraController.CameraMovementEffect(() =>
+                if (req.result == UnityWebRequest.Result.Success)
                 {
-                    loadingUIController.gameObject.SetActive(true);
-                    loadingUIController.ShowLoadingUI(() =>
+                    // Save user information to UserManager
+                    string json = req.downloadHandler.text;
+                    var user = JsonUtility.FromJson<Packet.User>(json);
+                    UserManager.Instance.SignInUserInfo(user);
+
+                    // Process scroll, camera movement effect
+                    scroll3DSignin.CloseScroll();
+                    mainCameraController.CameraMovementEffect(() =>
                     {
-                        loadingUIController.HideLoadingUI(() =>
+                        loadingUIController.gameObject.SetActive(true);
+                        loadingUIController.ShowLoadingUI(() =>
                         {
-                            UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);
-                        }, false);
-                    });
-                }, 10, CameraMovementEffectSpd);
-            }
-            else if (req.result == UnityWebRequest.Result.ProtocolError)
-            {
-                // Occured Error (Account does not exist, Wrong password etc..)
-                UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyInvalidAccount);
-                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
-            }
-            else
-            {
-                // Occured Error (Server connection error)
-                UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyServerError);
-                Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                            loadingUIController.HideLoadingUI(() =>
+                            {
+                                UIManager.Instance.ChangeSceneAsync(UIManager.SceneNameLobby);
+                            }, false);
+                        });
+                    }, 10, CameraMovementEffectSpd);
+                }
+                else if (req.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    // Occured Error (Account does not exist, Wrong password etc..)
+                    UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyInvalidAccount);
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                }
+                else
+                {
+                    // Occured Error (Server connection error)
+                    UIManager.Instance.ShowInfoText(textInfo, HUDLoginNotify.NotifyServerError);
+                    Debug.Log($"{req.responseCode.ToString()} / {req.error}");
+                }
+                
+                // explicit dispose the resource 
+                req.Dispose();
             }
         }
 

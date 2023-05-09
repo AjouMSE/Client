@@ -6538,7 +6538,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Copyright\u24D22022 Ajou Univ. Team megica duel All rights reserved.\r"
+  m_Text: "Copyright\u24D22023 Smilegate Stove. Team megica duel All rights reserved.\r"
 --- !u!222 &885374334
 CanvasRenderer:
   m_ObjectHideFlags: 0
